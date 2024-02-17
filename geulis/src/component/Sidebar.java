@@ -68,7 +68,7 @@ public class Sidebar extends javax.swing.JPanel {
     }
     
     private ActionMenu getActionMenu() {
-        ActionMenu actionMenu = new ActionMenu() {
+        ActionMenu action =  new ActionMenu() {
             @Override
             public boolean menuPressed(Component componet, boolean open) {
                 if(enableMenu) {
@@ -86,7 +86,7 @@ public class Sidebar extends javax.swing.JPanel {
             }
         };
         
-        return actionMenu;
+        return action;
     }
     
     public void hidenMenu() {
@@ -121,25 +121,35 @@ public class Sidebar extends javax.swing.JPanel {
     private void initComponents() {
 
         panelLogo = new javax.swing.JPanel();
-        lbIcon = new javax.swing.JLabel();
+        lbIcon1 = new javax.swing.JLabel();
+        lbIcon2 = new javax.swing.JLabel();
         panelMenu = new javax.swing.JPanel();
 
         panelLogo.setOpaque(false);
 
-        lbIcon.setFont(new java.awt.Font("Dialog", 0, 36)); // NOI18N
-        lbIcon.setForeground(new java.awt.Color(255, 255, 255));
-        lbIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbIcon.setText("LOGO");
+        lbIcon1.setFont(new java.awt.Font("Dialog", 0, 36)); // NOI18N
+        lbIcon1.setForeground(new java.awt.Color(255, 255, 255));
+        lbIcon1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbIcon1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/geulis64.png"))); // NOI18N
+
+        lbIcon2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbIcon2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/geulis64.png"))); // NOI18N
 
         javax.swing.GroupLayout panelLogoLayout = new javax.swing.GroupLayout(panelLogo);
         panelLogo.setLayout(panelLogoLayout);
         panelLogoLayout.setHorizontalGroup(
             panelLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lbIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+            .addGroup(panelLogoLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(lbIcon1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbIcon2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(81, Short.MAX_VALUE))
         );
         panelLogoLayout.setVerticalGroup(
             panelLogoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lbIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+            .addComponent(lbIcon1, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+            .addComponent(lbIcon2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         panelMenu.setOpaque(false);
@@ -173,7 +183,8 @@ public class Sidebar extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbIcon;
+    private javax.swing.JLabel lbIcon1;
+    private javax.swing.JLabel lbIcon2;
     private javax.swing.JPanel panelLogo;
     private javax.swing.JPanel panelMenu;
     // End of variables declaration//GEN-END:variables

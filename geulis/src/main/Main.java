@@ -5,9 +5,18 @@
 package main;
 
 import action.ActionMenuSelected;
+import com.formdev.flatlaf.FlatLaf;
+import component.Content;
+import component.Navbar;
 import component.Sidebar;
+import features.FiturBarang;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import net.miginfocom.swing.MigLayout;
+import org.jdesktop.animation.timing.Animator;
+import org.jdesktop.animation.timing.TimingTarget;
+import org.jdesktop.animation.timing.TimingTargetAdapter;
 
 /**
  *
@@ -18,29 +27,130 @@ public class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    
     private MigLayout layout;
+    private Navbar navbar;
+    private Content content;
     private Sidebar menu;
+    private Animator animator;
+
     public Main() {
         initComponents();
         initiation();
     }
-    
+
     private void initiation() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         layout = new MigLayout("fill", "0[]0[100%, fill]0", "0[fill, top]0");
         background.setLayout(layout);
         menu = new Sidebar();
-        
+        content = new Content();
+        navbar = new Navbar();
+
         menu.addAction(new ActionMenuSelected() {
             @Override
             public void menuSelected(int menuIndex, int subMenuIndex) {
-                
+                System.out.println(menuIndex + " , " + subMenuIndex);
+
+                if (menuIndex == 0 && menuIndex == -1) {
+//              fitur beranda
+                } else if (menuIndex == 1) {
+//              fitur master                
+
+                    if (subMenuIndex == 0) {
+                        content.showContent(new FiturBarang());
+                    } else if (subMenuIndex == 1) {
+//                        fitur tindakan
+
+                    } else if (subMenuIndex == 2) {
+//                        fitur pasien
+
+                    } else if (subMenuIndex == 3) {
+//                        fitur supplier
+
+                    } else if (subMenuIndex == 4) {
+//                        fitur karyawan
+
+                    } else if (subMenuIndex == 5) {
+//                        fitur pengguna
+
+                    }
+                } else if (menuIndex == 2 && subMenuIndex == -1) {
+//              fitur reservasi
+
+                } else if (menuIndex == 3) {
+//              fitur transaksi
+                    if (subMenuIndex == 0) {
+//                        fitur pemeriksaan
+                    } else if (subMenuIndex == 1) {
+//                        fitur penjualan
+                    } else if (subMenuIndex == 2) {
+//                        fitur pemesanan
+                    }
+                } else if (menuIndex == 4 && subMenuIndex == -1) {
+//              fitur riwayat pasien
+                } else if (menuIndex == 5) {
+//              fitur lain lain
+                    if (subMenuIndex == 0) {
+//                        fitur restok
+                    } else if (subMenuIndex == 1) {
+//                        fitur absensi
+                    } else if (subMenuIndex == 2) {
+//                        fitur cetak kartu
+                    } else if (subMenuIndex == 3) {
+//                        fitur laporan
+                    }
+                }
+
             }
         });
-        
-       menu.initiationMenu();
-       background.add(menu, "w 230!, spany2");
+
+        menu.initiationMenu();
+        background.add(menu, "w 230!, spany2");
+        background.add(navbar, "h 50!, wrap");
+        background.add(content, "w 100%, h 100%");
+
+        TimingTarget target = new TimingTargetAdapter() {
+            @Override
+            public void timingEvent(float fraction) {
+                double width;
+                if (menu.isShowMenu()) {
+                    width = 52.5 + (170 * (1f - fraction));
+                } else {
+                    width = 60 + (170 * fraction);
+                }
+
+                layout.setComponentConstraints(menu, "w " + width + "!, spany2");
+                menu.revalidate();
+            }
+
+            @Override
+            public void end() {
+                menu.setShowMenu(!menu.isShowMenu());
+                menu.setEnableMenu(true);
+            }
+            
+            
+        };
+
+        animator = new Animator(500, target);
+        animator.setResolution(0);
+        animator.setDeceleration(0.5f);
+        animator.setAcceleration(0.5f);
+
+        navbar.addAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!animator.isRunning()) {
+                    animator.start();
+                }
+
+                menu.setEnableMenu(false);
+
+                if (menu.isShowMenu()) {
+                    menu.hidenMenu();
+                }
+            }
+        });
     }
 
     /**
@@ -85,6 +195,7 @@ public class Main extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

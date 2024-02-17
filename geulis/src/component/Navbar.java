@@ -4,6 +4,8 @@
  */
 package component;
 
+import java.awt.event.ActionListener;
+
 /**
  *
  * @author usER
@@ -16,6 +18,10 @@ public class Navbar extends javax.swing.JPanel {
     public Navbar() {
         initComponents();
     }
+    
+    public void addAction(ActionListener action) {
+        btn.addActionListener(action);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -26,19 +32,73 @@ public class Navbar extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btn = new swing.Button();
+        jLabel1 = new javax.swing.JLabel();
+        lbName = new javax.swing.JLabel();
+        lbId = new javax.swing.JLabel();
+        lbId1 = new javax.swing.JLabel();
+
+        setBackground(new java.awt.Color(255, 255, 255));
+        setForeground(new java.awt.Color(255, 255, 255));
+
+        btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/burger-bar-2.png"))); // NOI18N
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/profile-user.png"))); // NOI18N
+
+        lbName.setBackground(new java.awt.Color(255, 255, 255));
+        lbName.setFont(new java.awt.Font("SansSerif", 3, 14)); // NOI18N
+        lbName.setForeground(new java.awt.Color(135, 15, 50));
+        lbName.setText("Ali Akbar Rafsanjani");
+
+        lbId.setBackground(new java.awt.Color(255, 255, 255));
+        lbId.setFont(new java.awt.Font("SansSerif", 3, 14)); // NOI18N
+        lbId.setForeground(new java.awt.Color(135, 15, 50));
+        lbId.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbId.setText("Admin");
+
+        lbId1.setBackground(new java.awt.Color(255, 255, 255));
+        lbId1.setFont(new java.awt.Font("SansSerif", 3, 14)); // NOI18N
+        lbId1.setForeground(new java.awt.Color(135, 15, 50));
+        lbId1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbId1.setText("USR-001");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 540, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(btn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 319, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(lbName)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(lbId1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 95, Short.MAX_VALUE)
+            .addComponent(btn, javax.swing.GroupLayout.DEFAULT_SIZE, 56, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(lbName)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbId)
+                    .addComponent(lbId1)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private swing.Button btn;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lbId;
+    private javax.swing.JLabel lbId1;
+    private javax.swing.JLabel lbName;
     // End of variables declaration//GEN-END:variables
 }
