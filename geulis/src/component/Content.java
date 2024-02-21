@@ -3,11 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package component;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -39,6 +35,7 @@ public class Content extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        setBackground(new java.awt.Color(153, 153, 153));
         setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
         setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents

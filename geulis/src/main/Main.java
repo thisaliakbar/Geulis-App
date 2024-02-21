@@ -5,11 +5,16 @@
 package main;
 
 import action.ActionMenuSelected;
-import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import component.Content;
 import component.Navbar;
 import component.Sidebar;
+import features.FiturAbsensi;
 import features.FiturBarang;
+import features.FiturCetakKartu;
+import features.FiturLaporan;
+import features.FiturPemeriksaan;
+import features.FiturReservasi;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
@@ -76,11 +81,13 @@ public class Main extends javax.swing.JFrame {
                     }
                 } else if (menuIndex == 2 && subMenuIndex == -1) {
 //              fitur reservasi
+                    content.showContent(new FiturReservasi());
 
                 } else if (menuIndex == 3) {
 //              fitur transaksi
                     if (subMenuIndex == 0) {
 //                        fitur pemeriksaan
+                        content.showContent(new FiturPemeriksaan());
                     } else if (subMenuIndex == 1) {
 //                        fitur penjualan
                     } else if (subMenuIndex == 2) {
@@ -94,10 +101,13 @@ public class Main extends javax.swing.JFrame {
 //                        fitur restok
                     } else if (subMenuIndex == 1) {
 //                        fitur absensi
+                        content.showContent(new FiturAbsensi());
                     } else if (subMenuIndex == 2) {
 //                        fitur cetak kartu
+                        content.showContent(new FiturCetakKartu());
                     } else if (subMenuIndex == 3) {
 //                        fitur laporan
+                        content.showContent(new FiturLaporan());
                     }
                 }
 
@@ -218,8 +228,13 @@ public class Main extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
+        
+        FlatMacLightLaf.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Main().setVisible(true);
