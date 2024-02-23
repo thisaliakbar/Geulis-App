@@ -5,6 +5,7 @@
 package main;
 
 import action.ActionMenuSelected;
+import action.TableAction;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import component.Content;
 import component.Navbar;
@@ -13,8 +14,12 @@ import features.FiturAbsensi;
 import features.FiturBarang;
 import features.FiturCetakKartu;
 import features.FiturLaporan;
+import features.FiturPasien;
 import features.FiturPemeriksaan;
+import features.FiturPemesanan;
+import features.FiturPenjualan;
 import features.FiturReservasi;
+import features.FiturTindakan;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
@@ -22,6 +27,7 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
+import swing.PanelDetail;
 
 /**
  *
@@ -37,19 +43,20 @@ public class Main extends javax.swing.JFrame {
     private Content content;
     private Sidebar menu;
     private Animator animator;
-
+    private PanelDetail panelDetail;
     public Main() {
         initComponents();
         initiation();
     }
-
-    private void initiation() {
+    
+    public void initiation() {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         layout = new MigLayout("fill", "0[]0[100%, fill]0", "0[fill, top]0");
         background.setLayout(layout);
         menu = new Sidebar();
         content = new Content();
         navbar = new Navbar();
+        panelDetail = new PanelDetail();
 
         menu.addAction(new ActionMenuSelected() {
             @Override
@@ -65,9 +72,11 @@ public class Main extends javax.swing.JFrame {
                         content.showContent(new FiturBarang());
                     } else if (subMenuIndex == 1) {
 //                        fitur tindakan
+                        content.showContent(new FiturTindakan());
 
                     } else if (subMenuIndex == 2) {
 //                        fitur pasien
+                        content.showContent(new FiturPasien());
 
                     } else if (subMenuIndex == 3) {
 //                        fitur supplier
@@ -90,8 +99,10 @@ public class Main extends javax.swing.JFrame {
                         content.showContent(new FiturPemeriksaan());
                     } else if (subMenuIndex == 1) {
 //                        fitur penjualan
+                        content.showContent(new FiturPenjualan());
                     } else if (subMenuIndex == 2) {
 //                        fitur pemesanan
+                        content.showContent(new FiturPemesanan());
                     }
                 } else if (menuIndex == 4 && subMenuIndex == -1) {
 //              fitur riwayat pasien
@@ -115,9 +126,12 @@ public class Main extends javax.swing.JFrame {
         });
 
         menu.initiationMenu();
+//        background.setLayer(panelDetail, JLayeredPane.POPUP_LAYER);
+//        background.add(panelDetail, "pos 0 0 100% 100%");
         background.add(menu, "w 230!, spany2");
         background.add(navbar, "h 50!, wrap");
         background.add(content, "w 100%, h 100%");
+        
 
         TimingTarget target = new TimingTargetAdapter() {
             @Override
