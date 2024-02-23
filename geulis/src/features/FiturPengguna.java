@@ -7,8 +7,6 @@ package features;
 import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,7 +21,7 @@ import swing.TableCellEditor;
  *
  * @author usER
  */
-public class FiturPasien extends javax.swing.JPanel {
+public class FiturPengguna extends javax.swing.JPanel {
 
     /**
      * Creates new form FiturBarang
@@ -31,7 +29,7 @@ public class FiturPasien extends javax.swing.JPanel {
     private DefaultTableModel tabmodel;
     private TableAction action;
     
-    public FiturPasien() {
+    public FiturPengguna() {
         initComponents();
         
         scrollPane.getViewport().setBackground(new Color(255,255,255));
@@ -41,7 +39,7 @@ public class FiturPasien extends javax.swing.JPanel {
         scrollPane.setBorder(new EmptyBorder(5,10,5,10));
         table.setRowHeight(40);        
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
-        table.setDefaultRenderer(Object.class, new ModelRenderTable(6));
+        table.setDefaultRenderer(Object.class, new ModelRenderTable(5));
         tabmodel = (DefaultTableModel) table.getModel();
         
         for(int a = 0; a < 20; a++) {
@@ -73,8 +71,8 @@ public class FiturPasien extends javax.swing.JPanel {
             System.out.println("View row : " + row);
         }
     };        
-        table.getColumnModel().getColumn(6).setCellRenderer(new TableCellActionRender(true, true, false));
-        table.getColumnModel().getColumn(6).setCellEditor(new TableCellEditor(action, true, true, false));
+        table.getColumnModel().getColumn(5).setCellRenderer(new TableCellActionRender(true, true, false));
+        table.getColumnModel().getColumn(5).setCellEditor(new TableCellEditor(action, true, true, false));
     }
    
     /**
@@ -109,9 +107,8 @@ public class FiturPasien extends javax.swing.JPanel {
         jTextField4 = new javax.swing.JTextField();
         jTextField7 = new javax.swing.JTextField();
         jTextField8 = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
         jComboBox1 = new javax.swing.JComboBox<>();
+        jTextField5 = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         label1 = new javax.swing.JLabel();
 
@@ -134,11 +131,11 @@ public class FiturPasien extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID Pasien", "Nama Pasien", "No Telepon", "Email", "Alamat", "Level", "Aksi"
+                "ID Pengguna", "Nama Pengguna", "Username", "Email", "Level", "Aksi"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, true
+                false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -163,7 +160,7 @@ public class FiturPasien extends javax.swing.JPanel {
         label.setBackground(new java.awt.Color(135, 15, 50));
         label.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         label.setForeground(new java.awt.Color(135, 15, 50));
-        label.setText("PASIEN");
+        label.setText("PENGGUNA");
 
         pagination.setBackground(new java.awt.Color(135, 15, 50));
         pagination.setForeground(new java.awt.Color(255, 255, 255));
@@ -276,17 +273,17 @@ public class FiturPasien extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel2.setText("ID Pasien");
+        jLabel2.setText("ID Pengguna");
 
         jLabel3.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel3.setText("Email");
+        jLabel3.setText("Password");
 
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel4.setText("No Telepon");
+        jLabel4.setText("Username");
 
         jLabel5.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
@@ -296,7 +293,7 @@ public class FiturPasien extends javax.swing.JPanel {
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel6.setText("Alamat");
+        jLabel6.setText("Email");
 
         btnSimpan1.setBackground(new java.awt.Color(0, 153, 0));
         btnSimpan1.setForeground(new java.awt.Color(255, 255, 255));
@@ -320,11 +317,15 @@ public class FiturPasien extends javax.swing.JPanel {
         jTextField8.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jTextField8.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jTextField5.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jTextField5.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        jTextField5.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField5KeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -350,10 +351,10 @@ public class FiturPasien extends javax.swing.JPanel {
                     .addComponent(jTextField4)
                     .addComponent(jTextField7)
                     .addComponent(jTextField8)
-                    .addComponent(jScrollPane1)
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 289, Short.MAX_VALUE)))
+                        .addGap(0, 289, Short.MAX_VALUE))
+                    .addComponent(jTextField5))
                 .addContainerGap())
         );
         panel2Layout.setVerticalGroup(
@@ -376,9 +377,9 @@ public class FiturPasien extends javax.swing.JPanel {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jComboBox1)
@@ -437,7 +438,7 @@ public class FiturPasien extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(161, Short.MAX_VALUE))
         );
 
         add(panelTambah, "card2");
@@ -466,6 +467,10 @@ public class FiturPasien extends javax.swing.JPanel {
     private void jTextField4KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyTyped
         characterDigit(evt);
     }//GEN-LAST:event_jTextField4KeyTyped
+
+    private void jTextField5KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField5KeyTyped
 
     private void changePanel(JPanel panel) {
         removeAll();
@@ -496,10 +501,9 @@ public class FiturPasien extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
     private javax.swing.JLabel label;

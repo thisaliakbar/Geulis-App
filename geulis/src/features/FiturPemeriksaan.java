@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import main.Main;
 import model.ModelHeaderTable;
 import model.ModelRenderTable;
 import swing.ActionButtonTable;
@@ -81,7 +82,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
         @Override
         public void view(int row) {
-            System.out.println("View row : " + row);
+            DialogDetail dialog = new DialogDetail(new Main(), true, "Slide-1");
+            dialog.setVisible(true);
         }
     };        
         table.getColumnModel().getColumn(4).setCellRenderer(new TableCellActionRender(false, false, true));

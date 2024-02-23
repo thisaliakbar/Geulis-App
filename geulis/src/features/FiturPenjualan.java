@@ -12,9 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import main.Main;
 import model.ModelHeaderTable;
 import model.ModelRenderTable;
-import swing.PanelDetail;
 import swing.TableCellActionRender;
 import swing.TableCellEditor;
 
@@ -29,7 +29,6 @@ public class FiturPenjualan extends javax.swing.JPanel {
      */
     private DefaultTableModel tabmodel;
     private TableAction action;
-    private PanelDetail panelDetail;
     
     public FiturPenjualan() {
         initComponents();
@@ -57,6 +56,7 @@ public class FiturPenjualan extends javax.swing.JPanel {
                 
         actionRenderTable();
         
+        
     }
     
 //  Update,Delete,Detail
@@ -78,7 +78,8 @@ public class FiturPenjualan extends javax.swing.JPanel {
 
         @Override
         public void view(int row) {
-            System.out.println("View row : " + row);
+            DialogDetail dialog = new DialogDetail(new Main(), true, "Slide-2");
+            dialog.setVisible(true);
         }
     };        
         table.getColumnModel().getColumn(4).setCellRenderer(new TableCellActionRender(false, false, true));
@@ -630,6 +631,7 @@ public class FiturPenjualan extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
+        
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void txtCariFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusGained

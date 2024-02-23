@@ -13,12 +13,16 @@ import component.Sidebar;
 import features.FiturAbsensi;
 import features.FiturBarang;
 import features.FiturCetakKartu;
+import features.FiturKaryawan;
 import features.FiturLaporan;
 import features.FiturPasien;
 import features.FiturPemeriksaan;
 import features.FiturPemesanan;
+import features.FiturPengguna;
 import features.FiturPenjualan;
 import features.FiturReservasi;
+import features.FiturRestok;
+import features.FiturSupplier;
 import features.FiturTindakan;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -80,12 +84,15 @@ public class Main extends javax.swing.JFrame {
 
                     } else if (subMenuIndex == 3) {
 //                        fitur supplier
+                        content.showContent(new FiturSupplier());
 
                     } else if (subMenuIndex == 4) {
 //                        fitur karyawan
+                        content.showContent(new FiturKaryawan());
 
                     } else if (subMenuIndex == 5) {
 //                        fitur pengguna
+                        content.showContent(new FiturPengguna());
 
                     }
                 } else if (menuIndex == 2 && subMenuIndex == -1) {
@@ -110,6 +117,7 @@ public class Main extends javax.swing.JFrame {
 //              fitur lain lain
                     if (subMenuIndex == 0) {
 //                        fitur restok
+                        content.showContent(new FiturRestok());
                     } else if (subMenuIndex == 1) {
 //                        fitur absensi
                         content.showContent(new FiturAbsensi());

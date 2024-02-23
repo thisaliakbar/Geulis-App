@@ -152,12 +152,12 @@
                     </Property>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="7" rowCount="0">
-                        <Column editable="false" title="ID Pasien" type="java.lang.Object"/>
-                        <Column editable="false" title="Nama Pasien" type="java.lang.Object"/>
+                        <Column editable="false" title="ID Karyawan" type="java.lang.Object"/>
+                        <Column editable="false" title="Nama Karyawan" type="java.lang.Object"/>
                         <Column editable="false" title="No Telepon" type="java.lang.Object"/>
                         <Column editable="false" title="Email" type="java.lang.Object"/>
                         <Column editable="false" title="Alamat" type="java.lang.Object"/>
-                        <Column editable="false" title="Level" type="java.lang.Object"/>
+                        <Column editable="false" title="Jabatan" type="java.lang.Object"/>
                         <Column editable="true" title="Aksi" type="java.lang.Object"/>
                       </Table>
                     </Property>
@@ -240,7 +240,7 @@
                 <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="32" green="f" red="87" type="rgb"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="PASIEN"/>
+                <Property name="text" type="java.lang.String" value="KARYAWAN"/>
               </Properties>
             </Component>
             <Component class="swing.Pagination" name="pagination">
@@ -464,7 +464,7 @@
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="2"/>
-                <Property name="text" type="java.lang.String" value="ID Pasien"/>
+                <Property name="text" type="java.lang.String" value="ID Karyawan"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel3">
@@ -500,7 +500,7 @@
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="2"/>
-                <Property name="text" type="java.lang.String" value="Level"/>
+                <Property name="text" type="java.lang.String" value="Jabatan"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">

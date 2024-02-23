@@ -7,8 +7,6 @@ package features;
 import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,7 +21,7 @@ import swing.TableCellEditor;
  *
  * @author usER
  */
-public class FiturPasien extends javax.swing.JPanel {
+public class FiturKaryawan extends javax.swing.JPanel {
 
     /**
      * Creates new form FiturBarang
@@ -31,7 +29,7 @@ public class FiturPasien extends javax.swing.JPanel {
     private DefaultTableModel tabmodel;
     private TableAction action;
     
-    public FiturPasien() {
+    public FiturKaryawan() {
         initComponents();
         
         scrollPane.getViewport().setBackground(new Color(255,255,255));
@@ -134,7 +132,7 @@ public class FiturPasien extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID Pasien", "Nama Pasien", "No Telepon", "Email", "Alamat", "Level", "Aksi"
+                "ID Karyawan", "Nama Karyawan", "No Telepon", "Email", "Alamat", "Jabatan", "Aksi"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -163,7 +161,7 @@ public class FiturPasien extends javax.swing.JPanel {
         label.setBackground(new java.awt.Color(135, 15, 50));
         label.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         label.setForeground(new java.awt.Color(135, 15, 50));
-        label.setText("PASIEN");
+        label.setText("KARYAWAN");
 
         pagination.setBackground(new java.awt.Color(135, 15, 50));
         pagination.setForeground(new java.awt.Color(255, 255, 255));
@@ -276,7 +274,7 @@ public class FiturPasien extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel2.setText("ID Pasien");
+        jLabel2.setText("ID Karyawan");
 
         jLabel3.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
@@ -291,7 +289,7 @@ public class FiturPasien extends javax.swing.JPanel {
         jLabel5.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel5.setText("Level");
+        jLabel5.setText("Jabatan");
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));

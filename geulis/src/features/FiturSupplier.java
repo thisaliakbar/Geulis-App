@@ -7,8 +7,6 @@ package features;
 import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -23,7 +21,7 @@ import swing.TableCellEditor;
  *
  * @author usER
  */
-public class FiturPasien extends javax.swing.JPanel {
+public class FiturSupplier extends javax.swing.JPanel {
 
     /**
      * Creates new form FiturBarang
@@ -31,7 +29,7 @@ public class FiturPasien extends javax.swing.JPanel {
     private DefaultTableModel tabmodel;
     private TableAction action;
     
-    public FiturPasien() {
+    public FiturSupplier() {
         initComponents();
         
         scrollPane.getViewport().setBackground(new Color(255,255,255));
@@ -41,7 +39,7 @@ public class FiturPasien extends javax.swing.JPanel {
         scrollPane.setBorder(new EmptyBorder(5,10,5,10));
         table.setRowHeight(40);        
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
-        table.setDefaultRenderer(Object.class, new ModelRenderTable(6));
+        table.setDefaultRenderer(Object.class, new ModelRenderTable(5));
         tabmodel = (DefaultTableModel) table.getModel();
         
         for(int a = 0; a < 20; a++) {
@@ -73,8 +71,8 @@ public class FiturPasien extends javax.swing.JPanel {
             System.out.println("View row : " + row);
         }
     };        
-        table.getColumnModel().getColumn(6).setCellRenderer(new TableCellActionRender(true, true, false));
-        table.getColumnModel().getColumn(6).setCellEditor(new TableCellEditor(action, true, true, false));
+        table.getColumnModel().getColumn(5).setCellRenderer(new TableCellActionRender(true, true, false));
+        table.getColumnModel().getColumn(5).setCellEditor(new TableCellEditor(action, true, true, false));
     }
    
     /**
@@ -102,7 +100,6 @@ public class FiturPasien extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         btnSimpan1 = new swing.Button();
         jTextField2 = new javax.swing.JTextField();
@@ -111,7 +108,6 @@ public class FiturPasien extends javax.swing.JPanel {
         jTextField8 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jComboBox1 = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         label1 = new javax.swing.JLabel();
 
@@ -134,11 +130,11 @@ public class FiturPasien extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID Pasien", "Nama Pasien", "No Telepon", "Email", "Alamat", "Level", "Aksi"
+                "ID Supplier", "Nama Supplier", "No Telepon", "Email", "Alamat", "Aksi"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, true
+                false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -163,7 +159,7 @@ public class FiturPasien extends javax.swing.JPanel {
         label.setBackground(new java.awt.Color(135, 15, 50));
         label.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         label.setForeground(new java.awt.Color(135, 15, 50));
-        label.setText("PASIEN");
+        label.setText("SUPPLIER");
 
         pagination.setBackground(new java.awt.Color(135, 15, 50));
         pagination.setForeground(new java.awt.Color(255, 255, 255));
@@ -276,7 +272,7 @@ public class FiturPasien extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel2.setText("ID Pasien");
+        jLabel2.setText("ID Supplier");
 
         jLabel3.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
@@ -287,11 +283,6 @@ public class FiturPasien extends javax.swing.JPanel {
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel4.setText("No Telepon");
-
-        jLabel5.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel5.setText("Level");
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 0, 0));
@@ -324,8 +315,6 @@ public class FiturPasien extends javax.swing.JPanel {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
         panel2Layout.setHorizontalGroup(
@@ -337,12 +326,11 @@ public class FiturPasien extends javax.swing.JPanel {
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGap(0, 445, Short.MAX_VALUE)
                         .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -350,10 +338,7 @@ public class FiturPasien extends javax.swing.JPanel {
                     .addComponent(jTextField4)
                     .addComponent(jTextField7)
                     .addComponent(jTextField8)
-                    .addComponent(jScrollPane1)
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 289, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         panel2Layout.setVerticalGroup(
@@ -380,12 +365,6 @@ public class FiturPasien extends javax.swing.JPanel {
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1)
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -397,16 +376,16 @@ public class FiturPasien extends javax.swing.JPanel {
         label1.setBackground(new java.awt.Color(135, 15, 50));
         label1.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         label1.setForeground(new java.awt.Color(255, 255, 255));
-        label1.setText("Tambah Barang");
+        label1.setText("Tambah Supplier");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(501, Short.MAX_VALUE)
+                .addContainerGap(493, Short.MAX_VALUE)
                 .addComponent(label1)
-                .addContainerGap(501, Short.MAX_VALUE))
+                .addContainerGap(493, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -437,7 +416,7 @@ public class FiturPasien extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(116, Short.MAX_VALUE))
         );
 
         add(panelTambah, "card2");
@@ -487,12 +466,10 @@ public class FiturPasien extends javax.swing.JPanel {
     private swing.Button btnSimpan;
     private swing.Button btnSimpan1;
     private swing.Button btnTambah;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;

@@ -266,6 +266,7 @@ public class FiturAbsensi extends javax.swing.JPanel {
     private void attendence() {
         LocalDateTime timeNow = LocalDateTime.now();
         int hour = timeNow.getHour();
+        System.out.println(hour);
         
         if(hour == 8 || hour == 17) {
             changePanel(panel1);
