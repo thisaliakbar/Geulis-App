@@ -18,8 +18,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import model.ModelHeaderTable;
 import model.ModelKaryawan;
 import model.ModelRenderTable;
@@ -54,12 +58,19 @@ public class PilihPemeriksaan extends java.awt.Dialog {
         tabemodel1.setRowCount(0);
         tampilData1();
         modelKaryawan = new ModelKaryawan();
+        TableRowSorter rowSorter1 = new TableRowSorter<>(tabemodel1);
+        table1.setRowSorter(rowSorter1);
         
         styleTable(scroll2, table2, 4);
         tabemodel2 = (DefaultTableModel) table2.getModel();
         tabemodel2.setRowCount(0);
         tampilData2();
         modelTindakan = new ModelTindakan();
+        TableRowSorter rowSorter2 = new TableRowSorter<>(tabemodel2);
+        table2.setRowSorter(rowSorter2);
+        
+        searchEmployee(txtCari1, rowSorter1);
+        searchAction(txtCari2, rowSorter2);
     }
     
 //  Style Table
@@ -157,6 +168,65 @@ public class PilihPemeriksaan extends java.awt.Dialog {
         }
     }
     
+//    Cari karyawan
+    private void searchEmployee(JTextField field, TableRowSorter rowSorter) {
+        field.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = field.getText();
+                if(text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = field.getText();
+                if(text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+                } 
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+        });
+    }
+//    Cari tindakan
+    private void searchAction(JTextField field, TableRowSorter rowSorter) {
+        field.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = field.getText();
+                if(text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = field.getText();
+                if(text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1));
+                } 
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+        });
+    }
+    
     
     
     /**
@@ -249,9 +319,6 @@ public class PilihPemeriksaan extends java.awt.Dialog {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCari2FocusGained(evt);
             }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtCari2FocusLost(evt);
-            }
         });
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/search-2.png"))); // NOI18N
@@ -339,9 +406,6 @@ public class PilihPemeriksaan extends java.awt.Dialog {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCari1FocusGained(evt);
             }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtCari1FocusLost(evt);
-            }
         });
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/search-2.png"))); // NOI18N
@@ -415,21 +479,9 @@ public class PilihPemeriksaan extends java.awt.Dialog {
         focusGained(txtCari1);
     }//GEN-LAST:event_txtCari1FocusGained
 
-    private void txtCari1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCari1FocusLost
-        txtCari1.setText("Cari Berdasarkan ID Karyawan Atau Nama Karyawan");
-        txtCari1.setFont(new Font("sansserif", Font.ITALIC, 14));
-        txtCari1.setForeground(new Color(185, 185, 185));
-    }//GEN-LAST:event_txtCari1FocusLost
-
     private void txtCari2FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCari2FocusGained
         focusGained(txtCari2);
     }//GEN-LAST:event_txtCari2FocusGained
-
-    private void txtCari2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCari2FocusLost
-        txtCari2.setText("Cari Berdasarkan Kode Tindakan Atau Nama Tindakan");
-        txtCari2.setFont(new Font("sansserif", Font.ITALIC, 14));
-        txtCari2.setForeground(new Color(185, 185, 185));
-    }//GEN-LAST:event_txtCari2FocusLost
 
     /**
      * @param args the command line arguments

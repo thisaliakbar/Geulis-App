@@ -9,6 +9,7 @@ import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -81,6 +82,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private void tambahData() {
         ModelPasien pasien = new ModelPasien();
         ModelKaryawan karyawan = new ModelKaryawan();
+        ModelDetailPemeriksaan detail = new ModelDetailPemeriksaan();
         
         String noPemeriksaan = lbNoPemeriksaan.getText();
         String tgl = lbTgl.getText();
@@ -102,7 +104,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             int totalHarga = (int) tableDetail.getValueAt(a, 4);
             int potongan = (int) tableDetail.getValueAt(a, 3);
             PemeriksaanSementara ts = new PemeriksaanSementara(new String[]{kodeTindakan}, new int[]{potongan}, new int[]{totalHarga});
-            serviceDetail.addData(noPemeriksaan, ts);
+            detail.setModelPemeriksaan(pemeriksaan);
+            serviceDetail.addData(detail, ts);
         }
         
         tabmodel2.setRowCount(0);
@@ -125,9 +128,32 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
          String namaTindaan = lbNamaTindakan.getText();
          int harga = Integer.parseInt(lbHarga.getText());
          int potongan = 100000;
+         
+         if(servicPemeriksaan.validationData(kodeTindakan)) {
          tabmodel2.addRow(new Object[]{kodeTindakan, namaTindaan, harga, potongan, harga - potongan});
-         lbTotal.setText(String.valueOf(total()));
+         lbTotal.setText(String.valueOf(total()));        
+         }
+         servicPemeriksaan.addTemporaryCode(kodeTindakan);
     }
+    
+//    Detail Pemeriksaan
+    private void detailPemeriksaan(int row) {
+        ModelPemeriksaan modelPemeriksaan = new ModelPemeriksaan();
+        ModelPasien modelPasien = new ModelPasien();
+
+        modelPemeriksaan.setNoPemeriksaan((String) table.getValueAt(row, 0));
+        modelPasien.setNama((String) table.getValueAt(row, 1));
+        modelPemeriksaan.setModelPasien(modelPasien);
+        modelPemeriksaan.setTglPemeriksaan((String) table.getValueAt(row, 2));
+        modelPemeriksaan.setTotal((int) table.getValueAt(row, 3));
+
+        ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
+        modelDetail.setModelPemeriksaan(modelPemeriksaan);
+
+        DialogDetail dialog = new DialogDetail(null, true, "Slide-1", modelDetail);
+        dialog.setVisible(true);
+    }
+    
     
 //  Update,Delete,Detail Table Main
     private void actionTableMain() {
@@ -142,20 +168,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
         @Override
         public void view(int row) {
-            ModelPemeriksaan modelPemeriksaan = new ModelPemeriksaan();
-            ModelPasien modelPasien = new ModelPasien();
-            
-            modelPemeriksaan.setNoPemeriksaan((String) table.getValueAt(row, 0));
-            modelPasien.setNama((String) table.getValueAt(row, 1));
-            modelPemeriksaan.setModelPasien(modelPasien);
-            modelPemeriksaan.setTglPemeriksaan((String) table.getValueAt(row, 2));
-            modelPemeriksaan.setTotal((int) table.getValueAt(row, 3));
-            
-            ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
-            modelDetail.setModelPemeriksaan(modelPemeriksaan);
-            
-            DialogDetail dialog = new DialogDetail(null, true, "Slide-1", modelDetail);
-            dialog.setVisible(true);
+            detailPemeriksaan(row);
         }
     };        
         table.getColumnModel().getColumn(4).setCellRenderer(new TableCellActionRender(false, false, true));
@@ -171,12 +184,13 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
             @Override
             public void delete(int row) {
+                String actionCode = (String) tabmodel2.getValueAt(row, 0);
                 if(tableDetail.isEditing()) {
                     tableDetail.getCellEditor().stopCellEditing();
                 }
                 tabmodel2.removeRow(row);
                 lbTotal.setText(String.valueOf(total()));
-                
+                servicPemeriksaan.deleteTemporaryCode(actionCode);
             }
 
             @Override
@@ -839,15 +853,27 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTambahSementaraActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        if(validation()) {
         tambahData();
         clearField();
+        servicPemeriksaan.deleteAll();
         changePanel(panelData);
         tabmodel1.setRowCount(0);
-        servicPemeriksaan.loadData(1, tabmodel1, pagination);
+        servicPemeriksaan.loadData(1, tabmodel1, pagination); 
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        changePanel(panelData);
+        if(tableDetail.getRowCount() != 0) {
+            int confirm = JOptionPane.showConfirmDialog(null, "Data yang telah diinput akan dihapus", "Konfirmasi", JOptionPane.OK_OPTION);
+            if(confirm == 0) {
+            clearField();
+            servicPemeriksaan.deleteAll();
+            changePanel(panelData);
+            }   
+        } else {
+            changePanel(panelData); 
+        }
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnPilih1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilih1ActionPerformed
@@ -894,6 +920,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         lbNamaPasien.setText(null);
         lbIdKaryawan.setText(null);
         lbNamaKaryawan.setText(null);
+        lbTotal.setText(String.valueOf(0));
         clearFieldTindakan();
     }
     
@@ -904,6 +931,21 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         lbPotongan.setText(null);
     }
     
+    private boolean validation() {
+        boolean valid = false;
+        
+        if(lbTgl.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Silahkan Pilih Nomor Reservasi");
+        } else if(lbIdKaryawan.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Silahkan Pilih Karyawan");  
+        } else if(tableDetail.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(null, "Silahkan Pilih Tindakan");    
+        } else {
+            valid = true;
+        }
+        
+        return valid;
+    }
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

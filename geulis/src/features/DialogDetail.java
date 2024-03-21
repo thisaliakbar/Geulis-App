@@ -9,13 +9,20 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import control.FieldsPemeriksaan;
+import control.PaymentPemeriksaan;
+import control.ProductPemeriksaan;
+import control.ReportPemeriksaan;
 import model.ModelDetailPemeriksaan;
 import model.ModelHeaderTable;
+import model.ModelPemeriksaan;
 import model.ModelRenderTable;
 import service.ServiceDetailPemeriksaan;
 
@@ -32,6 +39,7 @@ public class DialogDetail extends java.awt.Dialog {
     private DefaultTableModel tabModel1;
     private String slide;
     private ModelDetailPemeriksaan modelDetail;
+    
     public DialogDetail(java.awt.Frame parent, boolean modal, String slide, 
     ModelDetailPemeriksaan modelDetail) {
         super(parent, modal);
@@ -39,27 +47,38 @@ public class DialogDetail extends java.awt.Dialog {
         this.slide = slide;
         changePanel();
         
-        styleTable(scroll1, tablePemeriksaan, 5);
+        styleTable(scroll1, tablePemeriksaan, 6);
         tabModel1 = (DefaultTableModel) tablePemeriksaan.getModel();
         txtDesc.setLineWrap(true);
         txtDesc.setWrapStyleWord(true);
-        
+              
         this.modelDetail = modelDetail;
         tampilDataPemeriksaan();
     }
     
 //  Tampil Data Pemeriksaan
     private void tampilDataPemeriksaan() {
+        
+        try {
+            ReportPemeriksaan.getInstance().compileReport();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        ModelDetailPemeriksaan detail = new ModelDetailPemeriksaan();
+        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan();
         String noPemeriksaan = modelDetail.getModelPemeriksaan().getNoPemeriksaan();
         String nama = modelDetail.getModelPemeriksaan().getModelPasien().getNama();
         String tgl = modelDetail.getModelPemeriksaan().getTglPemeriksaan();
         int total = modelDetail.getModelPemeriksaan().getTotal();
+        pemeriksaan.setNoPemeriksaan(noPemeriksaan);
+        detail.setModelPemeriksaan(pemeriksaan);
         
         lbNoPemeriksaan.setText(noPemeriksaan);
         lbNama.setText(nama);
         lbTgl.setText(tgl);
         lbTotal.setText(String.valueOf(total));
-        servisDetail1.loadData(lbIdPasien, lbIdKaryawan, txtDesc,tabModel1, noPemeriksaan);
+        servisDetail1.loadData(lbIdPasien, lbIdKaryawan, txtDesc,tabModel1, detail);
     }
     
     
@@ -92,6 +111,27 @@ public class DialogDetail extends java.awt.Dialog {
         panel.revalidate();
     }
     
+    //Print Pemeriksaan
+private void printPemeriksaan() {
+    try {
+    List<FieldsPemeriksaan> fields = new ArrayList<>();
+    for(int a = 0; a < tablePemeriksaan.getRowCount(); a++) {
+        ProductPemeriksaan product = (ProductPemeriksaan) tablePemeriksaan.getValueAt(a, 0);
+        fields.add(new FieldsPemeriksaan(product.getNamaTindakan(), product.getHarga(), product.getPotongan(), product.getTotalHarga()));
+    }
+        
+        String noPemeriksaan = lbNoPemeriksaan.getText();
+        String tglPemeriksaan = lbTgl.getText();
+        String pasien = lbNama.getText();
+        String karyawan = lbIdKaryawan.getText();
+        String total = lbTotal.getText();
+        PaymentPemeriksaan payment = new PaymentPemeriksaan(noPemeriksaan, tglPemeriksaan, pasien, karyawan, total, fields);
+        ReportPemeriksaan.getInstance().printReport(payment, this);
+    
+    } catch(Exception ex) {
+        ex.printStackTrace();
+    }
+}
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -113,14 +153,6 @@ public class DialogDetail extends java.awt.Dialog {
     private void initComponents() {
 
         panel = new javax.swing.JPanel();
-        panel2 = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jTable4 = new javax.swing.JTable();
-        jLabel4 = new javax.swing.JLabel();
-        panel3 = new javax.swing.JPanel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jTable5 = new javax.swing.JTable();
-        jLabel5 = new javax.swing.JLabel();
         panel1 = new javax.swing.JPanel();
         lb1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -140,6 +172,14 @@ public class DialogDetail extends java.awt.Dialog {
         txtDesc = new javax.swing.JTextArea();
         scroll1 = new javax.swing.JScrollPane();
         tablePemeriksaan = new javax.swing.JTable();
+        panel2 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTable4 = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
+        panel3 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTable5 = new javax.swing.JTable();
+        jLabel5 = new javax.swing.JLabel();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -148,80 +188,6 @@ public class DialogDetail extends java.awt.Dialog {
         });
 
         panel.setLayout(new java.awt.CardLayout());
-
-        jTable4.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane4.setViewportView(jTable4);
-
-        jLabel4.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
-        jLabel4.setText("Panel 2");
-
-        javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
-        panel2.setLayout(panel2Layout);
-        panel2Layout.setHorizontalGroup(
-            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 938, Short.MAX_VALUE)
-            .addGroup(panel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panel2Layout.setVerticalGroup(
-            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                .addGap(0, 338, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        panel.add(panel2, "card2");
-
-        jTable5.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane5.setViewportView(jTable5);
-
-        jLabel5.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
-        jLabel5.setText("Panel 3");
-
-        javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
-        panel3.setLayout(panel3Layout);
-        panel3Layout.setHorizontalGroup(
-            panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 938, Short.MAX_VALUE)
-            .addGroup(panel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panel3Layout.setVerticalGroup(
-            panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
-                .addGap(0, 338, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        panel.add(panel3, "card2");
 
         panel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -240,6 +206,11 @@ public class DialogDetail extends java.awt.Dialog {
         btnPrint.setBackground(new java.awt.Color(135, 15, 50));
         btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/printerwhite.png"))); // NOI18N
         btnPrint.setBorder(null);
+        btnPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -317,11 +288,11 @@ public class DialogDetail extends java.awt.Dialog {
 
             },
             new String [] {
-                "Kode Tindakan", "Nama Tindakan", "Harga", "Potongan", "Total Harga"
+                "Data", "Kode Tindakan", "Nama Tindakan", "Harga", "Potongan", "Total Harga"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -329,6 +300,11 @@ public class DialogDetail extends java.awt.Dialog {
             }
         });
         scroll1.setViewportView(tablePemeriksaan);
+        if (tablePemeriksaan.getColumnModel().getColumnCount() > 0) {
+            tablePemeriksaan.getColumnModel().getColumn(0).setMinWidth(0);
+            tablePemeriksaan.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tablePemeriksaan.getColumnModel().getColumn(0).setMaxWidth(0);
+        }
 
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
@@ -363,7 +339,7 @@ public class DialogDetail extends java.awt.Dialog {
                             .addComponent(lbTgl, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lbIdKaryawan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -400,11 +376,85 @@ public class DialogDetail extends java.awt.Dialog {
                                 .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(txtDesc))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scroll1, javax.swing.GroupLayout.DEFAULT_SIZE, 655, Short.MAX_VALUE)
+                .addComponent(scroll1, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         panel.add(panel1, "card2");
+
+        jTable4.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane4.setViewportView(jTable4);
+
+        jLabel4.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
+        jLabel4.setText("Panel 2");
+
+        javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
+        panel2.setLayout(panel2Layout);
+        panel2Layout.setHorizontalGroup(
+            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 935, Short.MAX_VALUE)
+            .addGroup(panel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panel2Layout.setVerticalGroup(
+            panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
+                .addGap(0, 249, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        panel.add(panel2, "card2");
+
+        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane5.setViewportView(jTable5);
+
+        jLabel5.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
+        jLabel5.setText("Panel 3");
+
+        javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
+        panel3.setLayout(panel3Layout);
+        panel3Layout.setHorizontalGroup(
+            panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 935, Short.MAX_VALUE)
+            .addGroup(panel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        panel3Layout.setVerticalGroup(
+            panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
+                .addGap(0, 249, Short.MAX_VALUE)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 457, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        panel.add(panel3, "card2");
 
         add(panel, java.awt.BorderLayout.CENTER);
 
@@ -421,6 +471,10 @@ public class DialogDetail extends java.awt.Dialog {
         setVisible(false);
         dispose();
     }//GEN-LAST:event_closeDialog
+
+    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
+        printPemeriksaan();
+    }//GEN-LAST:event_btnPrintActionPerformed
 
     /**
      * @param args the command line arguments

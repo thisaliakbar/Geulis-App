@@ -156,4 +156,51 @@ public class ServicePemeriksaan {
             ex.printStackTrace();
         }
     }
+    
+    public void addTemporaryCode(String actionCode) {
+        String query = "INSERT INTO tindakansementara VALUES('"+actionCode+"')";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.executeUpdate();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void deleteTemporaryCode(String actionCode) {
+        String query = "DELETE FROM tindakansementara WHERE Kode_Tindakan='"+actionCode+"'";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.executeUpdate();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void deleteAll() {
+        String query = "DELETE FROM tindakansementara";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.executeUpdate();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public boolean validationData(String actionCode) {
+        boolean valid = false;
+        String query = "SELECT Kode_Tindakan FROM tindakansementara WHERE Kode_Tindakan='"+actionCode+"'";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+            JOptionPane.showMessageDialog(null, "Barang ini sudah ditambahkan");
+            } else {
+                valid = true;
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return valid;
+    }
 }

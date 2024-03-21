@@ -10,9 +10,11 @@ package model;
  */
 public class ModelDetailPemeriksaan {
 
-    public ModelDetailPemeriksaan(ModelPemeriksaan modelPemeriksaan, ModelTindakan modelTindakan) {
+    public ModelDetailPemeriksaan(ModelPemeriksaan modelPemeriksaan, ModelTindakan modelTindakan, int subtotal, int potongan) {
         this.modelPemeriksaan = modelPemeriksaan;
         this.modelTindakan = modelTindakan;
+        this.subtotal = subtotal;
+        this.potongan = potongan;
     }
 
     public ModelDetailPemeriksaan() {
@@ -23,6 +25,7 @@ public class ModelDetailPemeriksaan {
     private ModelPemeriksaan modelPemeriksaan;
     private ModelTindakan modelTindakan;
     private int subtotal;
+    private int potongan;
 
     public ModelPemeriksaan getModelPemeriksaan() {
         return modelPemeriksaan;
@@ -38,5 +41,21 @@ public class ModelDetailPemeriksaan {
 
     public void setModelTindakan(ModelTindakan modelTindakan) {
         this.modelTindakan = modelTindakan;
+    }
+    
+    public int getSubtotal() {
+        return this.subtotal;
+    }
+    
+    public void setSubtotal(int subtotal) {
+        this.subtotal = subtotal;
+    }
+    
+    public int getPotongan() {
+        return this.potongan;
+    }
+    
+    public void setPotongan(int potongan) {
+        this.potongan = potongan;
     }
 }
