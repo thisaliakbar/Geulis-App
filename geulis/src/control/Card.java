@@ -18,36 +18,34 @@ import net.sf.jasperreports.view.JasperViewer;
  *
  * @author usER
  */
-public class ReportPemeriksaan {
+public class Card {
+    private static Card instance;
+    private JasperReport card;
     
-    private static ReportPemeriksaan instance;
-    private JasperReport report;
-    
-    public static ReportPemeriksaan getInstance() {
+    public static Card getInstance() {
         if(instance == null) {
-            instance = new ReportPemeriksaan();
+            instance = new Card();
         }
         
         return instance;
     }
     
-    private ReportPemeriksaan() {
-        
+    public void compileCard(int index) throws JRException{
+        switch(index) {
+            case 0: 
+                card = JasperCompileManager.compileReport(getClass().getResourceAsStream("/report/KartuKaryawan.jrxml"));
+                break;
+            case 1: 
+                card = JasperCompileManager.compileReport(getClass().getResourceAsStream("/report/KartuMember.jrxml"));
+                break;
+        }
     }
     
-    public void compileReport() throws JRException{
-        report = JasperCompileManager.compileReport(getClass().getResourceAsStream("/report/ReportPemeriksaan.jrxml"));
-    }
-    
-    public void printReport(ParamPemeriksaan data) throws JRException {
-        Map parameter = new HashMap();
-        parameter.put("noPmrksn", data.getNoPemeriksaan());
-        parameter.put("tanggal", data.getTglPemeriksaan());
-        parameter.put("pasien", data.getPasien());
-        parameter.put("staff", data.getKaryawan());
-        parameter.put("total", data.getTotal());
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data.getFieldsReport());
-        JasperPrint print = JasperFillManager.fillReport(report, parameter,  dataSource);
+    public void printCard(Parameter data) throws JRException{
+        Map paramater = new HashMap();
+        paramater.put("qrcode", data.getQrcode());
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data.getFields());
+        JasperPrint print = JasperFillManager.fillReport(card, paramater, dataSource);
         viewReport(print);
     }
     

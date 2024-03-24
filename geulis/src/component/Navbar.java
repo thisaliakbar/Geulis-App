@@ -4,7 +4,11 @@
  */
 package component;
 
+import features.Pengaturan;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import main.Main;
 
 /**
  *
@@ -15,8 +19,10 @@ public class Navbar extends javax.swing.JPanel {
     /**
      * Creates new form Navbar
      */
+    public Pengaturan settings;
     public Navbar() {
         initComponents();
+        settings = new Pengaturan(null, true);
     }
     
     public void addAction(ActionListener action) {
@@ -37,7 +43,7 @@ public class Navbar extends javax.swing.JPanel {
         lbId = new javax.swing.JLabel();
         lbId1 = new javax.swing.JLabel();
         btn = new swing.Button();
-        jLabel2 = new javax.swing.JLabel();
+        setting = new swing.Button();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setForeground(new java.awt.Color(255, 255, 255));
@@ -64,8 +70,12 @@ public class Navbar extends javax.swing.JPanel {
 
         btn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/burger-bar-2.png"))); // NOI18N
 
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/setting.png"))); // NOI18N
+        setting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/setting.png"))); // NOI18N
+        setting.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                settingActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -82,9 +92,8 @@ public class Navbar extends javax.swing.JPanel {
                         .addComponent(lbId, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1, 1, 1))
+                .addGap(7, 7, 7)
+                .addComponent(setting, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -97,17 +106,25 @@ public class Navbar extends javax.swing.JPanel {
                     .addComponent(lbId)
                     .addComponent(lbId1)))
             .addComponent(btn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(setting, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void settingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_settingActionPerformed
+        Point point = setting.getLocationOnScreen();
+        int x = point.x + setting.getWidth() - settings.getWidth();
+        int y = point.y + setting.getHeight();
+        settings.setLocation(x, y);
+        settings.setVisible(true);
+    }//GEN-LAST:event_settingActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private swing.Button btn;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lbId;
     private javax.swing.JLabel lbId1;
     private javax.swing.JLabel lbName;
+    private swing.Button setting;
     // End of variables declaration//GEN-END:variables
 }

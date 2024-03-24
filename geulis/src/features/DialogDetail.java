@@ -17,7 +17,7 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import control.FieldsPemeriksaan;
-import control.PaymentPemeriksaan;
+import control.ParamPemeriksaan;
 import control.ProductPemeriksaan;
 import control.ReportPemeriksaan;
 import model.ModelDetailPemeriksaan;
@@ -111,28 +111,6 @@ public class DialogDetail extends java.awt.Dialog {
         panel.revalidate();
     }
     
-    //Print Pemeriksaan
-private void printPemeriksaan() {
-    try {
-    List<FieldsPemeriksaan> fields = new ArrayList<>();
-    for(int a = 0; a < tablePemeriksaan.getRowCount(); a++) {
-        ProductPemeriksaan product = (ProductPemeriksaan) tablePemeriksaan.getValueAt(a, 0);
-        fields.add(new FieldsPemeriksaan(product.getNamaTindakan(), product.getHarga(), product.getPotongan(), product.getTotalHarga()));
-    }
-        
-        String noPemeriksaan = lbNoPemeriksaan.getText();
-        String tglPemeriksaan = lbTgl.getText();
-        String pasien = lbNama.getText();
-        String karyawan = lbIdKaryawan.getText();
-        String total = lbTotal.getText();
-        PaymentPemeriksaan payment = new PaymentPemeriksaan(noPemeriksaan, tglPemeriksaan, pasien, karyawan, total, fields);
-        ReportPemeriksaan.getInstance().printReport(payment, this);
-    
-    } catch(Exception ex) {
-        ex.printStackTrace();
-    }
-}
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -157,7 +135,6 @@ private void printPemeriksaan() {
         lb1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btnPrint = new javax.swing.JButton();
         lbIdPasien = new javax.swing.JLabel();
         lb2 = new javax.swing.JLabel();
         lbNoPemeriksaan = new javax.swing.JLabel();
@@ -203,31 +180,17 @@ private void printPemeriksaan() {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("DETAIL PEMERIKSAAN");
 
-        btnPrint.setBackground(new java.awt.Color(135, 15, 50));
-        btnPrint.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/printerwhite.png"))); // NOI18N
-        btnPrint.setBorder(null);
-        btnPrint.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrintActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 2, Short.MAX_VALUE))
-            .addComponent(btnPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         lbIdPasien.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
@@ -472,10 +435,6 @@ private void printPemeriksaan() {
         dispose();
     }//GEN-LAST:event_closeDialog
 
-    private void btnPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintActionPerformed
-        printPemeriksaan();
-    }//GEN-LAST:event_btnPrintActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -494,7 +453,6 @@ private void printPemeriksaan() {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnPrint;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

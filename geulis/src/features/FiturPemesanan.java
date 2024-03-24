@@ -15,7 +15,6 @@ import javax.swing.table.DefaultTableModel;
 import main.Main;
 import model.ModelHeaderTable;
 import model.ModelRenderTable;
-import swing.PanelDetail;
 import swing.TableCellActionRender;
 import swing.TableCellEditor;
 
@@ -30,7 +29,6 @@ public class FiturPemesanan extends javax.swing.JPanel {
      */
     private DefaultTableModel tabmodel;
     private TableAction action;
-    private PanelDetail panelDetail;
     
     public FiturPemesanan() {
         initComponents();

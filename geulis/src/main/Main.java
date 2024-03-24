@@ -5,7 +5,6 @@
 package main;
 
 import action.ActionMenuSelected;
-import action.TableAction;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import component.Content;
 import component.Navbar;
@@ -18,6 +17,7 @@ import features.FiturLaporan;
 import features.FiturPasien;
 import features.FiturPemeriksaan;
 import features.FiturPemesanan;
+import features.FiturPengaturan;
 import features.FiturPengguna;
 import features.FiturPenjualan;
 import features.FiturReservasi;
@@ -31,7 +31,6 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
-import swing.PanelDetail;
 
 /**
  *
@@ -47,7 +46,6 @@ public class Main extends javax.swing.JFrame {
     private Content content;
     private Sidebar menu;
     private Animator animator;
-    private PanelDetail panelDetail;
     public Main() {
         initComponents();
         initiation();
@@ -60,8 +58,6 @@ public class Main extends javax.swing.JFrame {
         menu = new Sidebar();
         content = new Content();
         navbar = new Navbar();
-        panelDetail = new PanelDetail();
-
         menu.addAction(new ActionMenuSelected() {
             @Override
             public void menuSelected(int menuIndex, int subMenuIndex) {
@@ -132,7 +128,9 @@ public class Main extends javax.swing.JFrame {
 
             }
         });
-
+        
+        actionSettings();
+        
         menu.initiationMenu();
 //        background.setLayer(panelDetail, JLayeredPane.POPUP_LAYER);
 //        background.add(panelDetail, "pos 0 0 100% 100%");
@@ -181,6 +179,33 @@ public class Main extends javax.swing.JFrame {
                 if (menu.isShowMenu()) {
                     menu.hidenMenu();
                 }
+            }
+        });
+    }
+        
+//    action settings
+    private void actionSettings() {
+        navbar.settings.account(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                content.showContent(new FiturPengaturan("Slide-Akun"));
+                navbar.settings.dispose();
+            }
+        });
+        
+        navbar.settings.changePassword(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                content.showContent(new FiturPengaturan("Slide-Password"));
+                navbar.settings.dispose();
+            }
+        });
+        
+        navbar.settings.promo(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                content.showContent(new FiturPengaturan("Slide-Promo"));
+                navbar.settings.dispose();
             }
         });
     }

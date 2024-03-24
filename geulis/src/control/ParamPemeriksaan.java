@@ -8,9 +8,9 @@ import java.util.List;
  *
  * @author usER
  */
-public class PaymentPemeriksaan {
+public class ParamPemeriksaan {
 
-    public PaymentPemeriksaan(String noPemeriksaan, String tglPemeriksaan, String pasien, String karyawan, String total, List<FieldsPemeriksaan> fields) {
+    public ParamPemeriksaan(String noPemeriksaan, String tglPemeriksaan, String pasien, String karyawan, String total, List<FieldsPemeriksaan> fields) {
         this.noPemeriksaan = noPemeriksaan;
         this.tglPemeriksaan = tglPemeriksaan;
         this.pasien = pasien;
@@ -19,7 +19,7 @@ public class PaymentPemeriksaan {
         this.fields = fields;
     }
 
-    public PaymentPemeriksaan() {
+    public ParamPemeriksaan() {
     }
     
     

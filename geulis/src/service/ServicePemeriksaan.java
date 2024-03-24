@@ -203,4 +203,39 @@ public class ServicePemeriksaan {
         }
         return valid;
     }
+    
+    public int promo() {
+        int banyakPromo = 0;
+        String query = "SELECT Banyak_Promo FROM promo WHERE Keterangan='Berjalan'";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+                banyakPromo = rst.getInt("Banyak_Promo");
+            } else {
+                banyakPromo = 0;
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return banyakPromo;
+    }
+    
+    public boolean checkMember(String idMember) {
+        boolean member = false;
+        String query = "SELECT Level FROM pasien WHERE ID_Pasien='"+idMember+"'";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+               String level = rst.getString("Level");
+               if(level.equals("Member")) {
+                   member = true;
+               }
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return member;
+    }
 }
