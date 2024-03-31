@@ -12,6 +12,7 @@ import control.ProductPemeriksaan;
 import control.ReportPemeriksaan;
 import java.awt.Color;
 import java.awt.Font;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -50,12 +51,10 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private TableAction action;
     private ServicePemeriksaan servicPemeriksaan = new ServicePemeriksaan();
     private ServiceDetailPemeriksaan serviceDetail = new ServiceDetailPemeriksaan();
-    private String idPasien;
-    private String idMember;
     public FiturPemeriksaan() {
         initComponents();
       
-        styleTable(scrollPane, table, 5);
+        styleTable(scrollPane, table, 7);
         tabmodel1 = (DefaultTableModel) table.getModel();
         
         styleTable(scrollPanePasien, tableDetail, 6);
@@ -100,22 +99,21 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         String noPemeriksaan = lbNoPemeriksaan.getText();
         String tgl = lbTgl.getText();
         String deskripsi = txtDeskripsi.getText();
-        int total = Integer.parseInt(lbTotal.getText());
         
-        pasien.setIdPasien(this.idPasien);
+        pasien.setIdPasien(lbIdPasien.getText());
         pasien.setNama(lbNamaPasien.getText());
         karyawan.setIdKaryawan(lbIdKaryawan.getText());
         karyawan.setNama(lbNamaKaryawan.getText());
         
         
-        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan(noPemeriksaan, tgl, deskripsi, total, pasien, karyawan);
+        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan(noPemeriksaan, tgl, deskripsi, total(), pasien, karyawan);
         servicPemeriksaan.addData(pemeriksaan);
         
 //      Tambah Detail
         for(int a = 0; a < tabmodel2.getRowCount(); a++) {
-            String kodeTindakan = (String) tableDetail.getValueAt(a, 0);
-            int totalHarga = (int) tableDetail.getValueAt(a, 4);
-            int potongan = (int) tableDetail.getValueAt(a, 3);
+            String kodeTindakan = (String) tableDetail.getValueAt(a, 1);
+            int totalHarga = (int) tableDetail.getValueAt(a, 5);
+            int potongan = (int) tableDetail.getValueAt(a, 4);
             PemeriksaanSementara ts = new PemeriksaanSementara(new String[]{kodeTindakan}, new int[]{potongan}, new int[]{totalHarga});
             detail.setModelPemeriksaan(pemeriksaan);
             serviceDetail.addData(detail, ts);
@@ -145,7 +143,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
          int percent = 0;
          Pattern pattern = Pattern.compile("\\d+");
          Matcher matcher = pattern.matcher(disc);
-        
+         
          if(matcher.find()) {
              percent = Integer.parseInt(matcher.group());
              if(percent <= 100) {
@@ -154,13 +152,13 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
              } else {
                  potongan = percent;
              }
-         }
+         } 
          
          int totalHarga = harga - potongan;
-         
          if(servicPemeriksaan.validationData(kodeTindakan)) {
          tabmodel2.addRow(new ProductPemeriksaan(kodeTindakan, namaTindaan, harga, potongan, totalHarga).toTableRow());
-         lbTotal.setText(String.valueOf(total()));
+         DecimalFormat df = new DecimalFormat("#,##0.##");
+         lbTotal.setText(df.format(total()));
          }
          servicPemeriksaan.addTemporaryCode(kodeTindakan);
     }
@@ -169,17 +167,22 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private void detailPemeriksaan(int row) {
         ModelPemeriksaan modelPemeriksaan = new ModelPemeriksaan();
         ModelPasien modelPasien = new ModelPasien();
+        ModelKaryawan modelKaryawan = new ModelKaryawan();
 
         modelPemeriksaan.setNoPemeriksaan((String) table.getValueAt(row, 0));
-        modelPasien.setNama((String) table.getValueAt(row, 1));
+        modelPasien.setIdPasien((String) table.getValueAt(row, 1));
+        modelPasien.setNama((String) table.getValueAt(row, 2));
         modelPemeriksaan.setModelPasien(modelPasien);
-        modelPemeriksaan.setTglPemeriksaan((String) table.getValueAt(row, 2));
-        modelPemeriksaan.setTotal((int) table.getValueAt(row, 3));
+        modelKaryawan.setIdKaryawan((String) table.getValueAt(row, 3));
+        modelPemeriksaan.setModelKaryawan(modelKaryawan);
+        modelPemeriksaan.setTglPemeriksaan((String) table.getValueAt(row, 4));
+        modelPemeriksaan.setTotal((int) table.getValueAt(row, 5));
+        modelPemeriksaan.setDeskripsi((String) table.getValueAt(row, 6));
 
         ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
         modelDetail.setModelPemeriksaan(modelPemeriksaan);
 
-        DialogDetail dialog = new DialogDetail(null, true, "Slide-1", modelDetail);
+        DialogDetail dialog = new DialogDetail(null, true, "Slide-1", modelDetail, null);
         dialog.setVisible(true);
     }
     
@@ -231,8 +234,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             detailPemeriksaan(row);
         }
     };        
-        table.getColumnModel().getColumn(4).setCellRenderer(new TableCellActionRender(false, false, true));
-        table.getColumnModel().getColumn(4).setCellEditor(new TableCellEditor(action, false, false, true));
+        table.getColumnModel().getColumn(7).setCellRenderer(new TableCellActionRender(false, false, true));
+        table.getColumnModel().getColumn(7).setCellEditor(new TableCellEditor(action, false, false, true));
     }
     
 //    Update,Delete,Detail Table Detail
@@ -249,7 +252,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
                     tableDetail.getCellEditor().stopCellEditing();
                 }
                 tabmodel2.removeRow(row);
-                lbTotal.setText(String.valueOf(total()));
+                DecimalFormat df = new DecimalFormat("#,##0.##");
+                lbTotal.setText(df.format(total()));
                 servicPemeriksaan.deleteTemporaryCode(actionCode);
             }
 
@@ -263,9 +267,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         tableDetail.getColumnModel().getColumn(6).setCellEditor(new TableCellEditor(action, false, true, false));
     }
     
-    private void viewCheck(String text, JTextField field) {
+    private void viewCheck(String text, JTextField field, int size) {
         field.setText(text);
-        field.setFont(new Font("sansserif", Font.ITALIC, 20));
+        field.setFont(new Font("sansserif", Font.ITALIC, size));
         field.setForeground(new Color(185, 185, 185));
     }
     
@@ -277,7 +281,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
                 int potongan = servicPemeriksaan.promo();
                 txtPotongan.setHorizontalAlignment(JTextField.LEADING);
                 if(potongan == 0) {
-                    viewCheck("Tidak ada promo", txtPotongan);
+                    viewCheck("Tidak ada promo", txtPotongan, 20);
                     txtPotongan.setHorizontalAlignment(JTextField.CENTER);
                 } else if(potongan <= 100) {
                     txtPotongan.setText(String.valueOf(potongan).concat(" " + "%"));   
@@ -285,7 +289,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
                     txtPotongan.setText(String.valueOf(potongan));       
                 }
             } else {
-                viewCheck("Pasien bukan member", txtPotongan);
+                    viewCheck("Pasien bukan member", txtPotongan, 20);
             }
                 tabEnter.setText("Scan Ulang");
                 txtPotongan.setEnabled(false);
@@ -354,6 +358,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         label1 = new javax.swing.JLabel();
         btnBatal = new swing.Button();
         btnSimpan = new swing.Button();
+        lbIdPasien = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.CardLayout());
@@ -374,11 +379,11 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No Pemeriksaan", "Nama Pasien", "Tanggal Pemeriksaan", "Total", "Detail"
+                "No Pemeriksaan", "ID Pasien", "Nama Pasien", "ID Karyawan", "Tanggal Pemeriksaan", "Total", "Deskripsi", "Detail"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true
+                false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -389,6 +394,17 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         table.setOpaque(false);
         table.setSelectionBackground(new java.awt.Color(255, 255, 255));
         scrollPane.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(1).setMinWidth(0);
+            table.getColumnModel().getColumn(1).setPreferredWidth(0);
+            table.getColumnModel().getColumn(1).setMaxWidth(0);
+            table.getColumnModel().getColumn(3).setMinWidth(0);
+            table.getColumnModel().getColumn(3).setPreferredWidth(0);
+            table.getColumnModel().getColumn(3).setMaxWidth(0);
+            table.getColumnModel().getColumn(6).setMinWidth(0);
+            table.getColumnModel().getColumn(6).setPreferredWidth(0);
+            table.getColumnModel().getColumn(6).setMaxWidth(0);
+        }
 
         btnTambah.setBackground(new java.awt.Color(135, 15, 50));
         btnTambah.setForeground(new java.awt.Color(255, 255, 255));
@@ -895,6 +911,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         label1.setBackground(new java.awt.Color(135, 15, 50));
         label1.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         label1.setForeground(new java.awt.Color(255, 255, 255));
+        label1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label1.setText("Tambah Pemeriksaan");
 
         btnBatal.setForeground(new java.awt.Color(135, 15, 50));
@@ -913,13 +930,18 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             }
         });
 
+        lbIdPasien.setBackground(new java.awt.Color(135, 15, 50));
+        lbIdPasien.setForeground(new java.awt.Color(135, 15, 50));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(label1)
+                .addContainerGap()
+                .addComponent(lbIdPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 922, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -935,6 +957,10 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
                     .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(13, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbIdPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout panelTambahLayout = new javax.swing.GroupLayout(panelTambah);
@@ -968,8 +994,11 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
+        lbIdPasien.setVisible(false);
         lbNoPemeriksaan.setText(servicPemeriksaan.createNo());
         actionTableDetail();
+        cbxNoReservasi.removeAllItems();
+        cbxNoReservasi.addItem("Pilih No Reservasi");
         servicPemeriksaan.readReservasi(cbxNoReservasi);
         tabmodel2.setRowCount(0);
         tabEnter.setVisible(false);
@@ -989,11 +1018,12 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
     private void btnTambahSementaraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahSementaraActionPerformed
         int kodeTindakan = lbKodeTindakan.getText().length();
-        if(kodeTindakan > 0) {
+        int noReservasi = lbTgl.getText().length();
+        if(noReservasi > 0 && kodeTindakan > 0) {
         tambahDataSementara();
         clearFieldTindakan();   
         }else {
-            JOptionPane.showMessageDialog(null, "Silahkan Pilih Tindakan");
+            JOptionPane.showMessageDialog(null, "Silahkan Pilih No Reservasi\ndan Tindakan");
         }
     }//GEN-LAST:event_btnTambahSementaraActionPerformed
 
@@ -1043,8 +1073,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         
         if(selectIndex == selectIndex) {
             String noReservasi = (String) cbxNoReservasi.getSelectedItem();
-            servicPemeriksaan.readLabel(noReservasi, lbTgl, lbNamaPasien);
-            this.idPasien = servicPemeriksaan.readIdPasien(noReservasi);
+            servicPemeriksaan.readLabel(noReservasi, lbTgl, lbIdPasien,lbNamaPasien);
         }
     }//GEN-LAST:event_cbxNoReservasiActionPerformed
 
@@ -1080,7 +1109,14 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     }//GEN-LAST:event_tabEnterMouseClicked
 
     private void txtPotonganActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPotonganActionPerformed
-        checkPromo();
+        String idMember = txtPotongan.getText();
+        if(idMember.equals(lbIdPasien.getText())) {
+            checkPromo();
+        } else {
+            txtPotongan.setHorizontalAlignment(JTextField.CENTER);
+            viewCheck("Klik disini dan Scan Kartu Member", txtPotongan, 14);
+            JOptionPane.showMessageDialog(null, "Pasien tidak terdaftar"); 
+        }
     }//GEN-LAST:event_txtPotonganActionPerformed
 
     private void changePanel(JPanel panel) {
@@ -1103,10 +1139,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         lbKodeTindakan.setText(null);
         lbNamaTindakan.setText(null);
         lbHarga.setText(null);
-        txtPotongan.setText("Klik disini dan Scan Kartu Member");
-        txtPotongan.setHorizontalAlignment(JTextField.CENTER);
-        txtPotongan.setFont(new Font("sansserif", Font.ITALIC, 14));
-        txtPotongan.setForeground(new Color(185, 185, 185));
+        viewCheck("Klik disini dan Scan Kartu Member", txtPotongan, 14);
         txtPotongan.setEnabled(true);
         tabEnter.setText("Tab Enter");
         tabEnter.setVisible(false);
@@ -1158,6 +1191,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private javax.swing.JLabel label1;
     private javax.swing.JLabel lbHarga;
     private javax.swing.JLabel lbIdKaryawan;
+    private javax.swing.JLabel lbIdPasien;
     private javax.swing.JLabel lbKodeTindakan;
     private javax.swing.JLabel lbNamaKaryawan;
     private javax.swing.JLabel lbNamaPasien;

@@ -78,7 +78,7 @@ public class FiturPenjualan extends javax.swing.JPanel {
 
         @Override
         public void view(int row) {
-            DialogDetail dialog = new DialogDetail(new Main(), true, "Slide-2", null);
+            DialogDetail dialog = new DialogDetail(new Main(), true, "Slide-2", null, null);
             dialog.setVisible(true);
         }
     };        

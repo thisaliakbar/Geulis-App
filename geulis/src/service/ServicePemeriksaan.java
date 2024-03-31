@@ -50,10 +50,13 @@ public class ServicePemeriksaan {
             rst = pst.executeQuery();
             while(rst.next()) {
                 String noPemeriksaan = rst.getString("No_Pemeriksaan");
+                String idPasien = rst.getString("ID_Pasien");
                 String namaPasien = rst.getString("psn.Nama");
+                String idKaryawan = rst.getString("ID_Karyawan");
                 String tgl = rst.getString("Tanggal_Pemeriksaan");
                 int total = rst.getInt("Total");
-                tabmodel.addRow(new Object[]{noPemeriksaan, namaPasien, tgl, total});
+                String deskripsi = rst.getString("Deskripsi");
+                tabmodel.addRow(new Object[]{noPemeriksaan, idPasien, namaPasien, idKaryawan, tgl, total, deskripsi});
             }
             pst.close();
             rst.close();
@@ -107,21 +110,7 @@ public class ServicePemeriksaan {
         
         return noPemeriksaan;
     }
-    
-    public String readIdPasien(String noReservasi) {
-        String query = "SELECT ID_Pasien FROM reservasi WHERE No_Reservasi='"+noReservasi+"'";
-        try {
-            PreparedStatement pst = connection.prepareStatement(query);
-            ResultSet rst = pst.executeQuery();
-            if(rst.next()) {
-                return rst.getString("ID_Pasien");
-            }
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-    
+
     public void readReservasi(JComboBox<String> comboBox) {
         String query = "SELECT No_Reservasi FROM reservasi WHERE Status_Reservasi='Menunggu'";
         try {
@@ -138,7 +127,7 @@ public class ServicePemeriksaan {
         }
     }
     
-    public void readLabel(String noReservasi, JLabel lbTgl, JLabel lbNama) {
+    public void readLabel(String noReservasi, JLabel lbTgl, JLabel lbId, JLabel lbNama) {
         String query = "SELECT rsv.Tanggal_Kedatangan, rsv.ID_Pasien, psn.Nama FROM reservasi rsv "
                 + "INNER JOIN pasien psn ON rsv.ID_Pasien=psn.ID_Pasien WHERE No_Reservasi='"+noReservasi+"'";
         try {
@@ -146,8 +135,10 @@ public class ServicePemeriksaan {
             ResultSet rst = pst.executeQuery();
             if(rst.next()) {
                 String tgl = rst.getString("Tanggal_Kedatangan");
+                String id = rst.getString("ID_Pasien");
                 String nama = rst.getString("Nama");
                 lbTgl.setText(tgl);
+                lbId.setText(id);
                 lbNama.setText(nama);
             }
             pst.close();

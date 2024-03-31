@@ -42,7 +42,7 @@ public class FiturCetakKartu extends javax.swing.JPanel {
         initComponents();
         style();
         changeType();
-        instance();
+        instance(0);
     }
     
     private void style() {
@@ -56,25 +56,30 @@ public class FiturCetakKartu extends javax.swing.JPanel {
         }
     }
     
+    private void type(String lbId, String lbNama, String lbJabatan, int index) {
+        lb_id.setText(lbId);
+        lb_nama.setText(lbNama);
+        lb_jabatan.setText(lbJabatan);
+        clearField();
+        try {
+            instance(index);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     private void changeType() {
         cbxJenisKartu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int index = cbxJenisKartu.getSelectedIndex();
-                
                 switch(index) {
                     case 0: 
-                        lb_id.setText("ID Karyawan");
-                        lb_nama.setText("Nama");
-                        lb_jabatan.setText("Jabatan");
-                        clearField();
+                        type("ID Karyawan", "Nama", "Jabatan", 0);
                     break;
                     
                     case 1:
-                        lb_id.setText("ID Pasien");
-                        lb_nama.setText("Nama");
-                        lb_jabatan.setText("Level");
-                        clearField();
+                        type("ID Pasien", "Nama", "Level", 1);                        
                     break;
                         
                 }
@@ -83,9 +88,8 @@ public class FiturCetakKartu extends javax.swing.JPanel {
     }
     
 //    Instance
-    private void instance() {
+    private void instance(int index) {
         try {
-            int index = cbxJenisKartu.getSelectedIndex();
             Card.getInstance().compileCard(index);
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -93,7 +97,7 @@ public class FiturCetakKartu extends javax.swing.JPanel {
     }
     
 //    Print karyawn
-    private void printKaryawan() {
+    private void print() {
         try {
         List<FieldsCard> fields = new ArrayList<>();
         
@@ -110,7 +114,7 @@ public class FiturCetakKartu extends javax.swing.JPanel {
     }
     
     private InputStream generateQRCode() throws WriterException, IOException{
-        String id = lb_id.getText();
+        String id = txtId.getText();
         Map<EncodeHintType, Object> hints = new HashMap<>();
         hints.put(EncodeHintType.MARGIN, 0);
         BitMatrix bitMatrix = new MultiFormatWriter().encode(id, BarcodeFormat.QR_CODE, 75, 75, hints);
@@ -322,7 +326,7 @@ public class FiturCetakKartu extends javax.swing.JPanel {
 
     private void btnCetakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCetakActionPerformed
         if(validation()) {
-        printKaryawan();   
+        print();   
         }
     }//GEN-LAST:event_btnCetakActionPerformed
 

@@ -6,10 +6,7 @@ package service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
-import control.ProductPemeriksaan;
 import model.ModelDetailPemeriksaan;
 import model.PemeriksaanSementara;
 /**
@@ -24,30 +21,14 @@ public class ServiceDetailPemeriksaan {
         conncetion = Koneksi.getConnection();
     }
     
-    public void loadData(JLabel lbIdPasien, JLabel lbIdKaryawan, JTextArea txtDesc, DefaultTableModel tabModel, ModelDetailPemeriksaan detail) {
-        String query1 = "SELECT ID_Pasien, ID_Karyawan, Deskripsi FROM Pemeriksaan WHERE No_Pemeriksaan='"+detail.getModelPemeriksaan().getNoPemeriksaan()+"'";
-        String query2 = "SELECT detPem.No_Pemeriksaan, detPem.Kode_Tindakan, tdk.Nama_Tindakan, tdk.Biaya_Tindakan, "
+    public void loadData(DefaultTableModel tabModel, ModelDetailPemeriksaan detail) {
+        String query = "SELECT detPem.No_Pemeriksaan, detPem.Kode_Tindakan, tdk.Nama_Tindakan, tdk.Biaya_Tindakan, "
                 + "detPem.Potongan, detPem.Subtotal FROM detail_pemeriksaan detPem INNER JOIN "
                 + "tindakan tdk ON detPem.Kode_Tindakan=tdk.Kode_Tindakan WHERE No_Pemeriksaan='"+detail.getModelPemeriksaan().getNoPemeriksaan()+"'";
         
         try {
-            PreparedStatement pst = conncetion.prepareStatement(query1);
+            PreparedStatement pst = conncetion.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
-            if(rst.next()) {
-                String idPasien = rst.getString("ID_Pasien");
-                String idKaryawan = rst.getString("ID_Karyawan");
-                String desc = rst.getString("Deskripsi");
-                
-                lbIdPasien.setText(idPasien);
-                lbIdKaryawan.setText(idKaryawan);
-                txtDesc.setText(desc);
-                
-            }
-            pst.close();
-            rst.close();
-            
-            pst = conncetion.prepareStatement(query2);
-            rst = pst.executeQuery();
             while(rst.next()) {
                 String kode = rst.getString("Kode_Tindakan");
                 String nama = rst.getString("Nama_Tindakan");
@@ -55,8 +36,7 @@ public class ServiceDetailPemeriksaan {
                 int potongan = rst.getInt("Potongan");
                 int totalHarga = rst.getInt("Subtotal");
                 
-//                tabModel.addRow(new Object[]{kode, nama, harga, potongan, totalHarga});
-                tabModel.addRow(new ProductPemeriksaan(kode, nama, harga, potongan, totalHarga).toTableRow());
+                tabModel.addRow(new Object[]{kode, nama, harga, potongan, totalHarga});
             }
             
             pst.close();

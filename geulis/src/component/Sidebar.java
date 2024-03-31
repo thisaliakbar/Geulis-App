@@ -59,6 +59,7 @@ public class Sidebar extends javax.swing.JPanel {
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/briefcase.png")), "Master", "Barang","Tindakan","Pasien","Supplier","Karyawan","Pengguna"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/clock.png")), "Reservasi"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/money-exchange.png")), "Transaksi","Pemeriksaan","Penjualan","Pemesanan"));
+        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/expenditure.png")), "Pengeluaran"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/medical-records.png")), "Riwayat Pasien"));
         addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/menu.png")), "Lain lain","Restok","Absensi","Cetak Kartu","Laporan"));
     }
