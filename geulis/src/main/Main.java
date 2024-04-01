@@ -6,9 +6,11 @@ package main;
 
 import action.ActionMenuSelected;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import component.Chart;
 import component.Content;
 import component.Navbar;
 import component.Sidebar;
+import features.Dashboard;
 import features.FiturAbsensi;
 import features.FiturBarang;
 import features.FiturCetakKartu;
@@ -18,10 +20,12 @@ import features.FiturPasien;
 import features.FiturPemeriksaan;
 import features.FiturPemesanan;
 import features.FiturPengaturan;
+import features.FiturPengeluaran;
 import features.FiturPengguna;
 import features.FiturPenjualan;
 import features.FiturReservasi;
 import features.FiturRestok;
+import features.FiturRiwayatPasien;
 import features.FiturSupplier;
 import features.FiturTindakan;
 import java.awt.event.ActionEvent;
@@ -58,13 +62,13 @@ public class Main extends javax.swing.JFrame {
         menu = new Sidebar();
         content = new Content();
         navbar = new Navbar();
+        content.showContent(new Dashboard());
         menu.addAction(new ActionMenuSelected() {
             @Override
             public void menuSelected(int menuIndex, int subMenuIndex) {
-                System.out.println(menuIndex + " , " + subMenuIndex);
-
-                if (menuIndex == 0 && menuIndex == -1) {
+                if (menuIndex == 0 && subMenuIndex == -1) {
 //              fitur beranda
+                      content.showContent(new Dashboard());
                 } else if (menuIndex == 1) {
 //              fitur master                
 
@@ -108,8 +112,11 @@ public class Main extends javax.swing.JFrame {
                         content.showContent(new FiturPemesanan());
                     }
                 } else if (menuIndex == 4 && subMenuIndex == -1) {
-//              fitur riwayat pasien
-                } else if (menuIndex == 5) {
+//              fitur riwayat pasien 
+                        content.showContent(new FiturPengeluaran());
+                } else if(menuIndex == 5 && subMenuIndex == -1) {
+                        content.showContent(new FiturRiwayatPasien());                   
+                } else if (menuIndex == 6) {
 //              fitur lain lain
                     if (subMenuIndex == 0) {
 //                        fitur restok

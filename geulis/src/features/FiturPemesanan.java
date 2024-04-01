@@ -77,7 +77,7 @@ public class FiturPemesanan extends javax.swing.JPanel {
 
         @Override
         public void view(int row) {
-            DialogDetail dialog = new DialogDetail(new Main(), true, "Silde-3", null);
+            DialogDetail dialog = new DialogDetail(new Main(), true, "Silde-3", null, null);
             dialog.setVisible(true);
         }
     };        

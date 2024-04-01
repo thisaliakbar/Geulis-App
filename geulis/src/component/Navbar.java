@@ -6,9 +6,7 @@ package component;
 
 import features.Pengaturan;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import main.Main;
 
 /**
  *
@@ -38,7 +36,7 @@ public class Navbar extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        lbNotif = new javax.swing.JLabel();
         lbName = new javax.swing.JLabel();
         lbId = new javax.swing.JLabel();
         lbId1 = new javax.swing.JLabel();
@@ -48,8 +46,14 @@ public class Navbar extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setForeground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/profile-user.png"))); // NOI18N
+        lbNotif.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbNotif.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/bell.png"))); // NOI18N
+        lbNotif.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbNotif.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbNotifMouseClicked(evt);
+            }
+        });
 
         lbName.setBackground(new java.awt.Color(255, 255, 255));
         lbName.setFont(new java.awt.Font("SansSerif", 3, 14)); // NOI18N
@@ -91,13 +95,13 @@ public class Navbar extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbId, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbNotif, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(7, 7, 7)
                 .addComponent(setting, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(lbNotif, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(0, 16, Short.MAX_VALUE)
                 .addComponent(lbName)
@@ -118,13 +122,17 @@ public class Navbar extends javax.swing.JPanel {
         settings.setVisible(true);
     }//GEN-LAST:event_settingActionPerformed
 
+    private void lbNotifMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbNotifMouseClicked
+        System.out.println("Click");
+    }//GEN-LAST:event_lbNotifMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private swing.Button btn;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lbId;
     private javax.swing.JLabel lbId1;
     private javax.swing.JLabel lbName;
+    private javax.swing.JLabel lbNotif;
     private swing.Button setting;
     // End of variables declaration//GEN-END:variables
 }
