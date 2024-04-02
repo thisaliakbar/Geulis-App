@@ -10,14 +10,21 @@ import java.util.List;
  */
 public class ParamPemeriksaan {
 
-    public ParamPemeriksaan(String noPemeriksaan, String tglPemeriksaan, String pasien, String karyawan, String total, List<FieldsPemeriksaan> fields) {
+    public ParamPemeriksaan(String noPemeriksaan, String tglPemeriksaan, String jamPemeriksaan, String pasien, String karyawan, String admin, String total, String bayar, String kembalian, String jenis, List<FieldsPemeriksaan> fields) {
         this.noPemeriksaan = noPemeriksaan;
         this.tglPemeriksaan = tglPemeriksaan;
+        this.jamPemeriksaan = jamPemeriksaan;
         this.pasien = pasien;
         this.karyawan = karyawan;
+        this.admin = admin;
         this.total = total;
+        this.bayar = bayar;
+        this.kembalian = kembalian;
+        this.jenis = jenis;
         this.fields = fields;
     }
+    
+    
 
     public ParamPemeriksaan() {
     }
@@ -26,10 +33,15 @@ public class ParamPemeriksaan {
     
     private String noPemeriksaan;
     private String tglPemeriksaan;
+    private String jamPemeriksaan;
     private String pasien;
     private String karyawan;
+    private String admin;
     private String total;
-    private List<FieldsPemeriksaan> fields;
+    private String bayar;
+    private String kembalian;
+    private String jenis;
+    private List<FieldsPemeriksaan> fields;    
 
     public String getNoPemeriksaan() {
         return noPemeriksaan;
@@ -45,6 +57,14 @@ public class ParamPemeriksaan {
 
     public void setTglPemeriksaan(String tglPemeriksaan) {
         this.tglPemeriksaan = tglPemeriksaan;
+    }
+
+    public String getJamPemeriksaan() {
+        return jamPemeriksaan;
+    }
+
+    public void setJamPemeriksaan(String jamPemeriksaan) {
+        this.jamPemeriksaan = jamPemeriksaan;
     }
 
     public String getPasien() {
@@ -63,6 +83,14 @@ public class ParamPemeriksaan {
         this.karyawan = karyawan;
     }
 
+    public String getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(String admin) {
+        this.admin = admin;
+    }
+
     public String getTotal() {
         return total;
     }
@@ -70,12 +98,36 @@ public class ParamPemeriksaan {
     public void setTotal(String total) {
         this.total = total;
     }
-    
-    public List<FieldsPemeriksaan> getFieldsReport() {
-        return this.fields;
+
+    public String getBayar() {
+        return bayar;
     }
-    
-    public void setFieldsReport(List<FieldsPemeriksaan> fields) {
+
+    public void setBayar(String bayar) {
+        this.bayar = bayar;
+    }
+
+    public String getKembalian() {
+        return kembalian;
+    }
+
+    public void setKembalian(String kembalian) {
+        this.kembalian = kembalian;
+    }
+
+    public String getJenis() {
+        return jenis;
+    }
+
+    public void setJenis(String jenis) {
+        this.jenis = jenis;
+    }
+
+    public List<FieldsPemeriksaan> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<FieldsPemeriksaan> fields) {
         this.fields = fields;
     }
 }

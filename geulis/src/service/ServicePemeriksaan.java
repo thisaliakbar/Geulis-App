@@ -31,7 +31,8 @@ public class ServicePemeriksaan {
         int count = 0;
         
         String query = "SELECT pmn.No_Pemeriksaan, pmn.Tanggal_Pemeriksaan, pmn.Deskripsi, "
-                + "pmn.Total, pmn.ID_Pasien, psn.Nama, pmn.ID_Karyawan, krn.Nama FROM pemeriksaan pmn "
+                + "pmn.Total, pmn.Bayar, pmn.Kembalian, pmn.Jenis_Pembayaran, pmn.ID_Pasien, "
+                + "psn.Nama, pmn.ID_Karyawan, krn.Nama FROM pemeriksaan pmn "
                 + "INNER JOIN pasien psn ON pmn.ID_Pasien=psn.ID_Pasien "
                 + "INNER JOIN karyawan krn ON pmn.ID_Karyawan=krn.ID_Karyawan "
                 + "ORDER BY No_Pemeriksaan ASC LIMIT "+(page-1) * limit+","+limit+"";
@@ -56,7 +57,10 @@ public class ServicePemeriksaan {
                 String tgl = rst.getString("Tanggal_Pemeriksaan");
                 int total = rst.getInt("Total");
                 String deskripsi = rst.getString("Deskripsi");
-                tabmodel.addRow(new Object[]{noPemeriksaan, idPasien, namaPasien, idKaryawan, tgl, total, deskripsi});
+                double bayar = rst.getDouble("Bayar");
+                double kembalian = rst.getDouble("Kembalian");
+                String jenisPembayaran = rst.getString("Jenis_Pembayaran");
+                tabmodel.addRow(new Object[]{noPemeriksaan, idPasien, namaPasien, idKaryawan, tgl, total, deskripsi, bayar, kembalian, jenisPembayaran});
             }
             pst.close();
             rst.close();
@@ -69,15 +73,18 @@ public class ServicePemeriksaan {
     }
     
     public void addData(ModelPemeriksaan modelPemeriksaan) {
-        String query = "INSERT INTO pemeriksaan (No_Pemeriksaan, Tanggal_Pemeriksaan, Deskripsi, Total, ID_Pasien, ID_Karyawan) VALUES (?,?,?,?,?,?)";
+        String query = "INSERT INTO pemeriksaan (No_Pemeriksaan, Tanggal_Pemeriksaan, Deskripsi, Total, Bayar, Kembalian, Jenis_Pembayaran, ID_Pasien, ID_Karyawan) VALUES (?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, modelPemeriksaan.getNoPemeriksaan());
             pst.setString(2, modelPemeriksaan.getTglPemeriksaan());
             pst.setString(3, modelPemeriksaan.getDeskripsi());
             pst.setInt(4, modelPemeriksaan.getTotal());
-            pst.setString(5, modelPemeriksaan.getModelPasien().getIdPasien());
-            pst.setString(6, modelPemeriksaan.getModelKaryawan().getIdKaryawan());
+            pst.setDouble(5, modelPemeriksaan.getBayar());
+            pst.setDouble(6, modelPemeriksaan.getKembalian());
+            pst.setString(7, modelPemeriksaan.getJenisPembayaran());
+            pst.setString(8, modelPemeriksaan.getModelPasien().getIdPasien());
+            pst.setString(9, modelPemeriksaan.getModelKaryawan().getIdKaryawan());
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "Data Berhasil Ditambahkan");
             pst.close();

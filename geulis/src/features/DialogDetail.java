@@ -78,6 +78,9 @@ public class DialogDetail extends java.awt.Dialog {
         String idKaryawan = detailPemeriksaan.getModelPemeriksaan().getModelKaryawan().getIdKaryawan();
         String tgl = detailPemeriksaan.getModelPemeriksaan().getTglPemeriksaan();
         int total = detailPemeriksaan.getModelPemeriksaan().getTotal();
+        double bayar = detailPemeriksaan.getModelPemeriksaan().getBayar();
+        double kembalian = detailPemeriksaan.getModelPemeriksaan().getKembalian();
+        String jenisPembayaran = detailPemeriksaan.getModelPemeriksaan().getJenisPembayaran();
         String deskripsi = detailPemeriksaan.getModelPemeriksaan().getDeskripsi();
         pemeriksaan.setNoPemeriksaan(noPemeriksaan);
         detail.setModelPemeriksaan(pemeriksaan);
@@ -90,6 +93,9 @@ public class DialogDetail extends java.awt.Dialog {
         DecimalFormat df = new DecimalFormat("#,##0.##");
         lbTotal.setText("Rp " + df.format(total));
         txtDesc.setText(deskripsi);
+        lbBayar.setText("Rp " + df.format(bayar));
+        lbKembalian.setText("Rp " + df.format(kembalian));
+        lbJenisPembayaran.setText(jenisPembayaran);
         servisDetail1.loadData(tabModel1, detail);
     }
     
@@ -198,6 +204,12 @@ public class DialogDetail extends java.awt.Dialog {
         txtDesc = new javax.swing.JTextArea();
         scroll1 = new javax.swing.JScrollPane();
         tablePemeriksaan = new javax.swing.JTable();
+        jSeparator1 = new javax.swing.JSeparator();
+        lbBayar = new javax.swing.JLabel();
+        lb7 = new javax.swing.JLabel();
+        lb16 = new javax.swing.JLabel();
+        lbKembalian = new javax.swing.JLabel();
+        lbJenisPembayaran = new javax.swing.JLabel();
         panel2 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -336,6 +348,28 @@ public class DialogDetail extends java.awt.Dialog {
         });
         scroll1.setViewportView(tablePemeriksaan);
 
+        jSeparator1.setBackground(new java.awt.Color(185, 185, 185));
+
+        lbBayar.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        lbBayar.setForeground(new java.awt.Color(0, 0, 0));
+        lbBayar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+
+        lb7.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        lb7.setForeground(new java.awt.Color(0, 0, 0));
+        lb7.setText("Bayar");
+
+        lb16.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        lb16.setForeground(new java.awt.Color(0, 0, 0));
+        lb16.setText("Kembalian");
+
+        lbKembalian.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        lbKembalian.setForeground(new java.awt.Color(0, 0, 0));
+        lbKembalian.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+
+        lbJenisPembayaran.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        lbJenisPembayaran.setForeground(new java.awt.Color(0, 0, 0));
+        lbJenisPembayaran.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
@@ -344,6 +378,7 @@ public class DialogDetail extends java.awt.Dialog {
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jSeparator1)
                     .addComponent(scroll1)
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -370,7 +405,17 @@ public class DialogDetail extends java.awt.Dialog {
                             .addComponent(lbIdKaryawan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addComponent(lb7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbBayar, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lb16)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbKembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lbJenisPembayaran, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
@@ -405,8 +450,17 @@ public class DialogDetail extends java.awt.Dialog {
                                 .addComponent(lb6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(txtDesc))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scroll1, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbBayar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb7, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbKembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb16, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbJenisPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(scroll1, javax.swing.GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -740,6 +794,7 @@ public class DialogDetail extends java.awt.Dialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lb1;
     private javax.swing.JLabel lb10;
     private javax.swing.JLabel lb11;
@@ -747,16 +802,21 @@ public class DialogDetail extends java.awt.Dialog {
     private javax.swing.JLabel lb13;
     private javax.swing.JLabel lb14;
     private javax.swing.JLabel lb15;
+    private javax.swing.JLabel lb16;
     private javax.swing.JLabel lb2;
     private javax.swing.JLabel lb3;
     private javax.swing.JLabel lb4;
     private javax.swing.JLabel lb5;
     private javax.swing.JLabel lb6;
+    private javax.swing.JLabel lb7;
     private javax.swing.JLabel lb8;
     private javax.swing.JLabel lb9;
+    private javax.swing.JLabel lbBayar;
     private javax.swing.JLabel lbIdKaryawan;
     private javax.swing.JLabel lbIdPasien;
     private javax.swing.JLabel lbIdPasien2;
+    private javax.swing.JLabel lbJenisPembayaran;
+    private javax.swing.JLabel lbKembalian;
     private javax.swing.JLabel lbNama;
     private javax.swing.JLabel lbNamaPasien;
     private javax.swing.JLabel lbNoPemeriksaan;

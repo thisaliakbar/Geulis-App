@@ -43,10 +43,15 @@ public class ReportPemeriksaan {
         Map parameter = new HashMap();
         parameter.put("noPmrksn", data.getNoPemeriksaan());
         parameter.put("tanggal", data.getTglPemeriksaan());
+        parameter.put("jam", data.getJamPemeriksaan());
         parameter.put("pasien", data.getPasien());
         parameter.put("staff", data.getKaryawan());
+        parameter.put("admin", data.getAdmin());
         parameter.put("total", data.getTotal());
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data.getFieldsReport());
+        parameter.put("bayar", data.getBayar());
+        parameter.put("kembalian", data.getKembalian());
+        parameter.put("jenis", data.getJenis());
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data.getFields());
         JasperPrint print = JasperFillManager.fillReport(report, parameter,  dataSource);
         viewReport(print);
     }

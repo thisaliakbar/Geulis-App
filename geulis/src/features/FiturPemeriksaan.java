@@ -12,8 +12,11 @@ import control.ProductPemeriksaan;
 import control.ReportPemeriksaan;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +57,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     public FiturPemeriksaan() {
         initComponents();
       
-        styleTable(scrollPane, table, 7);
+        styleTable(scrollPane, table, 10);
         tabmodel1 = (DefaultTableModel) table.getModel();
         
         styleTable(scrollPanePasien, tableDetail, 6);
@@ -99,6 +102,20 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         String noPemeriksaan = lbNoPemeriksaan.getText();
         String tgl = lbTgl.getText();
         String deskripsi = txtDeskripsi.getText();
+        if(deskripsi.equals("Catatan (Opsional)")) {
+            deskripsi = null;
+        }
+        double bayar = Double.parseDouble(txtBayar.getText());
+        double kembalian = 0;
+        String jenisPembayaran = (String) cbx_jenisPembayaran.getSelectedItem();
+        String strKembalian = lbKembalian.getText();
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+        try {
+            Number formatNumber = df.parse(strKembalian);
+            kembalian = Double.parseDouble(formatNumber.toString());
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
         
         pasien.setIdPasien(lbIdPasien.getText());
         pasien.setNama(lbNamaPasien.getText());
@@ -106,7 +123,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         karyawan.setNama(lbNamaKaryawan.getText());
         
         
-        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan(noPemeriksaan, tgl, deskripsi, total(), pasien, karyawan);
+        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan(noPemeriksaan, tgl, deskripsi, total(), bayar, kembalian, jenisPembayaran, pasien, karyawan);
         servicPemeriksaan.addData(pemeriksaan);
         
 //      Tambah Detail
@@ -178,7 +195,10 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         modelPemeriksaan.setTglPemeriksaan((String) table.getValueAt(row, 4));
         modelPemeriksaan.setTotal((int) table.getValueAt(row, 5));
         modelPemeriksaan.setDeskripsi((String) table.getValueAt(row, 6));
-
+        modelPemeriksaan.setBayar((double) table.getValueAt(row, 7));
+        modelPemeriksaan.setKembalian((double) table.getValueAt(row, 8));
+        modelPemeriksaan.setJenisPembayaran((String) table.getValueAt(row, 9));
+        
         ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
         modelDetail.setModelPemeriksaan(modelPemeriksaan);
 
@@ -203,13 +223,18 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             ProductPemeriksaan product = (ProductPemeriksaan) tableDetail.getValueAt(a, 0);
             fields.add(new FieldsPemeriksaan(product.getNamaTindakan(), product.getHarga(), product.getPotongan(), product.getTotalHarga()));
         }
-
             String noPemeriksaan = lbNoPemeriksaan.getText();
             String tglPemeriksaan = lbTgl.getText();
+            Date dateNow = new Date();
+            String jamPemeriksaan = new SimpleDateFormat("HH:mm").format(dateNow) + " WIB";
             String pasien = lbNamaPasien.getText();
             String karyawan = lbIdKaryawan.getText();
+            String admin = "Admin 1";
             String total = lbTotal.getText();
-            ParamPemeriksaan payment = new ParamPemeriksaan(noPemeriksaan, tglPemeriksaan, pasien, karyawan, total, fields);
+            String bayar = new DecimalFormat("#,#00").format(Double.parseDouble(txtBayar.getText()));
+            String kembalian = lbKembalian.getText();
+            String jenisPembayaran = (String) cbx_jenisPembayaran.getSelectedItem();
+            ParamPemeriksaan payment = new ParamPemeriksaan(noPemeriksaan, tglPemeriksaan, jamPemeriksaan, pasien, karyawan, admin, total, bayar, kembalian, jenisPembayaran, fields);
             ReportPemeriksaan.getInstance().printReport(payment);
 
         } catch(Exception ex) {
@@ -234,8 +259,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             detailPemeriksaan(row);
         }
     };        
-        table.getColumnModel().getColumn(7).setCellRenderer(new TableCellActionRender(false, false, true));
-        table.getColumnModel().getColumn(7).setCellEditor(new TableCellEditor(action, false, false, true));
+        table.getColumnModel().getColumn(10).setCellRenderer(new TableCellActionRender(false, false, true));
+        table.getColumnModel().getColumn(10).setCellEditor(new TableCellEditor(action, false, false, true));
     }
     
 //    Update,Delete,Detail Table Detail
@@ -326,6 +351,14 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         lbRp = new javax.swing.JLabel();
         lbTotal = new javax.swing.JLabel();
         btnPrint = new javax.swing.JButton();
+        jLabel17 = new javax.swing.JLabel();
+        txtBayar = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
+        lbKembalian = new javax.swing.JLabel();
+        cbx_jenisPembayaran = new javax.swing.JComboBox<>();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
         panel2 = new javax.swing.JPanel();
         btnTambahSementara = new swing.Button();
         jLabel1 = new javax.swing.JLabel();
@@ -379,11 +412,11 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No Pemeriksaan", "ID Pasien", "Nama Pasien", "ID Karyawan", "Tanggal Pemeriksaan", "Total", "Deskripsi", "Detail"
+                "No Pemeriksaan", "ID Pasien", "Nama Pasien", "ID Karyawan", "Tanggal Pemeriksaan", "Total", "Deskripsi", "Bayar", "Kembalian", "Jenis Pembayaran", "Detail"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -404,6 +437,15 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             table.getColumnModel().getColumn(6).setMinWidth(0);
             table.getColumnModel().getColumn(6).setPreferredWidth(0);
             table.getColumnModel().getColumn(6).setMaxWidth(0);
+            table.getColumnModel().getColumn(7).setMinWidth(0);
+            table.getColumnModel().getColumn(7).setPreferredWidth(0);
+            table.getColumnModel().getColumn(7).setMaxWidth(0);
+            table.getColumnModel().getColumn(8).setMinWidth(0);
+            table.getColumnModel().getColumn(8).setPreferredWidth(0);
+            table.getColumnModel().getColumn(8).setMaxWidth(0);
+            table.getColumnModel().getColumn(9).setMinWidth(0);
+            table.getColumnModel().getColumn(9).setPreferredWidth(0);
+            table.getColumnModel().getColumn(9).setMaxWidth(0);
         }
 
         btnTambah.setBackground(new java.awt.Color(135, 15, 50));
@@ -602,6 +644,62 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        jLabel17.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel17.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel17.setText("BAYAR");
+
+        txtBayar.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        txtBayar.setForeground(new java.awt.Color(0, 0, 0));
+        txtBayar.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
+        txtBayar.setOpaque(false);
+        txtBayar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBayarKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtBayarKeyTyped(evt);
+            }
+        });
+
+        jPanel6.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel6.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
+        jPanel6.setOpaque(false);
+
+        lbKembalian.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        lbKembalian.setForeground(new java.awt.Color(0, 0, 0));
+        lbKembalian.setText("0");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addComponent(lbKembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lbKembalian, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+        );
+
+        cbx_jenisPembayaran.setBackground(new java.awt.Color(255, 255, 255));
+        cbx_jenisPembayaran.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        cbx_jenisPembayaran.setForeground(new java.awt.Color(0, 0, 0));
+        cbx_jenisPembayaran.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tunai", "Non Tunai" }));
+        cbx_jenisPembayaran.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+
+        jLabel19.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel19.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel19.setText("KEMBALI");
+
+        jLabel7.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel7.setText("Rp");
+
+        jLabel18.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
+        jLabel18.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel18.setText("Rp");
+
         javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
         panel3.setLayout(panel3Layout);
         panel3Layout.setHorizontalGroup(
@@ -609,8 +707,24 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             .addGroup(panel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPanePasien, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(scrollPanePasien)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel18))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panel3Layout.createSequentialGroup()
+                                .addComponent(txtBayar)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbx_jenisPembayaran, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(12, 12, 12)))
                 .addContainerGap())
         );
         panel3Layout.setVerticalGroup(
@@ -618,8 +732,24 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42)
-                .addComponent(scrollPanePasien, javax.swing.GroupLayout.DEFAULT_SIZE, 710, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtBayar)
+                                .addComponent(cbx_jenisPembayaran))
+                            .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panel3Layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollPanePasien)
                 .addContainerGap())
         );
 
@@ -899,7 +1029,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addComponent(tabEnter, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtDeskripsi))
+                        .addComponent(txtDeskripsi, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
                         .addComponent(btnTambahSementara, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(9, 9, 9)))
@@ -940,9 +1070,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lbIdPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 922, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -994,6 +1124,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
+        servicPemeriksaan.deleteAll();
         lbIdPasien.setVisible(false);
         lbNoPemeriksaan.setText(servicPemeriksaan.createNo());
         actionTableDetail();
@@ -1119,6 +1250,23 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_txtPotonganActionPerformed
 
+    private void txtBayarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBayarKeyReleased
+        String strBayar = txtBayar.getText();
+        double total = (double) total();
+        double bayar = 0;
+        double kembalian = 0;
+        if(strBayar.length() > 0) {
+            bayar = Double.parseDouble(strBayar);
+        }
+        kembalian = bayar - total;
+        DecimalFormat df = new DecimalFormat("#,##0");
+        lbKembalian.setText(df.format(kembalian));        
+    }//GEN-LAST:event_txtBayarKeyReleased
+
+    private void txtBayarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBayarKeyTyped
+        characterDigit(evt);
+    }//GEN-LAST:event_txtBayarKeyTyped
+
     private void changePanel(JPanel panel) {
         removeAll();
         add(panel);
@@ -1161,6 +1309,13 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         return valid;
     }
     
+    private void characterDigit(KeyEvent evt) {
+        char digit = evt.getKeyChar();
+        if(!Character.isDigit(digit)) {
+            evt.consume();
+        }
+    }
+        
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private swing.Button btnBatal;
@@ -1171,6 +1326,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private swing.Button btnTambah;
     private swing.Button btnTambahSementara;
     private javax.swing.JComboBox<String> cbxNoReservasi;
+    private javax.swing.JComboBox<String> cbx_jenisPembayaran;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1178,20 +1334,26 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JLabel label;
     private javax.swing.JLabel label1;
     private javax.swing.JLabel lbHarga;
     private javax.swing.JLabel lbIdKaryawan;
     private javax.swing.JLabel lbIdPasien;
+    private javax.swing.JLabel lbKembalian;
     private javax.swing.JLabel lbKodeTindakan;
     private javax.swing.JLabel lbNamaKaryawan;
     private javax.swing.JLabel lbNamaPasien;
@@ -1211,6 +1373,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private javax.swing.JLabel tabEnter;
     private javax.swing.JTable table;
     private javax.swing.JTable tableDetail;
+    private javax.swing.JTextField txtBayar;
     private javax.swing.JTextField txtCari;
     private javax.swing.JTextArea txtDeskripsi;
     private javax.swing.JTextField txtPotongan;
