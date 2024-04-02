@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReportPemeriksaan" language="groovy" pageWidth="198" pageHeight="283" columnWidth="160" leftMargin="19" rightMargin="19" topMargin="19" bottomMargin="19" uuid="0a185fa4-375d-4b81-95e3-6ddfe2d8b6fa">
 	<property name="ireport.zoom" value="4.177248169415668"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="288"/>
+	<property name="ireport.y" value="317"/>
 	<parameter name="noPmrksn" class="java.lang.String"/>
 	<parameter name="tanggal" class="java.lang.String"/>
 	<parameter name="pasien" class="java.lang.String"/>
@@ -13,7 +13,7 @@
 	<field name="disc" class="java.lang.String"/>
 	<field name="subtotal" class="java.lang.String"/>
 	<background>
-		<band splitType="Stretch"/>
+		<band height="245" splitType="Stretch"/>
 	</background>
 	<title>
 		<band height="44" splitType="Stretch">
@@ -169,7 +169,7 @@
 		</band>
 	</detail>
 	<summary>
-		<band height="42" splitType="Stretch">
+		<band height="53" splitType="Stretch">
 			<textField>
 				<reportElement x="104" y="0" width="56" height="14" uuid="59b8889f-3db3-440b-a36d-48b0828a3da1"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -185,12 +185,18 @@
 				<text><![CDATA[Total Rupiah :]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="29" width="160" height="13" uuid="53e00014-4a3e-4fee-8b7e-8fb6eb46f565"/>
+				<reportElement x="0" y="24" width="160" height="13" uuid="53e00014-4a3e-4fee-8b7e-8fb6eb46f565"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<text><![CDATA[Terima Kasih]]></text>
 			</staticText>
+			<line>
+				<reportElement x="0" y="52" width="160" height="1" forecolor="#999999" uuid="3eaf5bdf-847d-48e8-8301-6255ed2926dc"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
 		</band>
 	</summary>
 </jasperReport>
