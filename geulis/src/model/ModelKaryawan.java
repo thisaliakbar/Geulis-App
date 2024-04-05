@@ -16,22 +16,22 @@ public class ModelKaryawan {
     
     }
 
-    public ModelKaryawan(String idKaryawan, String nama, String noTelp, String email, String jabatan, String alamat) {
+    public ModelKaryawan(String idKaryawan, String nama, String noTelp, String email, String alamat, String jabatan) {
         this.idKaryawan = idKaryawan;
         this.nama = nama;
         this.noTelp = noTelp;
         this.email = email;
-        this.jabatan = jabatan;
         this.alamat = alamat;
+        this.jabatan = jabatan;
     }
-    
+
     
     private String idKaryawan;
     private String nama;
     private String noTelp;
     private String email;
-    private String jabatan;
     private String alamat;
+    private String jabatan;
 
     public String getIdKaryawan() {
         return idKaryawan;

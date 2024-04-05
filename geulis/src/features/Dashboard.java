@@ -217,7 +217,7 @@ public class Dashboard extends javax.swing.JPanel {
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Aktivitas Usaha Dalam Satu (1) Tahun");
 
-        txtYear.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        txtYear.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
         txtYear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtYearActionPerformed(evt);
@@ -244,7 +244,7 @@ public class Dashboard extends javax.swing.JPanel {
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtYear, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                .addComponent(chart, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE))
         );
 
         panel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -274,6 +274,7 @@ public class Dashboard extends javax.swing.JPanel {
             table2.getColumnModel().getColumn(0).setMinWidth(0);
             table2.getColumnModel().getColumn(0).setPreferredWidth(0);
             table2.getColumnModel().getColumn(0).setMaxWidth(0);
+            table2.getColumnModel().getColumn(1).setPreferredWidth(185);
             table2.getColumnModel().getColumn(2).setPreferredWidth(125);
         }
 

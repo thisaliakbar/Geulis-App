@@ -12,8 +12,11 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import model.ModelPromo;
-import service.ServicePengaturan;
+import service.ServicePromo;
 
 
 /**
@@ -26,7 +29,7 @@ public class FiturPengaturan extends javax.swing.JPanel {
      * Creates new form FiturBarang
      */
     private DateChooser dateChooser;
-    private ServicePengaturan servicePengaturan = new ServicePengaturan();
+    private ServicePromo servicePromo = new ServicePromo();
     public FiturPengaturan(String slide) {
         initComponents();
         dateChooser = new DateChooser();
@@ -74,6 +77,15 @@ public class FiturPengaturan extends javax.swing.JPanel {
     public void backAcount(ActionListener action) {
         btnBack1.addActionListener(action);
     }
+    
+    private void back(JPanel panel) {
+        removeAll();
+        add(panel);
+        repaint();
+        revalidate();
+    }
+    
+    
         
     /**
      * This method is called from within the constructor to initialize the form.
@@ -361,6 +373,11 @@ public class FiturPengaturan extends javax.swing.JPanel {
 
         btnBack2.setBackground(new java.awt.Color(135, 15, 50));
         btnBack2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/right-arrow.png"))); // NOI18N
+        btnBack2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBack2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -563,6 +580,11 @@ public class FiturPengaturan extends javax.swing.JPanel {
 
         btnBack3.setBackground(new java.awt.Color(135, 15, 50));
         btnBack3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/right-arrow.png"))); // NOI18N
+        btnBack3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBack3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -630,10 +652,7 @@ public class FiturPengaturan extends javax.swing.JPanel {
     }//GEN-LAST:event_btnViewPromoActionPerformed
 
     private void btnBack1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBack1ActionPerformed
-        removeAll();
-        add(new FiturBarang());
-        repaint();
-        revalidate();
+        back(new Dashboard());
     }//GEN-LAST:event_btnBack1ActionPerformed
 
     private void cbxJenisPromoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxJenisPromoActionPerformed
@@ -669,6 +688,14 @@ public class FiturPengaturan extends javax.swing.JPanel {
            lbNotif.setVisible(true);
         }
     }//GEN-LAST:event_txtPromoKeyTyped
+
+    private void btnBack3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBack3ActionPerformed
+        back(new Dashboard());
+    }//GEN-LAST:event_btnBack3ActionPerformed
+
+    private void btnBack2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBack2ActionPerformed
+        back(new Dashboard());
+    }//GEN-LAST:event_btnBack2ActionPerformed
 
     
     
@@ -720,7 +747,7 @@ public class FiturPengaturan extends javax.swing.JPanel {
 
 //    Atur Promo
     private void aturPromo() {
-        String noPromosi = servicePengaturan.createNo();
+        String noPromosi = servicePromo.createNo();
         String namaPromo = txtNamaPromo.getText();
         String tglAwal = lb_tglAwal.getText();
         String tglAkhir = lb_tglAkhir.getText();
@@ -753,9 +780,13 @@ public class FiturPengaturan extends javax.swing.JPanel {
         }
         int banyak = Integer.parseInt(txtPromo.getText());
         ModelPromo promo = new ModelPromo(noPromosi, namaPromo, tglAwal, tglAkhir, banyak, jenis, keterangan);
-        servicePengaturan.addPromo(promo);
-        txtNamaPromo.setText(null);
-        txtPromo.setText(null);
+        if(validation(promo)) {
+            servicePromo.addPromo(promo);   
+            txtNamaPromo.setText(null);
+            txtPromo.setText(null);
+        } else {
+            JOptionPane.showMessageDialog(null, "Terdapat Promo yang Sedang Berjalan");
+        }
     }
     
     
@@ -766,6 +797,7 @@ public class FiturPengaturan extends javax.swing.JPanel {
         dateChooser.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
         dateChooser.setLabelCurrentDayVisible(false);
         dateChooser.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+        dateChooser.setSelectedDate(new Date());
         dateChooser.addActionDateChooserListener(new DateChooserAdapter() {
             @Override
             public void dateBetweenChanged(DateBetween date, DateChooserAction action) {
@@ -776,6 +808,15 @@ public class FiturPengaturan extends javax.swing.JPanel {
                 lb_tglAkhir.setText(toDate);
             }
         });
+    }
+    
+    private boolean validation(ModelPromo modelPromo) {
+        boolean valid = false;
+        String keterangan = servicePromo.getKeterangan(modelPromo);
+        if(keterangan.equals("Akan Datang")) {
+            valid = true;
+        }
+        return valid;
     }
 
 }

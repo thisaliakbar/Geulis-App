@@ -9,7 +9,6 @@ import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -46,7 +45,7 @@ public class FiturBarang extends javax.swing.JPanel {
         scrollPane.setBorder(new EmptyBorder(5,10,5,10));
         table.setRowHeight(40);        
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
-        table.setDefaultRenderer(Object.class, new ModelRenderTable(6));
+        table.setDefaultRenderer(Object.class, new ModelRenderTable(8));
         tabmodel = (DefaultTableModel) table.getModel();
         jTextField1.setVisible(false);
         tampilData();
@@ -101,8 +100,8 @@ public class FiturBarang extends javax.swing.JPanel {
             System.out.println("View row : " + row);
         }
     };        
-        table.getColumnModel().getColumn(6).setCellRenderer(new TableCellActionRender(true, true, false));
-        table.getColumnModel().getColumn(6).setCellEditor(new TableCellEditor(action, true, true, false));
+        table.getColumnModel().getColumn(8).setCellRenderer(new TableCellActionRender(true, true, false));
+        table.getColumnModel().getColumn(8).setCellEditor(new TableCellEditor(action, true, true, false));
     }
 
     /**
@@ -172,11 +171,11 @@ public class FiturBarang extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Kode Barang", "Nama Barang", "Satuan", "Harga Beli", "Harga Jual", "Stok", "Aksi"
+                "Kode Barang", "Kode Jenis", "Jenis Barang", "Nama Barang", "Satuan", "Harga Beli", "Harga Jual", "Stok", "Aksi"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, true
+                false, false, true, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -187,6 +186,11 @@ public class FiturBarang extends javax.swing.JPanel {
         table.setOpaque(false);
         table.setSelectionBackground(new java.awt.Color(255, 255, 255));
         scrollPane.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(1).setMinWidth(0);
+            table.getColumnModel().getColumn(1).setPreferredWidth(0);
+            table.getColumnModel().getColumn(1).setMaxWidth(0);
+        }
 
         btnTambah.setBackground(new java.awt.Color(135, 15, 50));
         btnTambah.setForeground(new java.awt.Color(255, 255, 255));

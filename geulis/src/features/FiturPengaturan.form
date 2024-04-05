@@ -545,6 +545,9 @@
                   <Image iconType="3" name="/image/right-arrow.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBack2ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -913,6 +916,9 @@
                   <Image iconType="3" name="/image/right-arrow.png"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBack3ActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

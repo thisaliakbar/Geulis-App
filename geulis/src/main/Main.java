@@ -6,7 +6,6 @@ package main;
 
 import action.ActionMenuSelected;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
-import component.Chart;
 import component.Content;
 import component.Navbar;
 import component.Sidebar;
@@ -35,6 +34,7 @@ import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
+import service.ServicePromo;
 
 /**
  *
@@ -53,6 +53,7 @@ public class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
         initiation();
+        endPromoAuto();
     }
     
     public void initiation() {
@@ -216,6 +217,12 @@ public class Main extends javax.swing.JFrame {
             }
         });
     }
+    
+//    End Promo Auto
+    private void endPromoAuto() {
+        ServicePromo servicePromo = new ServicePromo();
+        servicePromo.autoChangeKeteranganPromo();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -281,6 +288,18 @@ public class Main extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>

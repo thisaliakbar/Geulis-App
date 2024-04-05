@@ -12,13 +12,13 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import main.Main;
 import model.ModelDetailPengeluaran;
 import model.ModelHeaderTable;
 import model.ModelJenisPengeluaran;
@@ -825,6 +825,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         DateChooser chooser = new DateChooser();
         chooser.setTextField(txtTanggal);
         chooser.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+        chooser.setSelectedDate(new Date());
         chooser.setDateSelectionMode(DateChooser.DateSelectionMode.SINGLE_DATE_SELECTED);
     }
     
