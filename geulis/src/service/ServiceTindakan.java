@@ -27,24 +27,26 @@ public class ServiceTindakan {
         int count = 0;
         String query = "SELECT * FROM tindakan LIMIT "+(page-1) * limit+","+limit+"";
         System.out.println(query);
-        try{
-            PreparedStatement pst = connection.prepareStatement(sqlCount);
-            ResultSet rst = pst.executeQuery();
-            if(rst.next()) {
-                count = rst.getInt("Jumlah");
-            }
-        }
-        
-        try {
-            PreparedStatement pst = connection.prepareStatement(sqlCount);
-            ResultSet rst = pst.executeQuery();
-            if(rst.next()) {
-                count = rst.getInt("Jumlah");
-            }
-            
-            pst.close();
-            rst.close();
-            
-
-        }
+//        try{
+//            PreparedStatement pst = connection.prepareStatement(sqlCount);
+//            ResultSet rst = pst.executeQuery();
+//            if(rst.next()) {
+//                count = rst.getInt("Jumlah");
+//            }
+//        }
+//        
+//        try {
+//            PreparedStatement pst = connection.prepareStatement(sqlCount);
+//            ResultSet rst = pst.executeQuery();
+//            if(rst.next()) {
+//                count = rst.getInt("Jumlah");
+//            }
+//            
+//            pst.close();
+//            rst.close();
+//            
+//
+//        }
+       }
+}
        
