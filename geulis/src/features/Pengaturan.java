@@ -32,6 +32,10 @@ public class Pengaturan extends java.awt.Dialog {
     public void promo(ActionListener action) {
         btnPromo.addActionListener(action);
     }
+    
+    public void logout(ActionListener action) {
+        btnLogout.addActionListener(action);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -216,6 +216,13 @@ public class Main extends javax.swing.JFrame {
                 navbar.settings.dispose();
             }
         });
+        
+        navbar.settings.logout(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+//                navbar.settings.dispose();
+            }
+        });
     }
     
 //    End Promo Auto

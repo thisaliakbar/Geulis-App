@@ -63,6 +63,7 @@ public class Card extends javax.swing.JPanel {
     public void setRange(DateChooserAdapter action) {
         DateChooser chooser = new DateChooser();
         chooser.setTextField(txtRange);
+        chooser.setLabelCurrentDayVisible(false);
         chooser.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
         chooser.setSelectedDate(new Date());
         chooser.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);

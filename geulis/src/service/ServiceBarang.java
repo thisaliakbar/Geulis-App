@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package service;
+import model.ModelJenisBarang;
 import java.sql.Connection;
 import model.ModelBarang;
 import java.sql.PreparedStatement;

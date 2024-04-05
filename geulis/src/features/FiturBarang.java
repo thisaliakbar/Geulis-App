@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import model.ModelBarang;
 import model.ModelHeaderTable;
 import model.ModelRenderTable;
-import service.ModelJenisBarang;
+import model.ModelJenisBarang;
 import service.ServiceBarang;
 import swing.TableCellActionRender;
 import swing.TableCellEditor;

@@ -173,7 +173,7 @@ public class FiturPengaturan extends javax.swing.JPanel {
 
         btnSimpan1.setBackground(new java.awt.Color(135, 15, 50));
         btnSimpan1.setForeground(new java.awt.Color(255, 255, 255));
-        btnSimpan1.setText("SIMPAN");
+        btnSimpan1.setText("PERBARUI");
         btnSimpan1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSimpan1ActionPerformed(evt);
@@ -188,7 +188,7 @@ public class FiturPengaturan extends javax.swing.JPanel {
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
