@@ -34,6 +34,7 @@ import model.ModelKaryawan;
 import model.ModelPemeriksaan;
 import model.ModelRenderTable;
 import model.ModelPasien;
+import model.ModelReservasi;
 import model.PemeriksaanSementara;
 import service.ServiceDetailPemeriksaan;
 import swing.TableCellActionRender;
@@ -57,7 +58,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     public FiturPemeriksaan() {
         initComponents();
       
-        styleTable(scrollPane, table, 10);
+        styleTable(scrollPane, table, 11);
         tabmodel1 = (DefaultTableModel) table.getModel();
         
         styleTable(scrollPanePasien, tableDetail, 6);
@@ -98,6 +99,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         ModelPasien pasien = new ModelPasien();
         ModelKaryawan karyawan = new ModelKaryawan();
         ModelDetailPemeriksaan detail = new ModelDetailPemeriksaan();
+        ModelReservasi modelReservasi = new ModelReservasi();
+        modelReservasi.setNoReservasi((String) cbxNoReservasi.getSelectedItem());
         
         String noPemeriksaan = lbNoPemeriksaan.getText();
         String tgl = lbTgl.getText();
@@ -123,7 +126,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         karyawan.setNama(lbNamaKaryawan.getText());
         
         
-        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan(noPemeriksaan, tgl, deskripsi, total(), bayar, kembalian, jenisPembayaran, pasien, karyawan);
+        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan(noPemeriksaan, modelReservasi, tgl, deskripsi, total(), bayar, kembalian, jenisPembayaran, pasien, karyawan);
         servicPemeriksaan.addData(pemeriksaan);
         
 //      Tambah Detail
@@ -185,19 +188,22 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         ModelPemeriksaan modelPemeriksaan = new ModelPemeriksaan();
         ModelPasien modelPasien = new ModelPasien();
         ModelKaryawan modelKaryawan = new ModelKaryawan();
+        ModelReservasi modelReservasi = new ModelReservasi();
 
         modelPemeriksaan.setNoPemeriksaan((String) table.getValueAt(row, 0));
-        modelPasien.setIdPasien((String) table.getValueAt(row, 1));
-        modelPasien.setNama((String) table.getValueAt(row, 2));
+        modelReservasi.setNoReservasi((String) table.getValueAt(row, 1));
+        modelPemeriksaan.setModelReservasi(modelReservasi);
+        modelPasien.setIdPasien((String) table.getValueAt(row, 2));
+        modelPasien.setNama((String) table.getValueAt(row, 3));
         modelPemeriksaan.setModelPasien(modelPasien);
-        modelKaryawan.setIdKaryawan((String) table.getValueAt(row, 3));
+        modelKaryawan.setIdKaryawan((String) table.getValueAt(row, 4));
         modelPemeriksaan.setModelKaryawan(modelKaryawan);
-        modelPemeriksaan.setTglPemeriksaan((String) table.getValueAt(row, 4));
-        modelPemeriksaan.setTotal((int) table.getValueAt(row, 5));
-        modelPemeriksaan.setDeskripsi((String) table.getValueAt(row, 6));
-        modelPemeriksaan.setBayar((double) table.getValueAt(row, 7));
-        modelPemeriksaan.setKembalian((double) table.getValueAt(row, 8));
-        modelPemeriksaan.setJenisPembayaran((String) table.getValueAt(row, 9));
+        modelPemeriksaan.setTglPemeriksaan((String) table.getValueAt(row, 5));
+        modelPemeriksaan.setTotal((int) table.getValueAt(row, 6));
+        modelPemeriksaan.setDeskripsi((String) table.getValueAt(row, 7));
+        modelPemeriksaan.setBayar((double) table.getValueAt(row, 8));
+        modelPemeriksaan.setKembalian((double) table.getValueAt(row, 9));
+        modelPemeriksaan.setJenisPembayaran((String) table.getValueAt(row, 10));
         
         ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
         modelDetail.setModelPemeriksaan(modelPemeriksaan);
@@ -259,8 +265,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             detailPemeriksaan(row);
         }
     };        
-        table.getColumnModel().getColumn(10).setCellRenderer(new TableCellActionRender(false, false, true));
-        table.getColumnModel().getColumn(10).setCellEditor(new TableCellEditor(action, false, false, true));
+        table.getColumnModel().getColumn(11).setCellRenderer(new TableCellActionRender(false, false, true));
+        table.getColumnModel().getColumn(11).setCellEditor(new TableCellEditor(action, false, false, true));
     }
     
 //    Update,Delete,Detail Table Detail
@@ -279,6 +285,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
                 tabmodel2.removeRow(row);
                 DecimalFormat df = new DecimalFormat("#,##0.##");
                 lbTotal.setText(df.format(total()));
+                double kembali = Double.parseDouble(txtBayar.getText()) - total();
+                lbKembalian.setText(df.format(kembali));
                 servicPemeriksaan.deleteTemporaryCode(actionCode);
             }
 
@@ -412,11 +420,11 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No Pemeriksaan", "ID Pasien", "Nama Pasien", "ID Karyawan", "Tanggal Pemeriksaan", "Total", "Deskripsi", "Bayar", "Kembalian", "Jenis Pembayaran", "Detail"
+                "No Pemeriksaan", "No Reservasi", "ID Pasien", "Nama Pasien", "ID Karyawan", "Tanggal Pemeriksaan", "Total", "Deskripsi", "Bayar", "Kembalian", "Jenis Pembayaran", "Detail"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -428,15 +436,12 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         table.setSelectionBackground(new java.awt.Color(255, 255, 255));
         scrollPane.setViewportView(table);
         if (table.getColumnModel().getColumnCount() > 0) {
-            table.getColumnModel().getColumn(1).setMinWidth(0);
-            table.getColumnModel().getColumn(1).setPreferredWidth(0);
-            table.getColumnModel().getColumn(1).setMaxWidth(0);
-            table.getColumnModel().getColumn(3).setMinWidth(0);
-            table.getColumnModel().getColumn(3).setPreferredWidth(0);
-            table.getColumnModel().getColumn(3).setMaxWidth(0);
-            table.getColumnModel().getColumn(6).setMinWidth(0);
-            table.getColumnModel().getColumn(6).setPreferredWidth(0);
-            table.getColumnModel().getColumn(6).setMaxWidth(0);
+            table.getColumnModel().getColumn(2).setMinWidth(0);
+            table.getColumnModel().getColumn(2).setPreferredWidth(0);
+            table.getColumnModel().getColumn(2).setMaxWidth(0);
+            table.getColumnModel().getColumn(4).setMinWidth(0);
+            table.getColumnModel().getColumn(4).setPreferredWidth(0);
+            table.getColumnModel().getColumn(4).setMaxWidth(0);
             table.getColumnModel().getColumn(7).setMinWidth(0);
             table.getColumnModel().getColumn(7).setPreferredWidth(0);
             table.getColumnModel().getColumn(7).setMaxWidth(0);
@@ -446,6 +451,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             table.getColumnModel().getColumn(9).setMinWidth(0);
             table.getColumnModel().getColumn(9).setPreferredWidth(0);
             table.getColumnModel().getColumn(9).setMaxWidth(0);
+            table.getColumnModel().getColumn(10).setMinWidth(0);
+            table.getColumnModel().getColumn(10).setPreferredWidth(0);
+            table.getColumnModel().getColumn(10).setMaxWidth(0);
         }
 
         btnTambah.setBackground(new java.awt.Color(135, 15, 50));
@@ -1150,12 +1158,19 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private void btnTambahSementaraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahSementaraActionPerformed
         int kodeTindakan = lbKodeTindakan.getText().length();
         int noReservasi = lbTgl.getText().length();
+        String bayar = txtBayar.getText();
+        double kembalian = 0;
         if(noReservasi > 0 && kodeTindakan > 0) {
         tambahDataSementara();
         clearFieldTindakan();   
         }else {
             JOptionPane.showMessageDialog(null, "Silahkan Pilih No Reservasi\ndan Tindakan");
         }
+        if(bayar.length() > 0) {
+            kembalian = Double.parseDouble(bayar) - total();
+        }
+        DecimalFormat df = new DecimalFormat("#,##0.##");
+        lbKembalian.setText(df.format(kembalian));
     }//GEN-LAST:event_btnTambahSementaraActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed

@@ -4,16 +4,29 @@
  */
 package features;
 
+import action.ActionPagination;
 import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import model.ModelDetailPemeriksaan;
+import model.ModelHeader;
 import model.ModelHeaderTable;
+import model.ModelPasien;
+import model.ModelPemeriksaan;
+import model.ModelPengguna;
 import model.ModelRenderTable;
+import model.ModelReservasi;
+import service.ServiceReservasi;
 import swing.TableCellActionRender;
 import swing.TableCellEditor;
 
@@ -26,41 +39,43 @@ public class FiturReservasi extends javax.swing.JPanel {
     /**
      * Creates new form FiturBarang
      */
-    private DefaultTableModel tabmodel;
+    private DefaultTableModel tabmodel1;
+    private DefaultTableModel tabmodel2;
     private TableAction action;
-    
+    private ServiceReservasi serviceReservasi = new ServiceReservasi();
     public FiturReservasi() {
         initComponents();
-      
-        scrollPane.getViewport().setBackground(new Color(255,255,255));
+        table.scrollPane(scrollPane);
+        table.getTableHeader().setDefaultRenderer(new ModelHeader());
+        tabmodel1 = (DefaultTableModel) table.getModel();
+        tampilData();
+        styleTable(scrollPanePasien, tablePasien,5);
+        tabmodel2 = (DefaultTableModel) tablePasien.getModel();
+        actionRenderTable();
+    }
+    
+//    tampil data
+    private void tampilData() {
+        serviceReservasi.loadData(1, tabmodel1, pagination);
+        pagination.addActionPagination(new ActionPagination() {
+            @Override
+            public void pageChanged(int page) {
+                tabmodel1.setRowCount(0);
+                serviceReservasi.loadData(page, tabmodel1, pagination);
+            }
+        });
+    }
+    
+    //  Style Table
+    private void styleTable(JScrollPane scroll, JTable table, int columnTable) {
+        scroll.getViewport().setBackground(new Color(255,255,255));
         JPanel panel = new JPanel();
         panel.setBackground(new Color(255,255,255));
-        scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, panel);
-        scrollPane.setBorder(new EmptyBorder(5,10,5,10));
+        scroll.setCorner(JScrollPane.UPPER_RIGHT_CORNER, panel);
+        scroll.setBorder(new EmptyBorder(5,10,5,10));
         table.setRowHeight(40);        
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
-        table.setDefaultRenderer(Object.class, new ModelRenderTable(3));
-        tabmodel = (DefaultTableModel) table.getModel();
-        
-        scrollPanePasien.getViewport().setBackground(new Color(255,255,255));
-        scrollPanePasien.setCorner(JScrollPane.UPPER_RIGHT_CORNER, panel);
-        scrollPanePasien.setBorder(new EmptyBorder(5,10,5,10));
-        tablePasien.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
-        tablePasien.setDefaultRenderer(Object.class, new ModelRenderTable(2));
-        tablePasien.setRowHeight(35);
-        
-        
-        for(int a = 0; a < 20; a++) {
-            tabmodel.addRow(new String[]{"RSV-2402-001","Galih Setiono","28-February-2024",null,"Menunggu"});
-        }
-        
-        
-        for(int a = 0; a < 10; a++) {
-            DefaultTableModel model = (DefaultTableModel) tablePasien.getModel();
-            model.addRow(new String[]{"PSN-001","Galih Sutikno"});
-        }
-        
-        actionRenderTable();
+        table.setDefaultRenderer(Object.class, new ModelRenderTable(columnTable));
     }
     
 //  Update,Delete,Detail
@@ -77,16 +92,87 @@ public class FiturReservasi extends javax.swing.JPanel {
                 table.getCellEditor().stopCellEditing();
             }
             System.out.println("Remov Row : " + row);
-            tabmodel.removeRow(row);
+            tabmodel1.removeRow(row);
         }
 
         @Override
         public void view(int row) {
-            System.out.println("View row : " + row);
+            tampilDetail(row);
         }
     };        
-        table.getColumnModel().getColumn(3).setCellRenderer(new TableCellActionRender(false, false, true));
-        table.getColumnModel().getColumn(3).setCellEditor(new TableCellEditor(action, false, false, true));
+        table.getColumnModel().getColumn(11).setCellRenderer(new TableCellActionRender(false, false, true));
+        table.getColumnModel().getColumn(11).setCellEditor(new TableCellEditor(action, false, false, true));
+    }
+    
+    private void tambahData() {
+        String noReservasi = txtNoReservasi.getText();
+        String idPasien = txtIdPasien.getText();
+        String tglReservasi = txtTglReservasi.getText();
+        
+        Date day = (Date) spnDay.getValue();
+        Date month = (Date) spnMonth.getValue();
+        Date year = (Date) spnYear.getValue();
+        LocalDate localDate = convertToLocal(day);
+        LocalDate localMonth = convertToLocal(month);
+        LocalDate localYear = convertToLocal(year);
+        String tglKedatangan = String.valueOf(localYear.getYear()) + "-" + String.valueOf(localMonth.getMonthValue()) + "-" + String.valueOf(localDate.getDayOfMonth());
+        
+        Date hour = (Date) spnHour.getValue();
+        Date minute = (Date) spnMinute.getValue();
+        String jamKedatangan = String.valueOf(hour.getHours()) + ":" + String.valueOf(minute.getMinutes()) + ":00";
+        
+        ModelPengguna modelPengguna = new ModelPengguna();
+        modelPengguna.setIdpengguna("USR-001");
+        ModelPasien modelPasien = new ModelPasien();
+        modelPasien.setIdPasien(idPasien);
+        
+        ModelReservasi modelReservasi = new ModelReservasi(noReservasi, tglReservasi, tglKedatangan, jamKedatangan, null, null, modelPengguna, modelPasien);
+        serviceReservasi.addData(modelReservasi);
+        
+    }
+    
+    private LocalDate convertToLocal(Date date) {
+        return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+    }
+    
+    private void pilihPasien() {
+        int row = tablePasien.getSelectedRow();
+        if(row != -1) {
+            String idPasien = (String) tablePasien.getValueAt(row, 0);
+            String namaPasien = (String) tablePasien.getValueAt(row, 1);
+            txtIdPasien.setText(idPasien);
+            txtNamaPasien.setText(namaPasien);
+        } else {
+            JOptionPane.showMessageDialog(null, "Silahkan pilih pasien");
+        }
+    }
+    
+//    Tampil Detail
+    private void tampilDetail(int row) {
+        ModelPemeriksaan modelPemeriksaan = new ModelPemeriksaan();
+        ModelReservasi modelReservasi = new ModelReservasi();
+        ModelPasien modelPasien = new ModelPasien();
+        ModelPengguna modelPengguna = new ModelPengguna();
+        
+        modelReservasi.setNoReservasi((String) table.getValueAt(row, 0));
+        modelPasien.setIdPasien((String) table.getValueAt(row, 2));
+        modelPasien.setNama((String) table.getValueAt(row, 3));
+        modelPasien.setJenisKelamin((String) table.getValueAt(row, 4));
+        modelReservasi.setModelPasien(modelPasien);
+        modelReservasi.setTglKedatangan((String) table.getValueAt(row, 5));
+        modelReservasi.setJamKedatangan((String) table.getValueAt(row, 6));
+        modelReservasi.setStatusReservasi((String) table.getValueAt(row, 8));
+        modelPengguna.setIdpengguna((String) table.getValueAt(row, 9));
+        modelPengguna.setNama((String) table.getValueAt(row, 10));
+        modelReservasi.setModelPengguna(modelPengguna);
+        
+        modelPemeriksaan.setModelReservasi(modelReservasi);
+        ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
+        modelDetail.setModelPemeriksaan(modelPemeriksaan);
+        
+        DialogDetail dialog = new DialogDetail(null, true, "Slide-4", modelDetail, null);
+        dialog.setVisible(true);
+        
     }
 
     /**
@@ -100,21 +186,21 @@ public class FiturReservasi extends javax.swing.JPanel {
 
         panelData = new javax.swing.JPanel();
         panel1 = new javax.swing.JPanel();
-        scrollPane = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
         btnTambah = new swing.Button();
         label = new javax.swing.JLabel();
         pagination = new swing.Pagination();
         txtCari = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
+        scrollPane = new javax.swing.JScrollPane();
+        table = new swing.Table();
         panelTambah = new javax.swing.JPanel();
         panel3 = new javax.swing.JPanel();
-        btnSimpan3 = new swing.Button();
+        btnPilih = new swing.Button();
         scrollPanePasien = new javax.swing.JScrollPane();
         tablePasien = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
+        txtCariPasien = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         panel2 = new javax.swing.JPanel();
         btnSimpan = new swing.Button();
@@ -123,17 +209,17 @@ public class FiturReservasi extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        btnSimpan1 = new swing.Button();
-        jSpinner1 = new javax.swing.JSpinner();
-        jSpinner2 = new javax.swing.JSpinner();
-        jSpinner3 = new javax.swing.JSpinner();
-        jSpinner4 = new javax.swing.JSpinner();
-        jSpinner6 = new javax.swing.JSpinner();
+        btnBatal = new swing.Button();
+        spnDay = new javax.swing.JSpinner();
+        spnMonth = new javax.swing.JSpinner();
+        spnYear = new javax.swing.JSpinner();
+        spnHour = new javax.swing.JSpinner();
+        spnMinute = new javax.swing.JSpinner();
         jLabel8 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
+        txtTglReservasi = new javax.swing.JLabel();
+        txtNamaPasien = new javax.swing.JLabel();
+        txtIdPasien = new javax.swing.JLabel();
+        txtNoReservasi = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         label1 = new javax.swing.JLabel();
 
@@ -144,33 +230,6 @@ public class FiturReservasi extends javax.swing.JPanel {
         panelData.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
         panel1.setBackground(new java.awt.Color(255, 255, 255));
-
-        scrollPane.setBackground(new java.awt.Color(255, 255, 255));
-        scrollPane.setBorder(null);
-        scrollPane.setOpaque(false);
-
-        table.setBackground(new java.awt.Color(255, 255, 255));
-        table.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        table.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "No Reservasi", "Nama Pasien", "Tanggal Kedatangan", "Detail", "Status"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, true, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        table.setGridColor(new java.awt.Color(185, 185, 185));
-        table.setOpaque(false);
-        table.setSelectionBackground(new java.awt.Color(255, 255, 255));
-        scrollPane.setViewportView(table);
 
         btnTambah.setBackground(new java.awt.Color(135, 15, 50));
         btnTambah.setForeground(new java.awt.Color(255, 255, 255));
@@ -209,31 +268,75 @@ public class FiturReservasi extends javax.swing.JPanel {
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/search-2.png"))); // NOI18N
 
+        table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "No Reservasi", "Tanggal Reservasi", "ID Pasien", "Nama Pasien", "Jenis Kelamin", "Tanggal Kedatangan", "Jam Kedatangan", "Status", "", "ID Pengguna", "Nama Pengguna", "       Detail"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false, true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        table.setSelectionBackground(new java.awt.Color(245, 245, 245));
+        table.setSelectionForeground(new java.awt.Color(0, 0, 0));
+        scrollPane.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(2).setMinWidth(0);
+            table.getColumnModel().getColumn(2).setPreferredWidth(0);
+            table.getColumnModel().getColumn(2).setMaxWidth(0);
+            table.getColumnModel().getColumn(4).setMinWidth(0);
+            table.getColumnModel().getColumn(4).setPreferredWidth(0);
+            table.getColumnModel().getColumn(4).setMaxWidth(0);
+            table.getColumnModel().getColumn(7).setMinWidth(100);
+            table.getColumnModel().getColumn(7).setPreferredWidth(100);
+            table.getColumnModel().getColumn(7).setMaxWidth(100);
+            table.getColumnModel().getColumn(8).setMinWidth(0);
+            table.getColumnModel().getColumn(8).setPreferredWidth(0);
+            table.getColumnModel().getColumn(8).setMaxWidth(0);
+            table.getColumnModel().getColumn(9).setMinWidth(0);
+            table.getColumnModel().getColumn(9).setPreferredWidth(0);
+            table.getColumnModel().getColumn(9).setMaxWidth(0);
+            table.getColumnModel().getColumn(10).setMinWidth(0);
+            table.getColumnModel().getColumn(10).setPreferredWidth(0);
+            table.getColumnModel().getColumn(10).setMaxWidth(0);
+            table.getColumnModel().getColumn(11).setMinWidth(100);
+            table.getColumnModel().getColumn(11).setPreferredWidth(100);
+            table.getColumnModel().getColumn(11).setMaxWidth(100);
+        }
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 604, Short.MAX_VALUE)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(3, 3, 3)
-                .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(55, 55, 55))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(pagination, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(panel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 604, Short.MAX_VALUE)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(55, 55, 55))
+                    .addGroup(panel1Layout.createSequentialGroup()
+                        .addComponent(scrollPane)
+                        .addContainerGap())))
             .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel1Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1148, Short.MAX_VALUE)
-                        .addGroup(panel1Layout.createSequentialGroup()
-                            .addComponent(label)
-                            .addGap(0, 933, Short.MAX_VALUE)))
-                    .addContainerGap()))
+                    .addComponent(label)
+                    .addContainerGap(954, Short.MAX_VALUE)))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,16 +347,16 @@ public class FiturReservasi extends javax.swing.JPanel {
                     .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 510, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(pagination, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel1Layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(label)
-                    .addGap(63, 63, 63)
-                    .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
-                    .addGap(53, 53, 53)))
+                    .addContainerGap(588, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout panelDataLayout = new javax.swing.GroupLayout(panelData);
@@ -280,10 +383,15 @@ public class FiturReservasi extends javax.swing.JPanel {
 
         panel3.setBackground(new java.awt.Color(255, 255, 255));
 
-        btnSimpan3.setBackground(new java.awt.Color(135, 15, 50));
-        btnSimpan3.setForeground(new java.awt.Color(255, 255, 255));
-        btnSimpan3.setText("PILIH");
-        btnSimpan3.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btnPilih.setBackground(new java.awt.Color(135, 15, 50));
+        btnPilih.setForeground(new java.awt.Color(255, 255, 255));
+        btnPilih.setText("PILIH");
+        btnPilih.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btnPilih.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPilihActionPerformed(evt);
+            }
+        });
 
         scrollPanePasien.setBorder(null);
         scrollPanePasien.setOpaque(false);
@@ -294,9 +402,17 @@ public class FiturReservasi extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID Pasien", "Nama Pasien"
+                "ID Pasien", "Nama Pasien", "Jenis Kelamin", "Alamat", "No Telepon"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         tablePasien.setOpaque(false);
         scrollPanePasien.setViewportView(tablePasien);
 
@@ -324,18 +440,18 @@ public class FiturReservasi extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jTextField8.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
-        jTextField8.setForeground(new java.awt.Color(185, 185, 185));
-        jTextField8.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField8.setText("Cari Berdasarkan ID Pasien Atau Nama Pasien");
-        jTextField8.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
-        jTextField8.setOpaque(false);
-        jTextField8.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtCariPasien.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
+        txtCariPasien.setForeground(new java.awt.Color(185, 185, 185));
+        txtCariPasien.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtCariPasien.setText("Cari Berdasarkan ID Pasien atau Nama Pasien");
+        txtCariPasien.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
+        txtCariPasien.setOpaque(false);
+        txtCariPasien.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextField8FocusGained(evt);
+                txtCariPasienFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextField8FocusLost(evt);
+                txtCariPasienFocusLost(evt);
             }
         });
 
@@ -350,12 +466,12 @@ public class FiturReservasi extends javax.swing.JPanel {
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
-                        .addComponent(btnSimpan3, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnPilih, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(27, 27, 27)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(scrollPanePasien, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(txtCariPasien))
+                    .addComponent(scrollPanePasien))
                 .addContainerGap())
         );
         panel3Layout.setVerticalGroup(
@@ -363,13 +479,13 @@ public class FiturReservasi extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSimpan3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCariPasien, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPilih, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(scrollPanePasien, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollPanePasien, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -410,43 +526,52 @@ public class FiturReservasi extends javax.swing.JPanel {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel6.setText("Jam Kedatangan");
 
-        btnSimpan1.setBackground(new java.awt.Color(0, 153, 0));
-        btnSimpan1.setForeground(new java.awt.Color(255, 255, 255));
-        btnSimpan1.setText("BATAL");
-        btnSimpan1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btnBatal.setBackground(new java.awt.Color(0, 153, 0));
+        btnBatal.setForeground(new java.awt.Color(255, 255, 255));
+        btnBatal.setText("BATAL");
+        btnBatal.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBatalActionPerformed(evt);
+            }
+        });
 
-        jSpinner1.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jSpinner1.setModel(new javax.swing.SpinnerDateModel());
-        jSpinner1.setEditor(new javax.swing.JSpinner.DateEditor(jSpinner1, "dd"));
+        spnDay.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        spnDay.setModel(new javax.swing.SpinnerDateModel());
+        spnDay.setEditor(new javax.swing.JSpinner.DateEditor(spnDay, "dd"));
 
-        jSpinner2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jSpinner2.setModel(new javax.swing.SpinnerDateModel());
-        jSpinner2.setEditor(new javax.swing.JSpinner.DateEditor(jSpinner2, "MMMM"));
+        spnMonth.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        spnMonth.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MONTH));
+        spnMonth.setEditor(new javax.swing.JSpinner.DateEditor(spnMonth, "MMMM"));
 
-        jSpinner3.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jSpinner3.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(1708313778454L), null, null, java.util.Calendar.DAY_OF_YEAR));
-        jSpinner3.setEditor(new javax.swing.JSpinner.DateEditor(jSpinner3, "yyyy"));
+        spnYear.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        spnYear.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(1708313778454L), null, null, java.util.Calendar.YEAR));
+        spnYear.setEditor(new javax.swing.JSpinner.DateEditor(spnYear, "yyyy"));
 
-        jSpinner4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jSpinner4.setModel(new javax.swing.SpinnerListModel(new String[] {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"}));
-        jSpinner4.setEditor(new javax.swing.JSpinner.ListEditor(jSpinner4));
+        spnHour.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        spnHour.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR));
+        spnHour.setEditor(new javax.swing.JSpinner.DateEditor(spnHour, "HH"));
 
-        jSpinner6.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jSpinner6.setModel(new javax.swing.SpinnerListModel(new String[] {"00", "15", "30", "45", "60"}));
-        jSpinner6.setEditor(new javax.swing.JSpinner.ListEditor(jSpinner6));
+        spnMinute.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        spnMinute.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        spnMinute.setEditor(new javax.swing.JSpinner.DateEditor(spnMinute, "mm"));
 
         jLabel8.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel8.setText("Nama Pasien");
 
-        jLabel10.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        txtTglReservasi.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        txtTglReservasi.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jLabel11.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        txtNamaPasien.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        txtNamaPasien.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jLabel12.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        txtIdPasien.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        txtIdPasien.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jLabel13.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        txtNoReservasi.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        txtNoReservasi.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -459,7 +584,7 @@ public class FiturReservasi extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -470,23 +595,23 @@ public class FiturReservasi extends javax.swing.JPanel {
                             .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtTglReservasi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtNamaPasien, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtIdPasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtNoReservasi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(panel2Layout.createSequentialGroup()
                                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(panel2Layout.createSequentialGroup()
-                                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(spnHour, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(spnMinute, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(panel2Layout.createSequentialGroup()
-                                        .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(spnDay, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jSpinner6, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                        .addComponent(spnMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(spnYear, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         panel2Layout.setVerticalGroup(
@@ -495,35 +620,35 @@ public class FiturReservasi extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtNoReservasi, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE))
+                    .addComponent(txtIdPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtNamaPasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtTglReservasi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpinner3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(spnDay, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(spnMonth, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(spnYear, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jSpinner6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(spnHour, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(spnMinute, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
 
@@ -560,8 +685,8 @@ public class FiturReservasi extends javax.swing.JPanel {
                 .addGroup(panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelTambahLayout.createSequentialGroup()
-                        .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
+                        .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -571,9 +696,12 @@ public class FiturReservasi extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
-                .addGroup(panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelTambahLayout.createSequentialGroup()
+                        .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 140, Short.MAX_VALUE))
+                    .addComponent(panel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         add(panelTambah, "card2");
@@ -581,10 +709,24 @@ public class FiturReservasi extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
+        serviceReservasi.loadDataPasien(tabmodel2);
+        txtNoReservasi.setText(serviceReservasi.createNo());
+        LocalDate dateNow = LocalDate.now();
+        String tglReservasi = dateNow.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        txtTglReservasi.setText(tglReservasi);
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        changePanel(panelData);
+        String idPasien = txtIdPasien.getText();
+        if(idPasien.length() > 0) {        
+            tambahData();
+            clearField();
+            changePanel(panelData);
+            tabmodel1.setRowCount(0);
+            tampilData();
+        } else {
+            JOptionPane.showMessageDialog(null, "Silahkan pilih pasien");
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void txtCariFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusGained
@@ -599,17 +741,26 @@ public class FiturReservasi extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
     }//GEN-LAST:event_txtCariFocusLost
 
-    private void jTextField8FocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField8FocusGained
-        jTextField8.setText(null);
-        jTextField8.setForeground(new Color(0, 0, 0));
-        jTextField8.setFont(new Font("sansserif", 0, 14));
-    }//GEN-LAST:event_jTextField8FocusGained
+    private void txtCariPasienFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariPasienFocusGained
+        txtCariPasien.setText(null);
+        txtCariPasien.setForeground(new Color(0, 0, 0));
+        txtCariPasien.setFont(new Font("sansserif", 0, 14));
+    }//GEN-LAST:event_txtCariPasienFocusGained
 
-    private void jTextField8FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextField8FocusLost
-        jTextField8.setText("Cari Berdasarkan ID Pasien Atau Nama Pasien");
-        jTextField8.setForeground(new Color(185, 185, 185));
-        jTextField8.setFont(new Font("sansserif", Font.ITALIC, 14));
-    }//GEN-LAST:event_jTextField8FocusLost
+    private void txtCariPasienFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariPasienFocusLost
+        txtCariPasien.setText("Cari Berdasarkan ID Pasien Atau Nama Pasien");
+        txtCariPasien.setForeground(new Color(185, 185, 185));
+        txtCariPasien.setFont(new Font("sansserif", Font.ITALIC, 14));
+    }//GEN-LAST:event_txtCariPasienFocusLost
+
+    private void btnPilihActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihActionPerformed
+        pilihPasien();
+    }//GEN-LAST:event_btnPilihActionPerformed
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+        clearField();
+        changePanel(panelData);
+    }//GEN-LAST:event_btnBatalActionPerformed
 
     private void changePanel(JPanel panel) {
         removeAll();
@@ -625,18 +776,19 @@ public class FiturReservasi extends javax.swing.JPanel {
         }
     }
     
-    
+    private void clearField() {
+        txtNoReservasi.setText(null);
+        txtIdPasien.setText(null);
+        txtNamaPasien.setText(null);
+        txtTglReservasi.setText(null);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private swing.Button btnBatal;
+    private swing.Button btnPilih;
     private swing.Button btnSimpan;
-    private swing.Button btnSimpan1;
-    private swing.Button btnSimpan3;
     private swing.Button btnTambah;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -647,12 +799,6 @@ public class FiturReservasi extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner2;
-    private javax.swing.JSpinner jSpinner3;
-    private javax.swing.JSpinner jSpinner4;
-    private javax.swing.JSpinner jSpinner6;
-    private javax.swing.JTextField jTextField8;
     private javax.swing.JLabel label;
     private javax.swing.JLabel label1;
     private swing.Pagination pagination;
@@ -663,8 +809,18 @@ public class FiturReservasi extends javax.swing.JPanel {
     private javax.swing.JPanel panelTambah;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JScrollPane scrollPanePasien;
-    private javax.swing.JTable table;
+    private javax.swing.JSpinner spnDay;
+    private javax.swing.JSpinner spnHour;
+    private javax.swing.JSpinner spnMinute;
+    private javax.swing.JSpinner spnMonth;
+    private javax.swing.JSpinner spnYear;
+    private swing.Table table;
     private javax.swing.JTable tablePasien;
     private javax.swing.JTextField txtCari;
+    private javax.swing.JTextField txtCariPasien;
+    private javax.swing.JLabel txtIdPasien;
+    private javax.swing.JLabel txtNamaPasien;
+    private javax.swing.JLabel txtNoReservasi;
+    private javax.swing.JLabel txtTglReservasi;
     // End of variables declaration//GEN-END:variables
 }

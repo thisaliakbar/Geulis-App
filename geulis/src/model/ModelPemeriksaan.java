@@ -14,8 +14,9 @@ public class ModelPemeriksaan {
         
     }
 
-    public ModelPemeriksaan(String noPemeriksaan, String tglPemeriksaan, String deskripsi, int total, double bayar, double kembalian, String jenisPembayaran, ModelPasien modelPasien, ModelKaryawan modelKaryawan) {
+    public ModelPemeriksaan(String noPemeriksaan, ModelReservasi modelReservasi, String tglPemeriksaan, String deskripsi, int total, double bayar, double kembalian, String jenisPembayaran, ModelPasien modelPasien, ModelKaryawan modelKaryawan) {
         this.noPemeriksaan = noPemeriksaan;
+        this.modelReservasi = modelReservasi;
         this.tglPemeriksaan = tglPemeriksaan;
         this.deskripsi = deskripsi;
         this.total = total;
@@ -43,6 +44,15 @@ public class ModelPemeriksaan {
     public void setNoPemeriksaan(String noPemeriksaan) {
         this.noPemeriksaan = noPemeriksaan;
     }
+    
+    public ModelReservasi getModelReservasi() {
+        return modelReservasi;
+    }
+
+    public void setModelReservasi(ModelReservasi modelReservasi) {
+        this.modelReservasi = modelReservasi;
+    }
+    private ModelReservasi modelReservasi;
 
     public String getTglPemeriksaan() {
         return tglPemeriksaan;

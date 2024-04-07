@@ -14,9 +14,10 @@ public class ModelPasien {
         
     }
 
-    public ModelPasien(String idPasien, String nama, String noTelp, String alamat, String email, String level) {
+    public ModelPasien(String idPasien, String nama, String jenisKelamin, String noTelp, String alamat, String email, String level) {
         this.idPasien = idPasien;
         this.nama = nama;
+        this.jenisKelamin = jenisKelamin;
         this.noTelp = noTelp;
         this.alamat = alamat;
         this.email = email;
@@ -27,6 +28,7 @@ public class ModelPasien {
     
     private String idPasien;
     private String nama;
+    private String jenisKelamin;
     private String noTelp;
     private String alamat;
     private String email;
@@ -46,6 +48,14 @@ public class ModelPasien {
 
     public void setNama(String nama) {
         this.nama = nama;
+    }
+    
+    public String getJenisKelamin() {
+        return jenisKelamin;
+    }
+
+    public void setJenisKelamin(String jenisKelamin) {
+        this.jenisKelamin = jenisKelamin;
     }
 
     public String getNoTelp() {

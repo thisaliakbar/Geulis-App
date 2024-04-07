@@ -20,7 +20,7 @@ import model.ModelProfile;
  *
  * @author usER
  */
-public class Table extends JTable{
+public class Table extends JTable{    
     public Table() {
         setShowHorizontalLines(true);
         setGridColor(new Color(185, 185, 185));
