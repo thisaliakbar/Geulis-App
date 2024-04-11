@@ -22,8 +22,10 @@ public class ModelBarang {
         this.Harga_Jual = Harga_Jual;
         this.Stok = Stok;
     }
-    
+
     private String Kode_Barang;
+    private String Kode_Jenis;
+    private String Jenis_Barang;
     private String Nama_Barang;
     private String Satuan;
     private Integer Harga_Beli;
@@ -36,6 +38,22 @@ public class ModelBarang {
 
     public void setKode_Barang(String Kode_Barang) {
         this.Kode_Barang = Kode_Barang;
+    }
+    
+    public String getKode_Jenis() {
+        return Kode_Jenis;
+    }
+
+    public void setKode_Jenis(String Kode_Jenis) {
+        this.Kode_Jenis = Kode_Jenis;
+    }
+
+    public String getJenis_Barang() {
+        return Jenis_Barang;
+    }
+
+    public void setJenis_Barang(String Jenis_Barang) {
+        this.Jenis_Barang = Jenis_Barang;
     }
 
     public String getNama_Barang() {

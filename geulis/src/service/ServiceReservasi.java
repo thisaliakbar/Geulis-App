@@ -70,11 +70,11 @@ public class ServiceReservasi {
                 modelPengguna.setNama(namaPengguna);
                 
                 if(status.equals("Menunggu")) {
-                    type = StatusType.WAIT;
+                    type = StatusType.Wait;
                 } else if(status.equals("Selesai")) {
-                    type = StatusType.FINISH;
+                    type = StatusType.Finish;
                 } else {
-                    type = StatusType.CANCEL;
+                    type = StatusType.Cancel;
                 }
                 tabmodel.addRow(new ModelReservasi(noReservasi, tglReservasi, tglKedatangan, jamKedatangan, type, status, modelPengguna, modelPasien).toRowTable());
             }

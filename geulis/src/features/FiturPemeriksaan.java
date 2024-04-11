@@ -65,13 +65,13 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         tabmodel2 = (DefaultTableModel) tableDetail.getModel();
         txtDeskripsi.setLineWrap(true);
         
-        load();
+        tampilData();
         actionTableMain();
         instanceReport();
     }
     
 //  Tampil data
-    private void load() {
+    private void tampilData() {
         servicPemeriksaan.loadData(1, tabmodel1, pagination);
         pagination.addActionPagination(new ActionPagination() {
             @Override
@@ -484,9 +484,6 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         txtCari.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCariFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtCariFocusLost(evt);
             }
         });
 
@@ -1149,14 +1146,13 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",0,14));
     }//GEN-LAST:event_txtCariFocusGained
 
-    private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
-        txtCari.setText("Cari Berdasarkan Kode Barang & Nama Barang");
-        txtCari.setForeground(new Color(185,185,185));
-        txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
-    }//GEN-LAST:event_txtCariFocusLost
-
     private void btnTambahSementaraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahSementaraActionPerformed
-        int kodeTindakan = lbKodeTindakan.getText().length();
+        int kodeTindakan;
+        try {
+            kodeTindakan = lbKodeTindakan.getText().length();
+        } catch(NullPointerException ex) {
+            kodeTindakan= 0;
+        }
         int noReservasi = lbTgl.getText().length();
         String bayar = txtBayar.getText();
         double kembalian = 0;
@@ -1200,14 +1196,14 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     }//GEN-LAST:event_btnBatalActionPerformed
 
     private void btnPilih1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilih1ActionPerformed
-        PilihPemeriksaan pilih = new PilihPemeriksaan(new Main(), true, "Slide-1");
+        PilihPemeriksaan pilih = new PilihPemeriksaan(null, true, "Slide-1");
         pilih.setVisible(true);
         lbIdKaryawan.setText(pilih.modelKaryawan.getIdKaryawan());
-        lbNamaKaryawan.setText(pilih.modelKaryawan.getNama());
+        lbNamaKaryawan.setText(pilih.modelKaryawan.getNama());   
     }//GEN-LAST:event_btnPilih1ActionPerformed
 
     private void btnPilih2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilih2ActionPerformed
-        PilihPemeriksaan pilih = new PilihPemeriksaan(new Main(), true, "Slide-2");
+        PilihPemeriksaan pilih = new PilihPemeriksaan(null, true, "Slide-2");
         pilih.setVisible(true);
         lbKodeTindakan.setText(pilih.modelTindakan.getKodeTindakan());
         lbNamaTindakan.setText(pilih.modelTindakan.getNamaTindakan());

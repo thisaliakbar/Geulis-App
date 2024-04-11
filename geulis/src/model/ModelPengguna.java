@@ -18,16 +18,17 @@ public class ModelPengguna {
          this.level = level;
     }
     public ModelPengguna (){
+        
     }
-            
-            
-        private String idpengguna;
-        private String nama;
-        private String username; 
-        private String password;
-        private String email;
-        private String level; 
-        private String kode_verifikasi; 
+                  
+    private String idpengguna;
+    private String nama;
+    private String username; 
+    private String password;
+    private String confirPass;
+    private String email;
+    private String level; 
+    private String kode_verifikasi; 
 
     public String getIdpengguna() {
         return idpengguna;
@@ -59,6 +60,14 @@ public class ModelPengguna {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public String getConfirPass() {
+        return confirPass;
+    }
+
+    public void setConfirPass(String confirPass) {
+        this.confirPass = confirPass;
     }
 
     public String getEmail() {

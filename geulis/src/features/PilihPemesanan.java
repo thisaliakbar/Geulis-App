@@ -26,7 +26,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import model.ModelHeaderTable;
 import model.ModelPemesanan;
+import model.ModelPengguna;
 import model.ModelRenderTable;
+import model.ModelSupplier;
 import service.Koneksi;
 
 /**
@@ -46,11 +48,10 @@ public class PilihPemesanan extends java.awt.Dialog {
         initComponents();
         connection = Koneksi.getConnection();
                 
-        styleTable(scroll2, table2, 5);
+        styleTable(scroll2, table2, 7);
         tabemodel2 = (DefaultTableModel) table2.getModel();
-        tabemodel2.setRowCount(0);
-        tampilData();
         modelPemesanan = new ModelPemesanan();
+        tampilData();
         TableRowSorter rowSorter = new TableRowSorter<>(tabemodel2);
         table2.setRowSorter(rowSorter);
         
@@ -64,44 +65,56 @@ public class PilihPemesanan extends java.awt.Dialog {
         pn.setBackground(new Color(255, 255, 255));
         scroll.setCorner(JScrollPane.UPPER_RIGHT_CORNER, pn);
         scroll.setBorder(new EmptyBorder(5, 10, 5, 10));
-        table.setRowHeight(35);
+        table.setRowHeight(40);
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
         table.setDefaultRenderer(Object.class, new ModelRenderTable(columnTable));
     }
         
-//  Tampil Data Tindakan
+//  Tampil Data Pemesanan
     private void tampilData() {
-        String query = "SELECT No_Pemesanan, Tanggal, Total_Pemesanan, Keterangan FROM pemesanan";
+        String query = "SELECT pmsn.No_Pemesanan, DATE_FORMAT(pmsn.Tanggal, '%d - %M - %Y') AS Tanggal, pmsn.ID_Supplier, spl.Nama, pgn.ID_Pengguna, pgn.Nama, pmsn.Total_Pemesanan, pmsn.Keterangan "
+                + "FROM pemesanan pmsn JOIN supplier spl ON pmsn.ID_Supplier=spl.ID_Supplier JOIN pengguna pgn ON pmsn.ID_Pengguna=pgn.ID_Pengguna "
+                + "WHERE Keterangan='Dikirim'";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
             while(rst.next()) {
                 String noPemesanan = rst.getString("No_Pemesanan");
                 String tglPemesanan = rst.getString("Tanggal");
+                String idSupplier = rst.getString("ID_Supplier");
+                String namaSupplier = rst.getString("spl.Nama");
+                String idPengguna = rst.getString("ID_Pengguna");
+                String namaPengguna = rst.getString("pgn.Nama");
                 int total = rst.getInt("Total_Pemesanan");
-                String keterangan = rst.getString("Keterangan");
-                tabemodel2.addRow(new Object[]{noPemesanan, tglPemesanan, total, keterangan});
+                tabemodel2.addRow(new Object[]{noPemesanan, tglPemesanan, idSupplier, namaSupplier, idPengguna, namaPengguna, total});
             }
         } catch(Exception ex) {
             ex.printStackTrace();
         }
     }    
     
-//  Pilih Tindakan
+//  Pilih Pemesanan
     private void pilihPemesanan() {
+        ModelSupplier modelSupplier = new ModelSupplier();
+        ModelPengguna modelPengguna = new ModelPengguna();
         int selectRow = table2.getSelectedRow();
         if(selectRow != -1) {
-            String noPemesanan = (String) table2.getValueAt(selectRow, 0);
-            int total = (int) table2.getValueAt(selectRow, 2);
-            modelPemesanan.setNoPemesanan(noPemesanan);
-            modelPemesanan.setTotal(total);
+            modelPemesanan.setNoPemesanan((String) table2.getValueAt(selectRow, 0));
+            modelPemesanan.setTglPemesanan((String) table2.getValueAt(selectRow, 1));
+            modelSupplier.setIdSupplier((String) table2.getValueAt(selectRow, 2));
+            modelSupplier.setNamaSupplier((String) table2.getValueAt(selectRow, 3));
+            modelPemesanan.setModelSupplier(modelSupplier);
+            modelPengguna.setIdpengguna((String) table2.getValueAt(selectRow, 4));
+            modelPengguna.setNama((String) table2.getValueAt(selectRow, 5));
+            modelPemesanan.setModelPengguna(modelPengguna);
+            modelPemesanan.setTotal((int) table2.getValueAt(selectRow, 6));
             dispose();
         } else {
             JOptionPane.showMessageDialog(panel2, "Silahkan Pilih Pemesanan Terlebih Dahulu");
         }
     }
     
-//    Cari tindakan
+//    Cari Pemesanan
     private void search(JTextField field, TableRowSorter rowSorter) {
         field.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -174,17 +187,14 @@ public class PilihPemesanan extends java.awt.Dialog {
         table2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         table2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "No Pemesanan", "Tanggal", "Total", "Keterangan"
+                "No Pemesanan", "Tanggal Pemesanan", "ID Supplier", "Supplier", "ID Pengguna", "Pemesan", "Total"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -192,9 +202,18 @@ public class PilihPemesanan extends java.awt.Dialog {
             }
         });
         scroll2.setViewportView(table2);
+        if (table2.getColumnModel().getColumnCount() > 0) {
+            table2.getColumnModel().getColumn(2).setMinWidth(0);
+            table2.getColumnModel().getColumn(2).setPreferredWidth(0);
+            table2.getColumnModel().getColumn(2).setMaxWidth(0);
+            table2.getColumnModel().getColumn(4).setMinWidth(0);
+            table2.getColumnModel().getColumn(4).setPreferredWidth(0);
+            table2.getColumnModel().getColumn(4).setMaxWidth(0);
+        }
 
         label2.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         label2.setForeground(new java.awt.Color(135, 15, 50));
+        label2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         label2.setText("Data Pemesanan Barang");
 
         button2.setBackground(new java.awt.Color(135, 15, 50));
@@ -227,29 +246,26 @@ public class PilihPemesanan extends java.awt.Dialog {
             .addComponent(scroll2)
             .addGroup(panel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCari2, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(label2)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtCari2, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(140, Short.MAX_VALUE))
+            .addComponent(label2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panel2Layout.setVerticalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(label2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCari2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(label2, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(button2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCari2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(3, 3, 3)))
                 .addGap(18, 18, 18)
                 .addComponent(scroll2, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE))
         );

@@ -16,8 +16,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import model.ModelDetailPemeriksaan;
 import model.ModelHeader;
 import model.ModelHeaderTable;
@@ -51,6 +55,9 @@ public class FiturReservasi extends javax.swing.JPanel {
         tampilData();
         styleTable(scrollPanePasien, tablePasien,5);
         tabmodel2 = (DefaultTableModel) tablePasien.getModel();
+        TableRowSorter rowSorter = new TableRowSorter<>(tabmodel2);
+        tablePasien.setRowSorter(rowSorter);
+        search(rowSorter);
         actionRenderTable();
     }
     
@@ -174,6 +181,35 @@ public class FiturReservasi extends javax.swing.JPanel {
         dialog.setVisible(true);
         
     }
+    
+    private void search(TableRowSorter rowSorter) {
+        txtCariPasien.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = txtCariPasien.getText();
+                if(text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1, 3));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = txtCariPasien.getText();
+                if(text.trim().length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1, 3));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+            }
+        });
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -259,9 +295,6 @@ public class FiturReservasi extends javax.swing.JPanel {
         txtCari.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCariFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtCariFocusLost(evt);
             }
         });
 
@@ -443,15 +476,12 @@ public class FiturReservasi extends javax.swing.JPanel {
         txtCariPasien.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         txtCariPasien.setForeground(new java.awt.Color(185, 185, 185));
         txtCariPasien.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtCariPasien.setText("Cari Berdasarkan ID Pasien atau Nama Pasien");
+        txtCariPasien.setText("Cari Berdasarkan ID Pasien, Nama Pasien, atau Alamat");
         txtCariPasien.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
         txtCariPasien.setOpaque(false);
         txtCariPasien.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCariPasienFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtCariPasienFocusLost(evt);
             }
         });
 
@@ -735,23 +765,11 @@ public class FiturReservasi extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",0,14));
     }//GEN-LAST:event_txtCariFocusGained
 
-    private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
-        txtCari.setText("Cari Berdasarkan Kode Barang Atau Nama Barang");
-        txtCari.setForeground(new Color(185,185,185));
-        txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
-    }//GEN-LAST:event_txtCariFocusLost
-
     private void txtCariPasienFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariPasienFocusGained
         txtCariPasien.setText(null);
         txtCariPasien.setForeground(new Color(0, 0, 0));
         txtCariPasien.setFont(new Font("sansserif", 0, 14));
     }//GEN-LAST:event_txtCariPasienFocusGained
-
-    private void txtCariPasienFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariPasienFocusLost
-        txtCariPasien.setText("Cari Berdasarkan ID Pasien Atau Nama Pasien");
-        txtCariPasien.setForeground(new Color(185, 185, 185));
-        txtCariPasien.setFont(new Font("sansserif", Font.ITALIC, 14));
-    }//GEN-LAST:event_txtCariPasienFocusLost
 
     private void btnPilihActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihActionPerformed
         pilihPasien();

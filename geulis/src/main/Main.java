@@ -30,6 +30,7 @@ import features.FiturTindakan;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import model.ModelPengguna;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
@@ -50,7 +51,7 @@ public class Main extends javax.swing.JFrame {
     private Content content;
     private Sidebar menu;
     private Animator animator;
-    public Main() {
+    public Main(ModelPengguna modelPengguna) {
         initComponents();
         initiation();
         endPromoAuto();
@@ -317,7 +318,7 @@ public class Main extends javax.swing.JFrame {
         FlatMacLightLaf.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
+                new Main(null).setVisible(true);
             }
         });
     }
