@@ -14,7 +14,11 @@ public class ModelPemeriksaan {
         
     }
 
-    public ModelPemeriksaan(String noPemeriksaan, ModelReservasi modelReservasi, String tglPemeriksaan, String deskripsi, int total, double bayar, double kembalian, String jenisPembayaran, ModelPasien modelPasien, ModelKaryawan modelKaryawan) {
+    public ModelPemeriksaan(
+    String noPemeriksaan, ModelReservasi modelReservasi, String tglPemeriksaan, String deskripsi, 
+    int total, double bayar, double kembalian, String jenisPembayaran, ModelPasien modelPasien, 
+    ModelKaryawan modelKaryawan, ModelPengguna modelPengguna
+    ) {
         this.noPemeriksaan = noPemeriksaan;
         this.modelReservasi = modelReservasi;
         this.tglPemeriksaan = tglPemeriksaan;
@@ -25,6 +29,7 @@ public class ModelPemeriksaan {
         this.jenisPembayaran = jenisPembayaran;
         this.modelPasien = modelPasien;
         this.modelKaryawan = modelKaryawan;
+        this.modelPengguna = modelPengguna;
     }
     
     private String noPemeriksaan;
@@ -36,7 +41,9 @@ public class ModelPemeriksaan {
     private String jenisPembayaran;
     private ModelPasien modelPasien;
     private ModelKaryawan modelKaryawan;
-
+    private ModelReservasi modelReservasi;
+    private ModelPengguna modelPengguna;
+    
     public String getNoPemeriksaan() {
         return noPemeriksaan;
     }
@@ -45,15 +52,6 @@ public class ModelPemeriksaan {
         this.noPemeriksaan = noPemeriksaan;
     }
     
-    public ModelReservasi getModelReservasi() {
-        return modelReservasi;
-    }
-
-    public void setModelReservasi(ModelReservasi modelReservasi) {
-        this.modelReservasi = modelReservasi;
-    }
-    private ModelReservasi modelReservasi;
-
     public String getTglPemeriksaan() {
         return tglPemeriksaan;
     }
@@ -116,5 +114,21 @@ public class ModelPemeriksaan {
 
     public void setModelKaryawan(ModelKaryawan modelKaryawan) {
         this.modelKaryawan = modelKaryawan;
+    }
+    
+    public ModelReservasi getModelReservasi() {
+        return modelReservasi;
+    }
+
+    public void setModelReservasi(ModelReservasi modelReservasi) {
+        this.modelReservasi = modelReservasi;
+    }
+    
+    public ModelPengguna getModelPengguna() {
+        return modelPengguna;
+    }
+
+    public void setModelPengguna(ModelPengguna modelPengguna) {
+        this.modelPengguna = modelPengguna;
     }
 }

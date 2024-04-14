@@ -17,12 +17,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import model.ModelDetailPengeluaran;
 import model.ModelHeaderTable;
 import model.ModelJenisPengeluaran;
 import model.ModelPengeluaran;
+import model.ModelPengguna;
 import model.ModelRenderTable;
 import model.PengeluaranSementara;
 import service.ServicePengeluaran;
@@ -42,13 +47,20 @@ public class FiturPengeluaran extends javax.swing.JPanel {
     private DefaultTableModel tabmodel1;
     private DefaultTableModel tabmodel2;
     private TableAction action;
+    private ModelPengguna modelPengguna;
+    private TableRowSorter<DefaultTableModel> rowSorter;
     
-    public FiturPengeluaran() {
+    public FiturPengeluaran(ModelPengguna modelPengguna) {
         initComponents();
+        this.modelPengguna = modelPengguna;
         styleTable(scrollPane, table,6);
         tabmodel1 = (DefaultTableModel) table.getModel();
         tampilData();
+        rowSorter = new TableRowSorter<>(tabmodel1);
+        table.setRowSorter(rowSorter);
+        cariData();
         actionTableMain();
+        
         
         styleTable(scrollPane2, tableDetail, 4);
         tabmodel2 = (DefaultTableModel) tableDetail.getModel();
@@ -85,6 +97,11 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         @Override
         public void view(int row) {
             tampilDataDetail(row);
+            txtCari.setText("");
+            if(txtCari.getText().length() == 0) {
+                tabmodel1.setRowCount(0);
+                tampilData();
+            }
         }
     };        
         table.getColumnModel().getColumn(6).setCellRenderer(new TableCellActionRender(false, false, true));
@@ -142,7 +159,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         String deskripsi = txtDesc.getText();
         
 //        tambah data pengeluaran
-        ModelPengeluaran modelPengeluaran = new ModelPengeluaran(noPengeluaran, tgl, total(), deskripsi);
+        ModelPengeluaran modelPengeluaran = new ModelPengeluaran(noPengeluaran, tgl, total(), deskripsi, modelPengguna);
         servicePengeluaran.addDataPengeluaran(modelPengeluaran);
         
         ModelDetailPengeluaran detail = new ModelDetailPengeluaran();
@@ -150,7 +167,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         for(int a = 0; a < tableDetail.getRowCount(); a++) {
             String noJenis = (String) tableDetail.getValueAt(a, 0);
             String detailJenis = (String) tableDetail.getValueAt(a, 2);
-            int subtotal = (int) tableDetail.getValueAt(0, 3);
+            int subtotal = (int) tableDetail.getValueAt(a, 3);
             PengeluaranSementara ps = new PengeluaranSementara(new String[]{noJenis}, new String[]{detailJenis}, new int[]{subtotal});
             modelPengeluaran.setNoPengeluaran(noPengeluaran);
             detail.setModelPengeluaran(modelPengeluaran);
@@ -175,7 +192,11 @@ public class FiturPengeluaran extends javax.swing.JPanel {
     private void tampilDataDetail(int row) {
         ModelDetailPengeluaran detailPengeluaran = new ModelDetailPengeluaran();
         ModelPengeluaran pengeluaran = new ModelPengeluaran();
+        ModelPengguna modelPengguna = new ModelPengguna();
         pengeluaran.setNoPengeluaran((String) table.getValueAt(row, 0));
+        modelPengguna.setIdpengguna((String) table.getValueAt(row, 1));
+        modelPengguna.setNama((String) table.getValueAt(row, 2));
+        pengeluaran.setModelPengguna(modelPengguna);
         pengeluaran.setTglPengeluaran((String) table.getValueAt(row, 3));
         pengeluaran.setTotal((int) table.getValueAt(row, 4));
         pengeluaran.setDeskripsi((String) table.getValueAt(row, 5));
@@ -192,6 +213,40 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         }
         return total;
     }
+    
+    private void cariData() {
+        txtCari.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                    rowSorter.setRowFilter(null);
+                    pagination.setVisible(true);
+                } else {
+                    pagination.setVisible(false);
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 3));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                    rowSorter.setRowFilter(null);
+                    pagination.setVisible(true);
+                } else {
+                    pagination.setVisible(false);
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 3));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                
+            }
+        });
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -404,7 +459,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, true
+                false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -739,12 +794,13 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         txtCari.setText(null);
         txtCari.setForeground(new Color(0,0,0));
         txtCari.setFont(new Font("sansserif",0,14));
+        pagination.setVisible(false);
+        tabmodel1.setRowCount(0);
+        servicePengeluaran.searchData(tabmodel1);
     }//GEN-LAST:event_txtCariFocusGained
 
     private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
-        txtCari.setText("Cari Berdasarkan Kode Barang & Nama Barang");
-        txtCari.setForeground(new Color(185,185,185));
-        txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
+        pagination.setVisible(true);
     }//GEN-LAST:event_txtCariFocusLost
 
     private void btnTambahDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahDetailActionPerformed
@@ -781,6 +837,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
             tambahData();
             clearField();
             addItemCbx();
+            tabmodel1.setRowCount(0);
             tampilData();
             changePanel(panelData);
         }
@@ -872,6 +929,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         txtDetailJenis.setText(null);
         txtSubtotal.setText(null);
         txtDesc.setText("Catatan(Opsional)");
+        lbTotal.setText("0");
     } 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

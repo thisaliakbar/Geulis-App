@@ -10,11 +10,12 @@ package model;
  */
 public class ModelPengeluaran {
 
-    public ModelPengeluaran(String noPengeluaran, String tglPengeluaran, int total, String deskripsi) {
+    public ModelPengeluaran(String noPengeluaran, String tglPengeluaran, int total, String deskripsi, ModelPengguna modelPengguna) {
         this.noPengeluaran = noPengeluaran;
         this.tglPengeluaran = tglPengeluaran;
         this.total = total;
         this.deskripsi = deskripsi;
+        this.modelPengguna = modelPengguna;
     }
 
     public ModelPengeluaran() {
@@ -25,7 +26,7 @@ public class ModelPengeluaran {
     private String tglPengeluaran;
     private int total;
     private String deskripsi;
-    private ModelPengeluaran modelPengeluaran;
+    private ModelPengguna modelPengguna;
 
     public String getNoPengeluaran() {
         return noPengeluaran;
@@ -57,5 +58,13 @@ public class ModelPengeluaran {
 
     public void setDeskripsi(String deskripsi) {
         this.deskripsi = deskripsi;
+    }
+    
+    public ModelPengguna getModelPengguna() {
+        return modelPengguna;
+    }
+
+    public void setModelPengguna(ModelPengguna modelPengguna) {
+        this.modelPengguna = modelPengguna;
     }
 }

@@ -92,19 +92,4 @@ public class ServiceRiwayatPasien {
             ex.printStackTrace();
         }
     }
-    
-    private void addDataRiwayatPasien(ModelPemeriksaan modelPemeriksaan, String status) {
-        String query = "INSERT INTO riwayat_pasien (No_Pemeriksaan,ID_Pasien,Nama,Terakhir_Pemeriksaan,Status) VALUES(?,?,?,?,?)";
-        try {
-            PreparedStatement pst = connection.prepareStatement(query);
-            pst.setString(1, modelPemeriksaan.getNoPemeriksaan());
-            pst.setString(2, modelPemeriksaan.getModelPasien().getIdPasien());
-            pst.setString(3, modelPemeriksaan.getModelPasien().getNama());
-            pst.setString(4, modelPemeriksaan.getTglPemeriksaan());
-            pst.setString(5, status);
-            pst.executeUpdate();
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 }

@@ -5,6 +5,7 @@
 package features;
 
 import java.awt.event.ActionListener;
+import model.ModelPengguna;
 
 
 /**
@@ -16,9 +17,14 @@ public class Pengaturan extends java.awt.Dialog {
     /**
      * Creates new form Pengaturan
      */
-    public Pengaturan(java.awt.Frame parent, boolean modal) {
+    public Pengaturan(java.awt.Frame parent, boolean modal, ModelPengguna modelPengguna) {
         super(parent, modal);
         initComponents();
+        String level = modelPengguna.getLevel();
+        if(level.equals("Admin")) {
+            jLabel2.setVisible(false);
+            btnPromo.setVisible(false);
+        }
     }
     
     public void account(ActionListener action) {
@@ -160,7 +166,7 @@ public class Pengaturan extends java.awt.Dialog {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Pengaturan dialog = new Pengaturan(new java.awt.Frame(), true);
+                Pengaturan dialog = new Pengaturan(new java.awt.Frame(), true, null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);

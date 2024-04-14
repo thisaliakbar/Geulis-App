@@ -76,13 +76,63 @@ public class ServiceReservasi {
                 } else {
                     type = StatusType.Cancel;
                 }
-                tabmodel.addRow(new ModelReservasi(noReservasi, tglReservasi, tglKedatangan, jamKedatangan, type, status, modelPengguna, modelPasien).toRowTable());
+                tabmodel.addRow(new ModelReservasi
+                (noReservasi, tglReservasi, tglKedatangan, 
+                jamKedatangan, type, status, modelPengguna, 
+                modelPasien).toRowTable());
             }
             pst.close();
             rst.close();
             
             int totalPage = (int) Math.ceil((double)count / limit);
             pagination.setPagination(page, totalPage);
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void searchData(DefaultTableModel tabmodel) {
+        String query = "SELECT rsv.No_Reservasi, DATE_FORMAT(rsv.Tanggal_Reservasi, '%d - %M - %Y') AS Tanggal_Reservasi, "
+        + "rsv.ID_Pasien, psn.Nama, psn.Jenis_Kelamin, DATE_FORMAT(rsv.Tanggal_Kedatangan, '%d - %M - %Y') AS Tanggal_Kedatangan, "
+        + "TIME_FORMAT(rsv.Jam_Kedatangan, '%H.%i WIB') AS Jam_Kedatangan, rsv.Status_Reservasi, rsv.ID_Pengguna, pgn.Nama FROM reservasi rsv "
+        + "JOIN pasien psn ON rsv.ID_Pasien=psn.ID_Pasien JOIN pengguna pgn "
+        + "ON rsv.ID_Pengguna=pgn.ID_Pengguna ORDER BY No_Reservasi ASC ";
+        ModelPengguna modelPengguna = new ModelPengguna();
+        ModelPasien modelPasien = new ModelPasien();
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            while(rst.next()){
+                String noReservasi = rst.getString("No_Reservasi");
+                String tglReservasi = rst.getString("Tanggal_Reservasi");
+                String idPasien = rst.getString("ID_Pasien");
+                String namaPasien = rst.getString("psn.Nama");
+                String jenisKelamin = rst.getString("Jenis_Kelamin");
+                String tglKedatangan = rst.getString("Tanggal_Kedatangan");
+                String jamKedatangan = rst.getString("Jam_Kedatangan");
+                String status = rst.getString("Status_Reservasi");
+                String idPengguna = rst.getString("ID_Pengguna");
+                String namaPengguna = rst.getString("pgn.Nama");
+                
+                StatusType type;
+                modelPasien.setIdPasien(idPasien);
+                modelPasien.setNama(namaPasien);
+                modelPasien.setJenisKelamin(jenisKelamin);
+                modelPengguna.setIdpengguna(idPengguna);
+                modelPengguna.setNama(namaPengguna);
+                
+                if(status.equals("Menunggu")) {
+                    type = StatusType.Wait;
+                } else if(status.equals("Selesai")) {
+                    type = StatusType.Finish;
+                } else {
+                    type = StatusType.Cancel;
+                }
+                tabmodel.addRow(new ModelReservasi
+                (noReservasi, tglReservasi, tglKedatangan, 
+                jamKedatangan, type, status, modelPengguna, 
+                modelPasien).toRowTable());
+            }
         } catch(Exception ex) {
             ex.printStackTrace();
         }

@@ -15,6 +15,8 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,15 +27,19 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import main.Main;
+import javax.swing.table.TableRowSorter;
 import model.ModelDetailPemeriksaan;
 import model.ModelHeaderTable;
 import model.ModelKaryawan;
 import model.ModelPemeriksaan;
 import model.ModelRenderTable;
 import model.ModelPasien;
+import model.ModelPengguna;
 import model.ModelReservasi;
 import model.PemeriksaanSementara;
 import service.ServiceDetailPemeriksaan;
@@ -53,19 +59,24 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private DefaultTableModel tabmodel1;
     private DefaultTableModel tabmodel2;
     private TableAction action;
+    private ModelPengguna modelPengguna;
+    private TableRowSorter<DefaultTableModel> rowSorter;
     private ServicePemeriksaan servicPemeriksaan = new ServicePemeriksaan();
     private ServiceDetailPemeriksaan serviceDetail = new ServiceDetailPemeriksaan();
-    public FiturPemeriksaan() {
+    public FiturPemeriksaan(ModelPengguna modelPengguna) {
         initComponents();
-      
-        styleTable(scrollPane, table, 11);
+        this.modelPengguna = modelPengguna;
+        styleTable(scrollPane, table, 13);
         tabmodel1 = (DefaultTableModel) table.getModel();
+        rowSorter = new TableRowSorter<>(tabmodel1);
+        table.setRowSorter(rowSorter);
         
         styleTable(scrollPanePasien, tableDetail, 6);
         tabmodel2 = (DefaultTableModel) tableDetail.getModel();
         txtDeskripsi.setLineWrap(true);
         
         tampilData();
+        cariData();
         actionTableMain();
         instanceReport();
     }
@@ -126,7 +137,10 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         karyawan.setNama(lbNamaKaryawan.getText());
         
         
-        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan(noPemeriksaan, modelReservasi, tgl, deskripsi, total(), bayar, kembalian, jenisPembayaran, pasien, karyawan);
+        ModelPemeriksaan pemeriksaan = new ModelPemeriksaan(
+        noPemeriksaan, modelReservasi, tgl, deskripsi, 
+        total(), bayar, kembalian, jenisPembayaran, pasien, 
+        karyawan, modelPengguna);
         servicPemeriksaan.addData(pemeriksaan);
         
 //      Tambah Detail
@@ -189,7 +203,8 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         ModelPasien modelPasien = new ModelPasien();
         ModelKaryawan modelKaryawan = new ModelKaryawan();
         ModelReservasi modelReservasi = new ModelReservasi();
-
+        ModelPengguna modelPengguna = new ModelPengguna();
+        
         modelPemeriksaan.setNoPemeriksaan((String) table.getValueAt(row, 0));
         modelReservasi.setNoReservasi((String) table.getValueAt(row, 1));
         modelPemeriksaan.setModelReservasi(modelReservasi);
@@ -204,6 +219,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         modelPemeriksaan.setBayar((double) table.getValueAt(row, 8));
         modelPemeriksaan.setKembalian((double) table.getValueAt(row, 9));
         modelPemeriksaan.setJenisPembayaran((String) table.getValueAt(row, 10));
+        modelPengguna.setIdpengguna((String) table.getValueAt(row, 11));
+        modelPengguna.setNama((String) table.getValueAt(row, 12));
+        modelPemeriksaan.setModelPengguna(modelPengguna);
         
         ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
         modelDetail.setModelPemeriksaan(modelPemeriksaan);
@@ -230,12 +248,15 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             fields.add(new FieldsPemeriksaan(product.getNamaTindakan(), product.getHarga(), product.getPotongan(), product.getTotalHarga()));
         }
             String noPemeriksaan = lbNoPemeriksaan.getText();
-            String tglPemeriksaan = lbTgl.getText();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate date = LocalDate.parse(lbTgl.getText(), formatter);
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("dd - MMMM - yyyy");
+            String tglPemeriksaan = format.format(date);
             Date dateNow = new Date();
             String jamPemeriksaan = new SimpleDateFormat("HH:mm").format(dateNow) + " WIB";
             String pasien = lbNamaPasien.getText();
             String karyawan = lbIdKaryawan.getText();
-            String admin = "Admin 1";
+            String admin = modelPengguna.getIdpengguna();
             String total = lbTotal.getText();
             String bayar = new DecimalFormat("#,#00").format(Double.parseDouble(txtBayar.getText()));
             String kembalian = lbKembalian.getText();
@@ -263,10 +284,15 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         @Override
         public void view(int row) {
             detailPemeriksaan(row);
+            txtCari.setText("");
+            if(txtCari.getText().length() == 0) {
+                tabmodel1.setRowCount(0);
+                tampilData();
+            }
         }
     };        
-        table.getColumnModel().getColumn(11).setCellRenderer(new TableCellActionRender(false, false, true));
-        table.getColumnModel().getColumn(11).setCellEditor(new TableCellEditor(action, false, false, true));
+        table.getColumnModel().getColumn(13).setCellRenderer(new TableCellActionRender(false, false, true));
+        table.getColumnModel().getColumn(13).setCellEditor(new TableCellEditor(action, false, false, true));
     }
     
 //    Update,Delete,Detail Table Detail
@@ -329,6 +355,39 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         } else {
             JOptionPane.showMessageDialog(null, "Silahkan scan kartu member");
         }
+    }
+        
+    private void cariData() {
+        txtCari.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                   rowSorter.setRowFilter(null);
+                   pagination.setVisible(true);
+                } else {
+                   pagination.setVisible(false);
+                   rowSorter.setRowFilter(RowFilter.regexFilter("(?i)"+text, 0, 3));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                   rowSorter.setRowFilter(null);
+                   pagination.setVisible(true);
+                } else {
+                   pagination.setVisible(false);
+                   rowSorter.setRowFilter(RowFilter.regexFilter("(?i)"+text, 0, 3));
+                }
+           }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+               
+           }
+        });
     }
     
 
@@ -420,11 +479,11 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No Pemeriksaan", "No Reservasi", "ID Pasien", "Nama Pasien", "ID Karyawan", "Tanggal Pemeriksaan", "Total", "Deskripsi", "Bayar", "Kembalian", "Jenis Pembayaran", "Detail"
+                "No Pemeriksaan", "No Reservasi", "ID Pasien", "Nama Pasien", "ID Karyawan", "Tanggal Pemeriksaan", "Total", "Deskripsi", "Bayar", "Kembalian", "Jenis Pembayaran", "ID Pengguna", "Nama Pengguna", "Detail"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -454,6 +513,12 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             table.getColumnModel().getColumn(10).setMinWidth(0);
             table.getColumnModel().getColumn(10).setPreferredWidth(0);
             table.getColumnModel().getColumn(10).setMaxWidth(0);
+            table.getColumnModel().getColumn(11).setMinWidth(0);
+            table.getColumnModel().getColumn(11).setPreferredWidth(0);
+            table.getColumnModel().getColumn(11).setMaxWidth(0);
+            table.getColumnModel().getColumn(12).setMinWidth(0);
+            table.getColumnModel().getColumn(12).setPreferredWidth(0);
+            table.getColumnModel().getColumn(12).setMaxWidth(0);
         }
 
         btnTambah.setBackground(new java.awt.Color(135, 15, 50));
@@ -484,6 +549,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         txtCari.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCariFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCariFocusLost(evt);
             }
         });
 
@@ -1144,6 +1212,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         txtCari.setText(null);
         txtCari.setForeground(new Color(0,0,0));
         txtCari.setFont(new Font("sansserif",0,14));
+        pagination.setVisible(false);
+        tabmodel1.setRowCount(0);
+        servicPemeriksaan.search(tabmodel1);
     }//GEN-LAST:event_txtCariFocusGained
 
     private void btnTambahSementaraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahSementaraActionPerformed
@@ -1277,6 +1348,10 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     private void txtBayarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBayarKeyTyped
         characterDigit(evt);
     }//GEN-LAST:event_txtBayarKeyTyped
+
+    private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
+        pagination.setVisible(true);
+    }//GEN-LAST:event_txtCariFocusLost
 
     private void changePanel(JPanel panel) {
         removeAll();

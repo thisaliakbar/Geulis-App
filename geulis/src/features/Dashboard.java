@@ -21,6 +21,7 @@ import javax.swing.JTable;
 import model.ModelCard;
 import model.ModelDashboard;
 import model.ModelHeader;
+import model.ModelPengguna;
 import service.ServiceDashboard;
 
 /**
@@ -35,8 +36,10 @@ public class Dashboard extends javax.swing.JPanel {
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     private ServiceDashboard serviceDashboard = new ServiceDashboard();
     private List<Integer> months = new ArrayList<>();
-    public Dashboard() {
+    private ModelPengguna modelPengguna;
+    public Dashboard(ModelPengguna modelPengguna) {
         initComponents();
+        this.modelPengguna = modelPengguna;
         initiationCard();
         viewChart();
         serviceDashboard.lastReseravsi(table2);
@@ -118,7 +121,7 @@ public class Dashboard extends javax.swing.JPanel {
         this.card11.viewDetail(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                detail(new FiturPemeriksaan());
+                detail(new FiturPemeriksaan(modelPengguna));
             }
         });
         
@@ -139,7 +142,7 @@ public class Dashboard extends javax.swing.JPanel {
         this.card14.viewDetail(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                detail(new FiturPengeluaran());
+                detail(new FiturPengeluaran(modelPengguna));
             }
         });
     }

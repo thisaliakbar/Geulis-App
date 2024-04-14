@@ -24,9 +24,11 @@ import model.ModelDetailPengeluaran;
 import model.ModelHeaderTable;
 import model.ModelPasien;
 import model.ModelPemeriksaan;
+import model.ModelPengeluaran;
 import model.ModelRenderTable;
 import model.ModelReservasi;
 import service.ServiceDetailPemeriksaan;
+import service.ServicePengeluaran;
 import service.ServiceReservasi;
 import service.ServiceRiwayatPasien;
 
@@ -42,6 +44,7 @@ public class DialogDetail extends java.awt.Dialog {
     private ServiceDetailPemeriksaan servisDetail1 = new ServiceDetailPemeriksaan();
     private ServiceRiwayatPasien serviceRiwayat = new ServiceRiwayatPasien();
     private ServiceReservasi serviceReservasi = new ServiceReservasi();
+    private ServicePengeluaran servicePengeluaran = new ServicePengeluaran();
     private DefaultTableModel tabModel1;
     private DefaultTableModel tabModel2;
     private DefaultTableModel tabModel3;
@@ -89,6 +92,8 @@ public class DialogDetail extends java.awt.Dialog {
         double kembalian = detailPemeriksaan.getModelPemeriksaan().getKembalian();
         String jenisPembayaran = detailPemeriksaan.getModelPemeriksaan().getJenisPembayaran();
         String deskripsi = detailPemeriksaan.getModelPemeriksaan().getDeskripsi();
+        String idPengguna = detailPemeriksaan.getModelPemeriksaan().getModelPengguna().getIdpengguna();
+        String namaPengguna = detailPemeriksaan.getModelPemeriksaan().getModelPengguna().getNama();
         pemeriksaan.setNoPemeriksaan(noPemeriksaan);
         detail.setModelPemeriksaan(pemeriksaan);
         
@@ -103,6 +108,7 @@ public class DialogDetail extends java.awt.Dialog {
         txtDesc.setText(deskripsi);
         lbBayar.setText("Rp " + df.format(bayar) + " / " + jenisPembayaran);
         lbKembalian.setText("Rp " + df.format(kembalian));
+        lbKasir.setText(idPengguna + " / " + namaPengguna);
         servisDetail1.loadData(tabModel1, detail);
     }
     
@@ -132,14 +138,10 @@ public class DialogDetail extends java.awt.Dialog {
 //    Tampil data pengeluaran
     private void tampilDataPengeluaran() {
         String noPengeluaran = detailPengeluaran.getModelPengeluaran().getNoPengeluaran();
-        String idPengguna = "USR-001";
-        String namaPengguna = "Admin 1";
+        String idPengguna = detailPengeluaran.getModelPengeluaran().getModelPengguna().getIdpengguna();
+        String namaPengguna = detailPengeluaran.getModelPengeluaran().getModelPengguna().getNama();
         String user = idPengguna.concat("/" + namaPengguna);
-        String tgl = detailPengeluaran.getModelPengeluaran().getTglPengeluaran();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate date = LocalDate.parse(tgl, formatter);
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd - MMMM - yyyy");
-        String tanggal = date.format(format);
+        String tanggal = detailPengeluaran.getModelPengeluaran().getTglPengeluaran();
         int total = detailPengeluaran.getModelPengeluaran().getTotal();
         
         lbNoPengeluaran.setText(noPengeluaran);
@@ -147,6 +149,11 @@ public class DialogDetail extends java.awt.Dialog {
         lbTglPengeluaran.setText(tanggal);
         DecimalFormat df = new DecimalFormat("#,##0.##");
         lbTotalPengeluaran.setText("Rp " + df.format(total));
+        ModelPengeluaran modelPengeluaran = new ModelPengeluaran();
+        modelPengeluaran.setNoPengeluaran(noPengeluaran);
+        ModelDetailPengeluaran modelDetail = new ModelDetailPengeluaran();
+        modelDetail.setModelPengeluaran(modelPengeluaran);
+        servicePengeluaran.loadDataDetail(modelDetail, tabModel3);
     }
     
 //    Tampil data reservasi
@@ -270,6 +277,9 @@ public class DialogDetail extends java.awt.Dialog {
         lbKembalian = new javax.swing.JLabel();
         lbTotal = new javax.swing.JLabel();
         lb17 = new javax.swing.JLabel();
+        lbKasir = new javax.swing.JLabel();
+        jSeparator4 = new javax.swing.JSeparator();
+        lb27 = new javax.swing.JLabel();
         panel2 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -363,7 +373,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbNoReservasi.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNoReservasi.setForeground(new java.awt.Color(0, 0, 0));
-        lbNoReservasi.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNoReservasi.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb2.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb2.setForeground(new java.awt.Color(0, 0, 0));
@@ -371,7 +381,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbNoPemeriksaan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNoPemeriksaan.setForeground(new java.awt.Color(0, 0, 0));
-        lbNoPemeriksaan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNoPemeriksaan.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb3.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb3.setForeground(new java.awt.Color(0, 0, 0));
@@ -379,7 +389,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbTgl.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbTgl.setForeground(new java.awt.Color(0, 0, 0));
-        lbTgl.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbTgl.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb4.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb4.setForeground(new java.awt.Color(0, 0, 0));
@@ -395,15 +405,15 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbIdPasien.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbIdPasien.setForeground(new java.awt.Color(0, 0, 0));
-        lbIdPasien.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbIdPasien.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lbNama.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNama.setForeground(new java.awt.Color(0, 0, 0));
-        lbNama.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNama.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lbIdKaryawan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbIdKaryawan.setForeground(new java.awt.Color(0, 0, 0));
-        lbIdKaryawan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbIdKaryawan.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         txtDesc.setBackground(new java.awt.Color(255, 255, 255));
         txtDesc.setColumns(20);
@@ -439,7 +449,8 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbBayar.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbBayar.setForeground(new java.awt.Color(0, 0, 0));
-        lbBayar.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbBayar.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbBayar.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb7.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb7.setForeground(new java.awt.Color(0, 0, 0));
@@ -447,19 +458,32 @@ public class DialogDetail extends java.awt.Dialog {
 
         lb16.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb16.setForeground(new java.awt.Color(0, 0, 0));
-        lb16.setText("Kembalian");
+        lb16.setText("Kembali");
 
         lbKembalian.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbKembalian.setForeground(new java.awt.Color(0, 0, 0));
-        lbKembalian.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbKembalian.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbKembalian.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lbTotal.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbTotal.setForeground(new java.awt.Color(0, 0, 0));
-        lbTotal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbTotal.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbTotal.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb17.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb17.setForeground(new java.awt.Color(0, 0, 0));
         lb17.setText("No Reservasi");
+
+        lbKasir.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        lbKasir.setForeground(new java.awt.Color(0, 0, 0));
+        lbKasir.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbKasir.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
+
+        jSeparator4.setBackground(new java.awt.Color(185, 185, 185));
+
+        lb27.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        lb27.setForeground(new java.awt.Color(0, 0, 0));
+        lb27.setText("Kasir");
 
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
@@ -473,18 +497,6 @@ public class DialogDetail extends java.awt.Dialog {
                     .addComponent(scroll1)
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panel1Layout.createSequentialGroup()
-                                .addComponent(lb6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(lb7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbBayar, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(lb16)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lbKembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(panel1Layout.createSequentialGroup()
                                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(lb4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -509,11 +521,30 @@ public class DialogDetail extends java.awt.Dialog {
                                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(lbIdPasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(lbIdKaryawan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(lbNama, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(lbNama, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)))
+                            .addGroup(panel1Layout.createSequentialGroup()
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(panel1Layout.createSequentialGroup()
+                                        .addComponent(lb6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lb27))
+                                .addGap(18, 18, 18)
+                                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(panel1Layout.createSequentialGroup()
+                                        .addComponent(lb7)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lbBayar, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(lb16))
+                                    .addComponent(lbKasir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(lbKembalian, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 80, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(txtDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtDesc, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSeparator4))
                 .addContainerGap())
         );
         panel1Layout.setVerticalGroup(
@@ -557,7 +588,13 @@ public class DialogDetail extends java.awt.Dialog {
                     .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lb6, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(scroll1, javax.swing.GroupLayout.DEFAULT_SIZE, 632, Short.MAX_VALUE)
+                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lbKasir, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb27, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scroll1, javax.swing.GroupLayout.PREFERRED_SIZE, 506, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -595,7 +632,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbNamaPasien.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNamaPasien.setForeground(new java.awt.Color(0, 0, 0));
-        lbNamaPasien.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNamaPasien.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb8.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb8.setForeground(new java.awt.Color(0, 0, 0));
@@ -603,7 +640,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbIdPasien2.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbIdPasien2.setForeground(new java.awt.Color(0, 0, 0));
-        lbIdPasien2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbIdPasien2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb10.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb10.setForeground(new java.awt.Color(0, 0, 0));
@@ -615,11 +652,11 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbTerakhirPemeriksaan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbTerakhirPemeriksaan.setForeground(new java.awt.Color(0, 0, 0));
-        lbTerakhirPemeriksaan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbTerakhirPemeriksaan.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lbNoPemeriksaan2.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNoPemeriksaan2.setForeground(new java.awt.Color(0, 0, 0));
-        lbNoPemeriksaan2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNoPemeriksaan2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         tableRiwayat.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
         tableRiwayat.setModel(new javax.swing.table.DefaultTableModel(
@@ -706,7 +743,7 @@ public class DialogDetail extends java.awt.Dialog {
                             .addComponent(lb11, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+                .addComponent(scroll2, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -735,7 +772,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbPengguna.setForeground(new java.awt.Color(0, 0, 0));
-        lbPengguna.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb9.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb9.setForeground(new java.awt.Color(0, 0, 0));
@@ -743,7 +780,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbNoPengeluaran.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNoPengeluaran.setForeground(new java.awt.Color(0, 0, 0));
-        lbNoPengeluaran.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNoPengeluaran.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb12.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb12.setForeground(new java.awt.Color(0, 0, 0));
@@ -755,11 +792,11 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbTglPengeluaran.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbTglPengeluaran.setForeground(new java.awt.Color(0, 0, 0));
-        lbTglPengeluaran.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbTglPengeluaran.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lbTotalPengeluaran.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbTotalPengeluaran.setForeground(new java.awt.Color(0, 0, 0));
-        lbTotalPengeluaran.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbTotalPengeluaran.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         tableDetailPengeluaran.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
         tableDetailPengeluaran.setModel(new javax.swing.table.DefaultTableModel(
@@ -842,7 +879,7 @@ public class DialogDetail extends java.awt.Dialog {
                             .addComponent(lb14, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(scroll3, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+                .addComponent(scroll3, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -871,7 +908,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbTglKedatangan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbTglKedatangan.setForeground(new java.awt.Color(0, 0, 0));
-        lbTglKedatangan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbTglKedatangan.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb18.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb18.setForeground(new java.awt.Color(0, 0, 0));
@@ -879,7 +916,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbNoReservasi2.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNoReservasi2.setForeground(new java.awt.Color(0, 0, 0));
-        lbNoReservasi2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNoReservasi2.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb19.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb19.setForeground(new java.awt.Color(0, 0, 0));
@@ -891,11 +928,11 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbJamKedatangan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbJamKedatangan.setForeground(new java.awt.Color(0, 0, 0));
-        lbJamKedatangan.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbJamKedatangan.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lbIdPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbIdPengguna.setForeground(new java.awt.Color(0, 0, 0));
-        lbIdPengguna.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbIdPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb21.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb21.setForeground(new java.awt.Color(0, 0, 0));
@@ -903,11 +940,11 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbNamaPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNamaPengguna.setForeground(new java.awt.Color(0, 0, 0));
-        lbNamaPengguna.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNamaPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lbStatus.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbStatus.setForeground(new java.awt.Color(0, 0, 0));
-        lbStatus.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbStatus.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb22.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb22.setForeground(new java.awt.Color(0, 0, 0));
@@ -919,11 +956,11 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbJenisKelamin.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbJenisKelamin.setForeground(new java.awt.Color(0, 0, 0));
-        lbJenisKelamin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbJenisKelamin.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lbNamaPasien3.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbNamaPasien3.setForeground(new java.awt.Color(0, 0, 0));
-        lbNamaPasien3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbNamaPasien3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb24.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb24.setForeground(new java.awt.Color(0, 0, 0));
@@ -935,7 +972,7 @@ public class DialogDetail extends java.awt.Dialog {
 
         lbIdPasien3.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lbIdPasien3.setForeground(new java.awt.Color(0, 0, 0));
-        lbIdPasien3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(185, 185, 185)));
+        lbIdPasien3.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(185, 185, 185)));
 
         lb26.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         lb26.setForeground(new java.awt.Color(0, 0, 0));
@@ -1058,7 +1095,7 @@ public class DialogDetail extends java.awt.Dialog {
                     .addComponent(jSeparator3))
                 .addGap(18, 18, 18)
                 .addComponent(btnBatalReservasi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(450, Short.MAX_VALUE))
+                .addContainerGap(430, Short.MAX_VALUE))
         );
 
         panel.add(panel4, "card2");
@@ -1116,6 +1153,7 @@ public class DialogDetail extends java.awt.Dialog {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
     private javax.swing.JLabel lb1;
     private javax.swing.JLabel lb10;
     private javax.swing.JLabel lb11;
@@ -1135,6 +1173,7 @@ public class DialogDetail extends java.awt.Dialog {
     private javax.swing.JLabel lb24;
     private javax.swing.JLabel lb25;
     private javax.swing.JLabel lb26;
+    private javax.swing.JLabel lb27;
     private javax.swing.JLabel lb3;
     private javax.swing.JLabel lb4;
     private javax.swing.JLabel lb5;
@@ -1150,6 +1189,7 @@ public class DialogDetail extends java.awt.Dialog {
     private javax.swing.JLabel lbIdPengguna;
     private javax.swing.JLabel lbJamKedatangan;
     private javax.swing.JLabel lbJenisKelamin;
+    private javax.swing.JLabel lbKasir;
     private javax.swing.JLabel lbKembalian;
     private javax.swing.JLabel lbNama;
     private javax.swing.JLabel lbNamaPasien;

@@ -10,13 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import main.Main;
 import model.ModelMessage;
@@ -33,26 +30,23 @@ public class ServiceLogin {
     
 //    Login
     public void login(ModelPengguna modelPengguna, PanelLoading panelLoading, JFrame frameLogin) {
-        String query = "SELECT * FROM pengguna WHERE Username='"+modelPengguna.getUsername()+"' OR Email='"+modelPengguna.getEmail()+"' "
+        String query = "SELECT * FROM pengguna WHERE (Username='"+modelPengguna.getUsername()+"' OR Email='"+modelPengguna.getEmail()+"') "
                 + "AND Password='"+modelPengguna.getPassword()+"'";
-        try {
-            PreparedStatement pst = connection.prepareStatement(query);
-            ResultSet rst = pst.executeQuery();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     panelLoading.setVisible(true);
                     try {
+                        PreparedStatement pst = connection.prepareStatement(query);
+                        ResultSet rst = pst.executeQuery();
                         if(rst.next()) {
                         String idPenguna = rst.getString("ID_Pengguna");
                         String namaPengguna = rst.getString("Nama");
                         String username = rst.getString("Username");
+                        String email = rst.getString("Email");
                         String level = rst.getString("Level");
-                        ModelPengguna pengguna = new ModelPengguna();
-                        pengguna.setIdpengguna(idPenguna);
-                        pengguna.setNama(namaPengguna);
-                        pengguna.setUsername(username);
-                        pengguna.setLevel(level);
+                        String password = rst.getString("Password");
+                        ModelPengguna pengguna = new ModelPengguna(idPenguna, namaPengguna, username, password, email, level);
                         Main main = new Main(pengguna);
                         panelLoading.setVisible(false);
                         main.setVisible(true);
@@ -66,9 +60,6 @@ public class ServiceLogin {
                     }
                 }
             }).start();
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
         
     }
     
@@ -144,7 +135,7 @@ public class ServiceLogin {
     }
     
     public void cancelVerify(ModelPengguna modelPengguna) {
-        String query = "UPDATE pengguna SET Password='', Kode_Verifikasi='' WHERE Email='"+modelPengguna.getEmail()+"' ";
+        String query = "UPDATE pengguna SET Kode_Verifikasi='' WHERE Email='"+modelPengguna.getEmail()+"' ";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             pst.executeUpdate();

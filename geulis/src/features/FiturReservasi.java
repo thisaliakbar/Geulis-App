@@ -47,17 +47,26 @@ public class FiturReservasi extends javax.swing.JPanel {
     private DefaultTableModel tabmodel2;
     private TableAction action;
     private ServiceReservasi serviceReservasi = new ServiceReservasi();
-    public FiturReservasi() {
+    private ModelPengguna modelPengguna;
+    private TableRowSorter<DefaultTableModel> rowSorter1;
+    private TableRowSorter<DefaultTableModel> rowSorter2;
+    public FiturReservasi(ModelPengguna modelPengguna) {
         initComponents();
+        this.modelPengguna = modelPengguna;
         table.scrollPane(scrollPane);
         table.getTableHeader().setDefaultRenderer(new ModelHeader());
         tabmodel1 = (DefaultTableModel) table.getModel();
+        rowSorter1 = new TableRowSorter<>(tabmodel1);
+        table.setRowSorter(rowSorter1);
         tampilData();
+        
         styleTable(scrollPanePasien, tablePasien,5);
         tabmodel2 = (DefaultTableModel) tablePasien.getModel();
-        TableRowSorter rowSorter = new TableRowSorter<>(tabmodel2);
-        tablePasien.setRowSorter(rowSorter);
-        search(rowSorter);
+        rowSorter2 = new TableRowSorter<>(tabmodel2);
+        tablePasien.setRowSorter(rowSorter2);
+        
+        cariReservasi();
+        cariPasien();
         actionRenderTable();
     }
     
@@ -90,7 +99,6 @@ public class FiturReservasi extends javax.swing.JPanel {
         action = new TableAction() {
         @Override
         public void edit(int row) {
-            System.out.println("Edit row : " + row);
         }
 
         @Override
@@ -98,13 +106,18 @@ public class FiturReservasi extends javax.swing.JPanel {
             if(table.isEditing()) {
                 table.getCellEditor().stopCellEditing();
             }
-            System.out.println("Remov Row : " + row);
             tabmodel1.removeRow(row);
         }
 
         @Override
         public void view(int row) {
             tampilDetail(row);
+            txtCari.setText("");
+            String text = txtCari.getText();
+            if(text.length() == 0) {
+                tabmodel1.setRowCount(0);
+                tampilData();
+            }
         }
     };        
         table.getColumnModel().getColumn(11).setCellRenderer(new TableCellActionRender(false, false, true));
@@ -129,7 +142,7 @@ public class FiturReservasi extends javax.swing.JPanel {
         String jamKedatangan = String.valueOf(hour.getHours()) + ":" + String.valueOf(minute.getMinutes()) + ":00";
         
         ModelPengguna modelPengguna = new ModelPengguna();
-        modelPengguna.setIdpengguna("USR-001");
+        modelPengguna.setIdpengguna(this.modelPengguna.getIdpengguna());
         ModelPasien modelPasien = new ModelPasien();
         modelPasien.setIdPasien(idPasien);
         
@@ -182,15 +195,48 @@ public class FiturReservasi extends javax.swing.JPanel {
         
     }
     
-    private void search(TableRowSorter rowSorter) {
+    private void cariReservasi() {
+        txtCari.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                    rowSorter1.setRowFilter(null);
+                    pagination.setVisible(true);
+                } else {
+                    pagination.setVisible(false);
+                    rowSorter1.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 3));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                    rowSorter1.setRowFilter(null);
+                    pagination.setVisible(true);
+                } else {
+                    pagination.setVisible(false);
+                    rowSorter1.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 3));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                
+            }
+        });
+    }
+    
+    private void cariPasien() {
         txtCariPasien.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 String text = txtCariPasien.getText();
                 if(text.trim().length() == 0) {
-                    rowSorter.setRowFilter(null);
+                    rowSorter2.setRowFilter(null);
                 } else {
-                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1, 3));
+                    rowSorter2.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1, 3));
                 }
             }
 
@@ -198,15 +244,15 @@ public class FiturReservasi extends javax.swing.JPanel {
             public void removeUpdate(DocumentEvent e) {
                 String text = txtCariPasien.getText();
                 if(text.trim().length() == 0) {
-                    rowSorter.setRowFilter(null);
+                    rowSorter2.setRowFilter(null);
                 } else {
-                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1, 3));
+                    rowSorter2.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1, 3));
                 }
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                
             }
         });
     }
@@ -290,11 +336,14 @@ public class FiturReservasi extends javax.swing.JPanel {
         txtCari.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         txtCari.setForeground(new java.awt.Color(185, 185, 185));
         txtCari.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtCari.setText("Cari Berdasarkan Kode Barang & Nama Barang");
+        txtCari.setText("Cari Berdasarkan No Reservasi atau Nama Pasien");
         txtCari.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(185, 185, 185)));
         txtCari.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCariFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCariFocusLost(evt);
             }
         });
 
@@ -348,23 +397,22 @@ public class FiturReservasi extends javax.swing.JPanel {
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pagination, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(panel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(pagination, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(panel1Layout.createSequentialGroup()
                         .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 604, Short.MAX_VALUE)
                         .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(3, 3, 3)
                         .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(55, 55, 55))
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(scrollPane)
-                        .addContainerGap())))
+                        .addGap(43, 43, 43))
+                    .addComponent(scrollPane))
+                .addContainerGap())
             .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(panel1Layout.createSequentialGroup()
                     .addContainerGap()
@@ -763,6 +811,9 @@ public class FiturReservasi extends javax.swing.JPanel {
         txtCari.setText(null);
         txtCari.setForeground(new Color(0,0,0));
         txtCari.setFont(new Font("sansserif",0,14));
+        pagination.setVisible(false);
+        tabmodel1.setRowCount(0);
+        serviceReservasi.searchData(tabmodel1);
     }//GEN-LAST:event_txtCariFocusGained
 
     private void txtCariPasienFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariPasienFocusGained
@@ -779,6 +830,10 @@ public class FiturReservasi extends javax.swing.JPanel {
         clearField();
         changePanel(panelData);
     }//GEN-LAST:event_btnBatalActionPerformed
+
+    private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
+        pagination.setVisible(true);
+    }//GEN-LAST:event_txtCariFocusLost
 
     private void changePanel(JPanel panel) {
         removeAll();

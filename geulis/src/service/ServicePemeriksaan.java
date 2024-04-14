@@ -27,14 +27,15 @@ public class ServicePemeriksaan {
     
     public void loadData(int page, DefaultTableModel tabmodel, Pagination pagination) {
         String sqlCount = "SELECT COUNT(No_Pemeriksaan) AS Jumlah FROM pemeriksaan";
-        int limit = 20;
+        int limit = 15;
         int count = 0;
         
         String query = "SELECT pmn.No_Pemeriksaan,pmn.No_Reservasi ,DATE_FORMAT(pmn.Tanggal_Pemeriksaan, '%d - %M - %Y') AS Tanggal_Pemeriksaan, "
                 + "pmn.Deskripsi, pmn.Total, pmn.Bayar, pmn.Kembalian, pmn.Jenis_Pembayaran, pmn.ID_Pasien, "
-                + "psn.Nama, pmn.ID_Karyawan, krn.Nama FROM pemeriksaan pmn "
+                + "psn.Nama, pmn.ID_Karyawan, krn.Nama, pmn.ID_Pengguna, pgn.Nama FROM pemeriksaan pmn "
                 + "INNER JOIN pasien psn ON pmn.ID_Pasien=psn.ID_Pasien "
                 + "INNER JOIN karyawan krn ON pmn.ID_Karyawan=krn.ID_Karyawan "
+                + "INNER JOIN pengguna pgn ON pmn.ID_Pengguna=pgn.ID_Pengguna "
                 + "ORDER BY No_Pemeriksaan ASC LIMIT "+(page-1) * limit+","+limit+"";
         
         try {
@@ -61,7 +62,12 @@ public class ServicePemeriksaan {
                 double bayar = rst.getDouble("Bayar");
                 double kembalian = rst.getDouble("Kembalian");
                 String jenisPembayaran = rst.getString("Jenis_Pembayaran");
-                tabmodel.addRow(new Object[]{noPemeriksaan, noReservasi, idPasien, namaPasien, idKaryawan, tgl, total, deskripsi, bayar, kembalian, jenisPembayaran});
+                String idPengguna = rst.getString("ID_Pengguna");
+                String namaPengguna = rst.getString("pgn.Nama");
+                tabmodel.addRow(
+                new Object[]{noPemeriksaan, noReservasi, idPasien, namaPasien, 
+                idKaryawan, tgl, total, deskripsi, bayar, kembalian, 
+                jenisPembayaran, idPengguna, namaPengguna});
             }
             pst.close();
             rst.close();
@@ -73,10 +79,46 @@ public class ServicePemeriksaan {
         }    
     }
     
+    public void search(DefaultTableModel tabmodel) {
+        String query = "SELECT pmn.No_Pemeriksaan,pmn.No_Reservasi ,DATE_FORMAT(pmn.Tanggal_Pemeriksaan, '%d - %M - %Y') AS Tanggal_Pemeriksaan, "
+        + "pmn.Deskripsi, pmn.Total, pmn.Bayar, pmn.Kembalian, pmn.Jenis_Pembayaran, pmn.ID_Pasien, "
+        + "psn.Nama, pmn.ID_Karyawan, krn.Nama, pmn.ID_Pengguna, pgn.Nama FROM pemeriksaan pmn "
+        + "INNER JOIN pasien psn ON pmn.ID_Pasien=psn.ID_Pasien "
+        + "INNER JOIN karyawan krn ON pmn.ID_Karyawan=krn.ID_Karyawan "
+        + "INNER JOIN pengguna pgn ON pmn.ID_Pengguna=pgn.ID_Pengguna "
+        + "ORDER BY No_Pemeriksaan ASC";
+        
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            while(rst.next()) {
+                String noPemeriksaan = rst.getString("No_Pemeriksaan");
+                String noReservasi = rst.getString("No_Reservasi");
+                String idPasien = rst.getString("ID_Pasien");
+                String namaPasien = rst.getString("psn.Nama");
+                String idKaryawan = rst.getString("ID_Karyawan");
+                String tgl = rst.getString("Tanggal_Pemeriksaan");
+                int total = rst.getInt("Total");
+                String deskripsi = rst.getString("Deskripsi");
+                double bayar = rst.getDouble("Bayar");
+                double kembalian = rst.getDouble("Kembalian");
+                String jenisPembayaran = rst.getString("Jenis_Pembayaran");
+                String idPengguna = rst.getString("ID_Pengguna");
+                String namaPengguna = rst.getString("pgn.Nama");
+                tabmodel.addRow(
+                new Object[]{noPemeriksaan, noReservasi, idPasien, namaPasien, 
+                idKaryawan, tgl, total, deskripsi, bayar, kembalian, 
+                jenisPembayaran, idPengguna, namaPengguna});
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+        
     public void addData(ModelPemeriksaan modelPemeriksaan) {
         String query = "INSERT INTO pemeriksaan (No_Pemeriksaan, No_Reservasi, Tanggal_Pemeriksaan, "
                 + "Deskripsi, Status_Pemeriksaan, Total, Bayar, Kembalian, Jenis_Pembayaran, "
-                + "ID_Pasien, ID_Karyawan) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                + "ID_Pasien, ID_Karyawan, ID_Pengguna) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, modelPemeriksaan.getNoPemeriksaan());
@@ -90,6 +132,7 @@ public class ServicePemeriksaan {
             pst.setString(9, modelPemeriksaan.getJenisPembayaran());
             pst.setString(10, modelPemeriksaan.getModelPasien().getIdPasien());
             pst.setString(11, modelPemeriksaan.getModelKaryawan().getIdKaryawan());
+            pst.setString(12, modelPemeriksaan.getModelPengguna().getIdpengguna());
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "Data Berhasil Ditambahkan");
             pst.close();

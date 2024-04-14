@@ -13,9 +13,12 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import model.ModelPengguna;
 import model.ModelPromo;
+import service.ServicePengaturan;
 import service.ServicePromo;
 
 
@@ -29,9 +32,13 @@ public class FiturPengaturan extends javax.swing.JPanel {
      * Creates new form FiturBarang
      */
     private DateChooser dateChooser;
+    private ServicePengaturan servicePengaturan = new ServicePengaturan();
     private ServicePromo servicePromo = new ServicePromo();
-    public FiturPengaturan(String slide) {
+    private ModelPengguna modelPengguna;
+    public FiturPengaturan(String slide, ModelPengguna modelPengguna) {
         initComponents();
+        this.modelPengguna = modelPengguna;
+        dataAkun();
         dateChooser = new DateChooser();
         lbNotif.setVisible(false);
         style();
@@ -113,9 +120,9 @@ public class FiturPengaturan extends javax.swing.JPanel {
         lb_old = new javax.swing.JLabel();
         lb_new = new javax.swing.JLabel();
         lb_confirm = new javax.swing.JLabel();
+        txtConfirPass = new javax.swing.JTextField();
         txtOldPass = new javax.swing.JTextField();
         txtNewPass = new javax.swing.JTextField();
-        txtConfirmPass = new javax.swing.JTextField();
         btnSimpan2 = new swing.Button();
         jPanel2 = new javax.swing.JPanel();
         label2 = new javax.swing.JLabel();
@@ -304,14 +311,14 @@ public class FiturPengaturan extends javax.swing.JPanel {
         lb_confirm.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lb_confirm.setText("Password Baru");
 
+        txtConfirPass.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        txtConfirPass.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+
         txtOldPass.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         txtOldPass.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         txtNewPass.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         txtNewPass.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-
-        txtConfirmPass.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
-        txtConfirmPass.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         btnSimpan2.setBackground(new java.awt.Color(135, 15, 50));
         btnSimpan2.setForeground(new java.awt.Color(255, 255, 255));
@@ -339,9 +346,9 @@ public class FiturPengaturan extends javax.swing.JPanel {
                             .addComponent(lb_confirm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(43, 43, 43)
                         .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtOldPass, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
-                            .addComponent(txtConfirmPass)
-                            .addComponent(txtNewPass))))
+                            .addComponent(txtConfirPass, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
+                            .addComponent(txtNewPass)
+                            .addComponent(txtOldPass))))
                 .addGap(26, 26, 26))
         );
         panel3Layout.setVerticalGroup(
@@ -350,15 +357,15 @@ public class FiturPengaturan extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lb_old, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtOldPass, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lb_confirm, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtConfirmPass, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNewPass, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lb_new, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtOldPass, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtConfirPass, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSimpan2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(25, Short.MAX_VALUE))
@@ -635,11 +642,11 @@ public class FiturPengaturan extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSimpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan1ActionPerformed
-
+        aturAkun();
     }//GEN-LAST:event_btnSimpan1ActionPerformed
 
     private void btnSimpan2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan2ActionPerformed
-        
+        ubahPassword();
     }//GEN-LAST:event_btnSimpan2ActionPerformed
 
     private void btnSimpan3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan3ActionPerformed
@@ -652,7 +659,7 @@ public class FiturPengaturan extends javax.swing.JPanel {
     }//GEN-LAST:event_btnViewPromoActionPerformed
 
     private void btnBack1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBack1ActionPerformed
-        back(new Dashboard());
+        back(new Dashboard(modelPengguna));
     }//GEN-LAST:event_btnBack1ActionPerformed
 
     private void cbxJenisPromoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxJenisPromoActionPerformed
@@ -690,11 +697,11 @@ public class FiturPengaturan extends javax.swing.JPanel {
     }//GEN-LAST:event_txtPromoKeyTyped
 
     private void btnBack3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBack3ActionPerformed
-        back(new Dashboard());
+        back(new Dashboard(modelPengguna));
     }//GEN-LAST:event_btnBack3ActionPerformed
 
     private void btnBack2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBack2ActionPerformed
-        back(new Dashboard());
+        back(new Dashboard(modelPengguna));
     }//GEN-LAST:event_btnBack2ActionPerformed
 
     
@@ -734,7 +741,7 @@ public class FiturPengaturan extends javax.swing.JPanel {
     private javax.swing.JPanel panelAkun;
     private javax.swing.JPanel panelPassword;
     private javax.swing.JPanel panelPromo;
-    private javax.swing.JTextField txtConfirmPass;
+    private javax.swing.JTextField txtConfirPass;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtNama;
     private javax.swing.JTextField txtNamaPromo;
@@ -744,6 +751,46 @@ public class FiturPengaturan extends javax.swing.JPanel {
     private javax.swing.JTextField txtRentang;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
+
+//  Akun
+    private void dataAkun() {
+        List<String> listData = servicePengaturan.loadAccount(modelPengguna);
+        for(int a = 0; a < listData.size(); a++) {
+        txtNama.setText(listData.get(0));
+        txtUsername.setText(listData.get(1));
+        txtEmail.setText(listData.get(2));   
+        }
+    }
+    
+    private void aturAkun() {
+        ModelPengguna modelPengguna = new ModelPengguna();
+        modelPengguna.setIdpengguna(this.modelPengguna.getIdpengguna());
+        modelPengguna.setNama(txtNama.getText());
+        modelPengguna.setUsername(txtUsername.getText());
+        modelPengguna.setEmail(txtEmail.getText());
+        servicePengaturan.setAccount(modelPengguna);
+    }
+    
+//    Ubah Password
+    private void ubahPassword() {
+        ModelPengguna modelPengguna = new ModelPengguna();
+        String idPengguna = this.modelPengguna.getIdpengguna();
+        String oldPassword = txtOldPass.getText();
+        String newPassword = txtNewPass.getText();
+        String confirPass = txtConfirPass.getText();
+        modelPengguna.setIdpengguna(idPengguna);
+        modelPengguna.setPassword(newPassword);
+                
+        if(oldPassword.equals(this.modelPengguna.getPassword())) {
+            if(confirPass.equals(newPassword)) {
+            servicePengaturan.setPassword(modelPengguna);
+            } else {
+            JOptionPane.showMessageDialog(null, "Konfirmasi password salah");   
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Password lama salah");
+        } 
+    }
 
 //    Atur Promo
     private void aturPromo() {

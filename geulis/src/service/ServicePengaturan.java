@@ -6,9 +6,10 @@ package service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
+import model.ModelPengguna;
 /**
  *
  * @author usER
@@ -17,5 +18,52 @@ public class ServicePengaturan {
     private Connection connection;
     public ServicePengaturan() {
         connection = Koneksi.getConnection();
+    }
+    
+//    Account
+    public List<String> loadAccount(ModelPengguna modelPengguna) {
+        List<String> listData = new ArrayList<>();
+        String query = "SELECT Nama, Username, Email FROM pengguna WHERE ID_Pengguna='"+modelPengguna.getIdpengguna()+"' ";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+                listData.add(rst.getString("Nama"));
+                listData.add(rst.getString("Username"));
+                listData.add(rst.getString("Email"));
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return listData;
+    }
+    
+    public void setAccount(ModelPengguna modelPengguna) {
+        String query = "UPDATE pengguna SET Nama=?, Username=?, Email=? WHERE ID_Pengguna=?";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.setString(1, modelPengguna.getNama());
+            pst.setString(2, modelPengguna.getUsername());
+            pst.setString(3, modelPengguna.getEmail());
+            pst.setString(4, modelPengguna.getIdpengguna());
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Akun berhasil dirubah");
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+//    Change Password
+    public void setPassword(ModelPengguna modelPengguna) {
+        String query = "UPDATE pengguna SET Password=? WHERE ID_Pengguna=?";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.setString(1, modelPengguna.getPassword());
+            pst.setString(2, modelPengguna.getIdpengguna());
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Password berhasil dirubah");
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
