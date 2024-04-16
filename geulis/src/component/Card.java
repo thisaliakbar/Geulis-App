@@ -12,6 +12,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import javax.swing.ImageIcon;
 import model.ModelCard;
 
 /**
@@ -112,7 +113,6 @@ public class Card extends javax.swing.JPanel {
         txtRange.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtRange.setText("2024-03-28 Sampai 2024-04-28");
         txtRange.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(170, 170, 170)));
-        txtRange.setOpaque(false);
 
         btnDetail.setBackground(new java.awt.Color(153, 153, 153));
         btnDetail.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N

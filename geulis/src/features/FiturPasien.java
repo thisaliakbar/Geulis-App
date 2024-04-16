@@ -4,18 +4,23 @@
  */
 package features;
 
+import action.ActionPagination;
 import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import model.ModelHeaderTable;
+import model.ModelPasien;
 import model.ModelRenderTable;
+import service.ServicePasien;
 import swing.TableCellActionRender;
 import swing.TableCellEditor;
 
@@ -30,7 +35,8 @@ public class FiturPasien extends javax.swing.JPanel {
      */
     private DefaultTableModel tabmodel;
     private TableAction action;
-    
+    private ServicePasien servicePasien = new ServicePasien();
+    private int page;
     public FiturPasien() {
         initComponents();
         
@@ -43,12 +49,20 @@ public class FiturPasien extends javax.swing.JPanel {
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
         table.setDefaultRenderer(Object.class, new ModelRenderTable(6));
         tabmodel = (DefaultTableModel) table.getModel();
-        
-        for(int a = 0; a < 20; a++) {
-            tabmodel.addRow(new String[]{"B-2402-001","Botol","Pcs","25000","35000","100"});
-        }
+        tampilData();
         actionRenderTable();
        
+    }
+    
+    private void tampilData() {
+        servicePasien.loadData(1, pagination, tabmodel);
+        pagination.addActionPagination(new ActionPagination() {
+            @Override
+            public void pageChanged(int page) {
+                tabmodel.setRowCount(0);
+                servicePasien.loadData(page, pagination, tabmodel);
+            }
+    });
     }
     
 //  Update,Delete,Detail
@@ -56,11 +70,30 @@ public class FiturPasien extends javax.swing.JPanel {
         action = new TableAction() {
         @Override
         public void edit(int row) {
-            System.out.println("Edit row : " + row);
+            changePanel(panelTambah);
+            t_idPasien.setEnabled(false);
+            btnSimpan.setText("PERBARUI");
+            String idPasien = (String) table.getValueAt(row, 0);
+            String nama = (String) table.getValueAt(row, 1);
+            String no_Telp = (String) table.getValueAt(row, 2);
+            String alamat = (String) table.getValueAt(row, 3);
+            String email = (String) table.getValueAt(row, 4);
+            String level = (String) table.getValueAt(row, 5);
+            
+            t_idPasien.setText(idPasien);
+            t_nama.setText(nama);
+            t_jenisKelamin.setText(no_Telp);
+            t_alamat.setText(alamat);
+            t_email.setText(email);
+            cbx_level.setSelectedItem(level);
         }
 
         @Override
         public void delete(int row) {
+            String idPasien = (String) table.getValueAt(row, 0);
+            ModelPasien modelPasien = new ModelPasien();
+            modelPasien.setIdPasien(idPasien);
+            servicePasien.deleteData(modelPasien);
             if(table.isEditing()) {
                 table.getCellEditor().stopCellEditing();
             }
@@ -105,13 +138,15 @@ public class FiturPasien extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         btnSimpan1 = new swing.Button();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
+        t_idPasien = new javax.swing.JTextField();
+        t_nama = new javax.swing.JTextField();
+        t_jenisKelamin = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        t_alamat = new javax.swing.JTextArea();
+        cbx_level = new javax.swing.JComboBox<>();
+        t_no_Telp = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        t_email = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         label1 = new javax.swing.JLabel();
 
@@ -127,7 +162,6 @@ public class FiturPasien extends javax.swing.JPanel {
         scrollPane.setBorder(null);
         scrollPane.setOpaque(false);
 
-        table.setBackground(new java.awt.Color(255, 255, 255));
         table.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -169,7 +203,6 @@ public class FiturPasien extends javax.swing.JPanel {
         pagination.setForeground(new java.awt.Color(255, 255, 255));
         pagination.setOpaque(false);
 
-        txtCari.setBackground(new java.awt.Color(255, 255, 255));
         txtCari.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         txtCari.setForeground(new java.awt.Color(185, 185, 185));
         txtCari.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -269,32 +302,26 @@ public class FiturPasien extends javax.swing.JPanel {
         });
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel1.setText("Nama");
 
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel2.setText("ID Pasien");
 
         jLabel3.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel3.setText("Email");
 
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel4.setText("No Telepon");
 
         jLabel5.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel5.setText("Level");
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel6.setText("Alamat");
 
@@ -302,29 +329,46 @@ public class FiturPasien extends javax.swing.JPanel {
         btnSimpan1.setForeground(new java.awt.Color(255, 255, 255));
         btnSimpan1.setText("BATAL");
         btnSimpan1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        jTextField2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField2.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-
-        jTextField4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField4.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextField4KeyTyped(evt);
+        btnSimpan1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpan1ActionPerformed(evt);
             }
         });
 
-        jTextField7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField7.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        t_idPasien.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        t_idPasien.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jTextField8.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField8.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        t_nama.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        t_nama.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        t_jenisKelamin.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        t_jenisKelamin.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        t_alamat.setColumns(20);
+        t_alamat.setRows(5);
+        jScrollPane1.setViewportView(t_alamat);
+
+        cbx_level.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Umum", "Member", " " }));
+
+        t_no_Telp.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        t_no_Telp.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        t_no_Telp.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                t_no_TelpKeyTyped(evt);
+            }
+        });
+
+        jLabel7.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jLabel7.setText("Jenis Kelamin");
+
+        t_email.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        t_email.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        t_email.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                t_emailKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -338,23 +382,27 @@ public class FiturPasien extends javax.swing.JPanel {
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextField2)
-                    .addComponent(jTextField4)
-                    .addComponent(jTextField7)
-                    .addComponent(jTextField8)
-                    .addComponent(jScrollPane1)
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 289, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(t_idPasien, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(t_nama, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(t_jenisKelamin, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(t_email, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 690, Short.MAX_VALUE))
+                    .addComponent(cbx_level, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
+            .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
+                    .addContainerGap(131, Short.MAX_VALUE)
+                    .addComponent(t_no_Telp, javax.swing.GroupLayout.PREFERRED_SIZE, 690, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap()))
         );
         panel2Layout.setVerticalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,34 +410,39 @@ public class FiturPasien extends javax.swing.JPanel {
                 .addGap(50, 50, 50)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(t_idPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(t_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(t_jenisKelamin, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(t_email, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1)
-                    .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbx_level, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
+            .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel2Layout.createSequentialGroup()
+                    .addGap(240, 240, 240)
+                    .addComponent(t_no_Telp, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(291, Short.MAX_VALUE)))
         );
 
         jPanel1.setBackground(new java.awt.Color(135, 15, 50));
@@ -404,9 +457,9 @@ public class FiturPasien extends javax.swing.JPanel {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(501, Short.MAX_VALUE)
+                .addContainerGap(507, Short.MAX_VALUE)
                 .addComponent(label1)
-                .addContainerGap(501, Short.MAX_VALUE))
+                .addContainerGap(507, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -424,7 +477,7 @@ public class FiturPasien extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panelTambahLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(panelTambahLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTambahLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -435,9 +488,9 @@ public class FiturPasien extends javax.swing.JPanel {
             .addGroup(panelTambahLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addGap(44, 44, 44))
         );
 
         add(panelTambah, "card2");
@@ -448,7 +501,17 @@ public class FiturPasien extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
+        if(validation()) {
+        if(btnSimpan.getText().equals("SIMPAN")) {
+            tambahData();  
+        } else {
+            perbaruiData();
+        }
+        clearField();
+        tabmodel.setRowCount(0);
+        servicePasien.loadData(1, pagination, tabmodel);
         changePanel(panelData);
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void txtCariFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusGained
@@ -463,9 +526,18 @@ public class FiturPasien extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
     }//GEN-LAST:event_txtCariFocusLost
 
-    private void jTextField4KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyTyped
-        characterDigit(evt);
-    }//GEN-LAST:event_jTextField4KeyTyped
+    private void btnSimpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan1ActionPerformed
+        clearField();
+        changePanel(panelData);
+    }//GEN-LAST:event_btnSimpan1ActionPerformed
+
+    private void t_no_TelpKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_no_TelpKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_t_no_TelpKeyTyped
+
+    private void t_emailKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_emailKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_t_emailKeyTyped
 
     private void changePanel(JPanel panel) {
         removeAll();
@@ -487,21 +559,17 @@ public class FiturPasien extends javax.swing.JPanel {
     private swing.Button btnSimpan;
     private swing.Button btnSimpan1;
     private swing.Button btnTambah;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> cbx_level;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
     private javax.swing.JLabel label;
     private javax.swing.JLabel label1;
     private swing.Pagination pagination;
@@ -510,7 +578,75 @@ public class FiturPasien extends javax.swing.JPanel {
     private javax.swing.JPanel panelData;
     private javax.swing.JPanel panelTambah;
     private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JTextArea t_alamat;
+    private javax.swing.JTextField t_email;
+    private javax.swing.JTextField t_idPasien;
+    private javax.swing.JTextField t_jenisKelamin;
+    private javax.swing.JTextField t_nama;
+    private javax.swing.JTextField t_no_Telp;
     private javax.swing.JTable table;
     private javax.swing.JTextField txtCari;
     // End of variables declaration//GEN-END:variables
+ 
+    private void tambahData() {
+        String idPasien = t_idPasien.getText();
+        String nama = t_nama.getText();
+        String jenisKelamin = t_jenisKelamin.getText();
+        String no_Telp = t_no_Telp.getText();
+        String alamat = t_alamat.getText();
+        String email = t_email.getText();
+        String level = (String) cbx_level.getSelectedItem();
+        
+        ModelPasien modelPasien = new ModelPasien(idPasien, nama, jenisKelamin, no_Telp, alamat, email, level);
+        servicePasien.addData(modelPasien);
+    }
+    
+    private void perbaruiData() {
+        String idPasien = t_idPasien.getText();
+        String nama = t_nama.getText();
+        String jenisKelamin = t_jenisKelamin.getText();
+        String no_Telp = t_no_Telp.getText();
+        String alamat = t_alamat.getText();
+        String email = t_email.getText();
+        String level = (String) cbx_level.getSelectedItem();
+        ModelPasien modelPasien = new ModelPasien(idPasien, nama, jenisKelamin, no_Telp, alamat, email, level);
+        servicePasien.updateData(modelPasien);
+    }
+    
+    private void hapusData(int row) {
+        String idPasien = (String) table.getValueAt(row, 0);
+        ModelPasien modelPasien = new ModelPasien();
+        modelPasien.setIdPasien(idPasien);
+        servicePasien.deleteData(modelPasien);
+    }
+    
+    private boolean validation() {
+        boolean valid = false;
+        if(t_idPasien.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "ID Pasien tidak boleh kosong");
+        } else if(t_nama.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Nama Pasien tidak boleh kosong");
+        } else if(t_jenisKelamin.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Jenis Kelamin tidak boleh kosong");
+        } else if(t_no_Telp.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No Telepon tidak boleh kosong");
+        } else if(t_alamat.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Alamat tidak boleh kosong");
+        } else if(t_email.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Email tidak boleh kosong");
+        } else {
+            valid = true;
+        }
+        
+        return valid;
+    }
+    
+    private void clearField() {
+        t_idPasien.setText(null);
+        t_nama.setText(null);
+        t_jenisKelamin.setText(null);
+        t_no_Telp.setText(null);
+        t_alamat.setText(null);
+        t_email.setText(null);
+    }
 }

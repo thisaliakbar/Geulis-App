@@ -4,16 +4,21 @@
  */
 package features;
 
+import action.ActionPagination;
 import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import model.ModelTindakan;
 import model.ModelHeaderTable;
 import model.ModelRenderTable;
+import service.ServiceTindakan;
 import swing.TableCellActionRender;
 import swing.TableCellEditor;
 
@@ -28,7 +33,8 @@ public class FiturTindakan extends javax.swing.JPanel {
      */
     private DefaultTableModel tabmodel;
     private TableAction action;
-    
+    private ServiceTindakan serviceTindakan = new ServiceTindakan();
+    private int page;
     public FiturTindakan() {
         initComponents();
         
@@ -41,11 +47,19 @@ public class FiturTindakan extends javax.swing.JPanel {
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
         table.setDefaultRenderer(Object.class, new ModelRenderTable(3));
         tabmodel = (DefaultTableModel) table.getModel();
-        
-        for(int a = 0; a < 20; a++) {
-            tabmodel.addRow(new String[]{"B-2402-001","Botol","Pcs","25000","35000","100"});
-        }
+        tampilData();
         actionRenderTable();
+    }
+    
+    private void tampilData() {
+        serviceTindakan.loadData(1, pagination, tabmodel);
+        pagination.addActionPagination(new ActionPagination() {
+            @Override
+            public void pageChanged(int page) {
+                tabmodel.setRowCount(0);
+                serviceTindakan.loadData(page, pagination, tabmodel);
+            }
+    });
     }
     
 //  Update,Delete,Detail
@@ -53,11 +67,23 @@ public class FiturTindakan extends javax.swing.JPanel {
         action = new TableAction() {
         @Override
         public void edit(int row) {
-            System.out.println("Edit row : " + row);
-        }
-
+            changePanel(panelTambah);
+            t_kodeTindakan.setEnabled(false);
+            btnSimpan.setText("PERBARUI");
+            String kodeTindakan = (String) table.getValueAt(row, 0);
+            String namaTindakan = (String) table.getValueAt(row, 1);
+            int biaya = (int) table.getValueAt(row, 2);
+          
+            t_kodeTindakan.setText(kodeTindakan);
+            t_namaTindakan.setText(namaTindakan);
+            t_biaya.setText(String.valueOf(biaya));
+        } 
         @Override
         public void delete(int row) {
+            String kodeTindakan = (String) table.getValueAt(row, 0);
+            ModelTindakan modelTindakan = new ModelTindakan();
+            modelTindakan.setKodeTindakan(kodeTindakan);
+            serviceTindakan.deletaData(modelTindakan);
             if(table.isEditing()) {
                 table.getCellEditor().stopCellEditing();
             }
@@ -99,9 +125,9 @@ public class FiturTindakan extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         btnSimpan1 = new swing.Button();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
+        t_kodeTindakan = new javax.swing.JTextField();
+        t_biaya = new javax.swing.JTextField();
+        t_namaTindakan = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         label1 = new javax.swing.JLabel();
 
@@ -117,7 +143,6 @@ public class FiturTindakan extends javax.swing.JPanel {
         scrollPane.setBorder(null);
         scrollPane.setOpaque(false);
 
-        table.setBackground(new java.awt.Color(255, 255, 255));
         table.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -159,7 +184,6 @@ public class FiturTindakan extends javax.swing.JPanel {
         pagination.setForeground(new java.awt.Color(255, 255, 255));
         pagination.setOpaque(false);
 
-        txtCari.setBackground(new java.awt.Color(255, 255, 255));
         txtCari.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         txtCari.setForeground(new java.awt.Color(185, 185, 185));
         txtCari.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -259,17 +283,14 @@ public class FiturTindakan extends javax.swing.JPanel {
         });
 
         jLabel1.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel1.setText("Nama Tindakan");
 
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel2.setText("Kode Tindakan");
 
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel4.setText("Biaya");
 
@@ -277,20 +298,25 @@ public class FiturTindakan extends javax.swing.JPanel {
         btnSimpan1.setForeground(new java.awt.Color(255, 255, 255));
         btnSimpan1.setText("BATAL");
         btnSimpan1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        jTextField2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField2.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-
-        jTextField4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField4.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextField4KeyTyped(evt);
+        btnSimpan1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpan1ActionPerformed(evt);
             }
         });
 
-        jTextField7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField7.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        t_kodeTindakan.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        t_kodeTindakan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+
+        t_biaya.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        t_biaya.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        t_biaya.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                t_biayaKeyTyped(evt);
+            }
+        });
+
+        t_namaTindakan.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        t_namaTindakan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -311,9 +337,9 @@ public class FiturTindakan extends javax.swing.JPanel {
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField2)
-                            .addComponent(jTextField4)
-                            .addComponent(jTextField7))))
+                            .addComponent(t_kodeTindakan)
+                            .addComponent(t_biaya)
+                            .addComponent(t_namaTindakan))))
                 .addContainerGap())
         );
         panel2Layout.setVerticalGroup(
@@ -322,15 +348,15 @@ public class FiturTindakan extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(t_kodeTindakan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(t_namaTindakan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(t_biaya, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -372,8 +398,7 @@ public class FiturTindakan extends javax.swing.JPanel {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelTambahLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         panelTambahLayout.setVerticalGroup(
@@ -405,13 +430,28 @@ public class FiturTindakan extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
     }//GEN-LAST:event_txtCariFocusLost
 
-    private void jTextField4KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyTyped
+    private void t_biayaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_t_biayaKeyTyped
         characterDigit(evt);
-    }//GEN-LAST:event_jTextField4KeyTyped
+    }//GEN-LAST:event_t_biayaKeyTyped
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        changePanel(panelData);
+        if(validation()) {
+        if(btnSimpan.getText().equals("SIMPAN")) {
+            tambahData();
+        }  else {
+            perbaruiData();
+        } 
+        clearField();
+        tabmodel.setRowCount(0);
+        serviceTindakan.loadData(1, pagination, tabmodel);
+            changePanel(panelData);
+        }
     }//GEN-LAST:event_btnSimpanActionPerformed
+
+    private void btnSimpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan1ActionPerformed
+        clearField();
+        changePanel(panelData);
+    }//GEN-LAST:event_btnSimpan1ActionPerformed
 
     private void changePanel(JPanel panel) {
         removeAll();
@@ -438,9 +478,6 @@ public class FiturTindakan extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField7;
     private javax.swing.JLabel label;
     private javax.swing.JLabel label1;
     private swing.Pagination pagination;
@@ -449,7 +486,59 @@ public class FiturTindakan extends javax.swing.JPanel {
     private javax.swing.JPanel panelData;
     private javax.swing.JPanel panelTambah;
     private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JTextField t_biaya;
+    private javax.swing.JTextField t_kodeTindakan;
+    private javax.swing.JTextField t_namaTindakan;
     private javax.swing.JTable table;
     private javax.swing.JTextField txtCari;
     // End of variables declaration//GEN-END:variables
+
+    private void tambahData() {
+        String kodeTindakan = t_kodeTindakan.getText();
+        String namaTindakan = t_namaTindakan.getText();
+        int biaya = Integer.parseInt(t_biaya.getText());
+        
+        ModelTindakan modelTindakan = new ModelTindakan(kodeTindakan, namaTindakan, biaya);
+        serviceTindakan.addData(modelTindakan);
+    }
+    
+    private void perbaruiData() {
+        String kodeTindakan = t_kodeTindakan.getText();
+        String namaTindakan = t_namaTindakan.getText();
+        int biaya = Integer.parseInt(t_biaya.getText());
+        ModelTindakan modelTindakan = new ModelTindakan(kodeTindakan, namaTindakan, biaya);
+        serviceTindakan.updateData(modelTindakan);
+    }
+    
+    private void hapusData(int row) {
+        String kodeTindakan = (String) table.getValueAt(row, 0);
+        ModelTindakan modelTindakan = new ModelTindakan();
+        modelTindakan.setKodeTindakan(kodeTindakan);
+        serviceTindakan.deletaData(modelTindakan);
+    }
+    
+    private boolean validation() {
+        boolean valid = false;
+        if(t_kodeTindakan.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Kode Tindakan tidak boleh kosong");
+        } else if(t_namaTindakan.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Nama Tindakan tidak boleh kosong");
+        } else if(t_biaya.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Biaya tidak boleh kosong");
+        } else {
+            valid = true;
+        }
+        
+        return valid;
+    }
+    
+    private void clearField() {
+        t_kodeTindakan.setText(null);
+        t_namaTindakan.setText(null);
+        t_biaya.setText(null);
+    }
 }
+
+
+    
+
