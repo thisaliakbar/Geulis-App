@@ -40,12 +40,20 @@ public class Status extends JLabel{
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             GradientPaint gp;
-            if(type == StatusType.WAIT) {
+            if(type == StatusType.Wait) {
                 gp = new GradientPaint(0, 0, new Color(76, 175, 80), 0, getHeight(), new Color(76, 175, 80));
-            } else if(type == StatusType.FINISH) {
+            } else if(type == StatusType.Finish) {
                 gp = new GradientPaint(0, 0, new Color(33, 150, 243), 0, getHeight(), new Color(33, 150, 243)); 
-            } else {
+            } else if(type == StatusType.Cancel){
                 gp = new GradientPaint(0, 0, new Color(135, 15, 50), 0, getHeight(), new Color(135, 15, 50));
+            } else if(type == StatusType.Send) {
+                gp = new GradientPaint(0, 0, new Color(31, 26, 186), 0, getHeight(), new Color(31, 26, 186));
+            } else if(type == StatusType.Accept) {
+                gp = new GradientPaint(0, 0, new Color(0, 153, 0), 0, getHeight(), new Color(0, 153, 0));    
+            } else if(type == StatusType.Habis) {
+                gp = new GradientPaint(0, 0, new Color(135, 15, 50), 0, getHeight(), new Color(135, 15, 50));      
+            } else {
+                gp = new GradientPaint(0, 0, new Color(194, 146, 4), 0, getHeight(), new Color(194, 146, 4));           
             }
             g2.setPaint(gp);
             g2.fillRoundRect(0, 0, getWidth(), getHeight(), 1, 1);

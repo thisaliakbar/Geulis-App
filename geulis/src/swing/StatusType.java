@@ -9,5 +9,7 @@ package swing;
  * @author usER
  */
 public enum StatusType {
-    WAIT, FINISH, CANCEL
+    Wait, Finish, Cancel, 
+    Send, Accept, Habis,
+    Tambah
 }

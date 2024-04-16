@@ -119,11 +119,11 @@ public class ServiceDashboard {
                 
                 StatusType type;
                 if(status.equals("Menunggu")) {
-                    type = StatusType.WAIT;
+                    type = StatusType.Wait;
                 } else if(status.equals("Selesai")) {
-                    type = StatusType.FINISH;
+                    type = StatusType.Finish;
                 } else {
-                    type = StatusType.CANCEL;
+                    type = StatusType.Cancel;
                 }
                 
                 table.addRow(new ModelLastReservasi(noReservasi,new ImageIcon(getClass().getResource(sourceImage)), nama, tglKedatangan.concat(" / " + jamKedatangan),type).toRowTable());

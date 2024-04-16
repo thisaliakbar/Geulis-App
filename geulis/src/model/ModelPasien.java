@@ -48,7 +48,7 @@ public class ModelPasien {
     public void setNama(String nama) {
         this.nama = nama;
     }
-
+    
     public String getJenisKelamin() {
         return jenisKelamin;
     }

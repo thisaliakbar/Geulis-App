@@ -7,6 +7,7 @@ package component;
 import features.Pengaturan;
 import java.awt.Point;
 import java.awt.event.ActionListener;
+import model.ModelPengguna;
 
 /**
  *
@@ -18,9 +19,12 @@ public class Navbar extends javax.swing.JPanel {
      * Creates new form Navbar
      */
     public Pengaturan settings;
-    public Navbar() {
+    public Navbar(ModelPengguna modelPengguna) {
         initComponents();
-        settings = new Pengaturan(null, true);
+        settings = new Pengaturan(null, true, modelPengguna);
+        lbName.setText(modelPengguna.getNama());
+        lbId1.setText(modelPengguna.getIdpengguna());
+        lbId.setText(modelPengguna.getLevel());
     }
     
     public void addAction(ActionListener action) {

@@ -6,10 +6,10 @@ package service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
-import model.ModelPromo;
+import model.ModelPengguna;
 /**
  *
  * @author usER
@@ -20,44 +20,50 @@ public class ServicePengaturan {
         connection = Koneksi.getConnection();
     }
     
-//    service atur promo
-    public void addPromo(ModelPromo modelPromo) {
-        String query = "INSERT INTO promo (No_Promo, Nama_Promo, Tanggal_Awal, Tanggal_Akhir, Banyak_Promo, Jenis_Promo, Keterangan) VALUES (?,?,?,?,?,?,?)";
+//    Account
+    public List<String> loadAccount(ModelPengguna modelPengguna) {
+        List<String> listData = new ArrayList<>();
+        String query = "SELECT Nama, Username, Email FROM pengguna WHERE ID_Pengguna='"+modelPengguna.getIdpengguna()+"' ";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
-            pst.setString(1, modelPromo.getNoPromo());
-            pst.setString(2, modelPromo.getNamaPromo());
-            pst.setString(3, modelPromo.getTglAwal());
-            pst.setString(4, modelPromo.getTglAkhir());
-            pst.setInt(5, modelPromo.getBanyakPromo());
-            pst.setString(6, modelPromo.getJenisPromo());
-            pst.setString(7, modelPromo.getKeterangan());
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+                listData.add(rst.getString("Nama"));
+                listData.add(rst.getString("Username"));
+                listData.add(rst.getString("Email"));
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return listData;
+    }
+    
+    public void setAccount(ModelPengguna modelPengguna) {
+        String query = "UPDATE pengguna SET Nama=?, Username=?, Email=? WHERE ID_Pengguna=?";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.setString(1, modelPengguna.getNama());
+            pst.setString(2, modelPengguna.getUsername());
+            pst.setString(3, modelPengguna.getEmail());
+            pst.setString(4, modelPengguna.getIdpengguna());
             pst.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Berhasil menambahkan promo");
+            JOptionPane.showMessageDialog(null, "Akun berhasil dirubah");
         } catch(Exception ex) {
             ex.printStackTrace();
         }
     }
     
-    public String createNo() {
-        String noPromosi = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyMM");
-        Date date = new Date();
-        String format = sdf.format(date);
-        String query = "SELECT RIGHT(No_Promo, 3) AS Nomor FROM promo WHERE No_Promo LIKE 'P-"+format+"%' ORDER BY Nomor DESC";
+//    Change Password
+    public void setPassword(ModelPengguna modelPengguna) {
+        String query = "UPDATE pengguna SET Password=? WHERE ID_Pengguna=?";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
-            ResultSet rst = pst.executeQuery();
-            if(rst.next()) {
-                int no = Integer.parseInt(rst.getString("Nomor"));
-                no++;
-                noPromosi = "P-" + format + "-"+String.format("%03d", no);
-            } else {
-                noPromosi = "P-" + format + "-001";
-            }
+            pst.setString(1, modelPengguna.getPassword());
+            pst.setString(2, modelPengguna.getIdpengguna());
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Password berhasil dirubah");
         } catch(Exception ex) {
             ex.printStackTrace();
         }
-        return noPromosi;
     }
 }

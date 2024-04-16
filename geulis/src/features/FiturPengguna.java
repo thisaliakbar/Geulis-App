@@ -8,12 +8,15 @@ import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import model.ModelHeaderTable;
+import model.ModelPengguna;
 import model.ModelRenderTable;
+import service.ServicePengguna;
 import swing.TableCellActionRender;
 import swing.TableCellEditor;
 
@@ -28,7 +31,7 @@ public class FiturPengguna extends javax.swing.JPanel {
      */
     private DefaultTableModel tabmodel;
     private TableAction action;
-    
+    private ServicePengguna servicePengguna = new ServicePengguna(); 
     public FiturPengguna() {
         initComponents();
         
@@ -41,10 +44,7 @@ public class FiturPengguna extends javax.swing.JPanel {
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
         table.setDefaultRenderer(Object.class, new ModelRenderTable(5));
         tabmodel = (DefaultTableModel) table.getModel();
-        
-        for(int a = 0; a < 20; a++) {
-            tabmodel.addRow(new String[]{"B-2402-001","Botol","Pcs","25000","35000","100"});
-        }
+        tampilData();
         actionRenderTable();
        
     }
@@ -54,7 +54,9 @@ public class FiturPengguna extends javax.swing.JPanel {
         action = new TableAction() {
         @Override
         public void edit(int row) {
-            System.out.println("Edit row : " + row);
+            changePanel(panelTambah);
+            setComponentUpdate(row);
+            btnSimpan.setText("PERBARUI");
         }
 
         @Override
@@ -62,17 +64,116 @@ public class FiturPengguna extends javax.swing.JPanel {
             if(table.isEditing()) {
                 table.getCellEditor().stopCellEditing();
             }
-            System.out.println("Remov Row : " + row);
+            if(JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Menghapusnya", "Konfirmasi", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            hapusData(row);  
             tabmodel.removeRow(row);
+            }
         }
 
         @Override
         public void view(int row) {
-            System.out.println("View row : " + row);
+
         }
     };        
         table.getColumnModel().getColumn(5).setCellRenderer(new TableCellActionRender(true, true, false));
         table.getColumnModel().getColumn(5).setCellEditor(new TableCellEditor(action, true, true, false));
+    }
+    
+    private void tambahData(){
+    String IdPengguna = TFIdPengguna.getText();
+    String NamaPengguna = TFNamaPengguna.getText();
+    String UsernamePengguna = TFUsernamePengguna.getText();
+    String PasswordPengguna = TFPasswordPengguna.getText();
+    String EmailPengguna = TFEmailPengguna.getText();
+    String LevelPengguna = (String)cbxLevelPengguna.getSelectedItem();
+    
+    ModelPengguna modelPengguna = new ModelPengguna(IdPengguna, NamaPengguna, UsernamePengguna, PasswordPengguna, EmailPengguna, LevelPengguna);
+    servicePengguna.addData(modelPengguna);
+     }
+     
+    private void setComponentUpdate(int row){
+        TFIdPengguna.setText((String) table.getValueAt(row, 0));
+        TFNamaPengguna.setText((String) table.getValueAt(row, 1));
+        TFUsernamePengguna.setText((String) table.getValueAt(row, 2));
+        jLabel3.setVisible(false);
+        TFPasswordPengguna.setVisible(false);
+        TFEmailPengguna.setText((String) table.getValueAt(row, 3));
+        cbxLevelPengguna.setSelectedItem((String)table.getValueAt(row, 4));
+    }
+    
+      private void perbaruiData(){
+        String IdPengguna = TFIdPengguna.getText();
+        String NamaPengguna = TFNamaPengguna.getText();
+        String UsernamePengguna = TFUsernamePengguna.getText();
+        String PasswordPengguna = TFPasswordPengguna.getText();
+        String EmailPengguna = TFEmailPengguna.getText();
+        String LevelPengguna = (String)cbxLevelPengguna.getSelectedItem();
+        ModelPengguna modelPengguna =new ModelPengguna(IdPengguna, NamaPengguna, UsernamePengguna, PasswordPengguna, EmailPengguna, LevelPengguna);
+        servicePengguna.updateData(modelPengguna);
+        btnSimpan.setText("SIMPAN");
+      } 
+    
+      
+      private void hapusData(int row){
+          String IdPengguna = (String) table.getValueAt(row, 0);
+          ModelPengguna modelPengguna = new ModelPengguna ();
+          modelPengguna.setIdpengguna(IdPengguna);
+          servicePengguna.deleteData(modelPengguna);
+          
+        
+    }
+      
+      private boolean validationAddData(){
+        boolean valid = false;
+        if(TFIdPengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "ID Pengguna Tidak Boleh Kosong");
+        }else if (TFNamaPengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Nama Pengguna Tidak Boleh Kosong");
+        }else if (TFUsernamePengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Username Pengguna Tidak Boleh Kosong");
+        }else if (TFPasswordPengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Password Pengguna Tidak Boleh Kosong");
+        }else if (TFEmailPengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Email Pengguna Tidak Boleh Kosong");   
+        }else{
+            valid = true;
+        }
+        
+        return valid;
+    }
+      
+      private boolean validationUpdateData(){
+        boolean valid = false;
+        if(TFIdPengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "ID Pengguna Tidak Boleh Kosong");
+        }else if (TFNamaPengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Nama Pengguna Tidak Boleh Kosong");
+        }else if (TFUsernamePengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Username Pengguna Tidak Boleh Kosong");
+        }else if (TFEmailPengguna.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Email Pengguna Tidak Boleh Kosong");   
+        }else{
+            valid = true;
+        }
+        
+        return valid;
+    }
+      
+    private void clearField(){
+        TFIdPengguna.setText(null);
+        TFNamaPengguna.setText(null);
+        TFUsernamePengguna.setText(null);
+        TFPasswordPengguna.setText(null);
+        TFEmailPengguna.setText(null);
+    }
+    private void tampilData(){
+    servicePengguna.loadData(1, tabmodel, pagination);
+    pagination.addActionPagination(new action.ActionPagination() {
+        @Override
+        public void pageChanged(int page) {
+             servicePengguna.loadData(page, tabmodel, pagination);
+        }
+    });
     }
    
     /**
@@ -103,12 +204,12 @@ public class FiturPengguna extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         btnSimpan1 = new swing.Button();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jTextField5 = new javax.swing.JTextField();
+        TFIdPengguna = new javax.swing.JTextField();
+        TFPasswordPengguna = new javax.swing.JTextField();
+        TFNamaPengguna = new javax.swing.JTextField();
+        TFUsernamePengguna = new javax.swing.JTextField();
+        cbxLevelPengguna = new javax.swing.JComboBox<>();
+        TFEmailPengguna = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         label1 = new javax.swing.JLabel();
 
@@ -299,33 +400,29 @@ public class FiturPengguna extends javax.swing.JPanel {
         btnSimpan1.setForeground(new java.awt.Color(255, 255, 255));
         btnSimpan1.setText("BATAL");
         btnSimpan1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        jTextField2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField2.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-
-        jTextField4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField4.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextField4KeyTyped(evt);
+        btnSimpan1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpan1ActionPerformed(evt);
             }
         });
 
-        jTextField7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField7.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        TFIdPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFIdPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jTextField8.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField8.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        TFPasswordPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFPasswordPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        TFNamaPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFNamaPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jTextField5.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField5.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-        jTextField5.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextField5KeyTyped(evt);
-            }
-        });
+        TFUsernamePengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFUsernamePengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+
+        cbxLevelPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        cbxLevelPengguna.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Owner", "Administrator" }));
+
+        TFEmailPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFEmailPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -347,14 +444,14 @@ public class FiturPengguna extends javax.swing.JPanel {
                         .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextField2)
-                    .addComponent(jTextField4)
-                    .addComponent(jTextField7)
-                    .addComponent(jTextField8)
+                    .addComponent(TFIdPengguna)
+                    .addComponent(TFPasswordPengguna)
+                    .addComponent(TFNamaPengguna)
+                    .addComponent(TFUsernamePengguna)
                     .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbxLevelPengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 289, Short.MAX_VALUE))
-                    .addComponent(jTextField5))
+                    .addComponent(TFEmailPengguna))
                 .addContainerGap())
         );
         panel2Layout.setVerticalGroup(
@@ -363,26 +460,26 @@ public class FiturPengguna extends javax.swing.JPanel {
                 .addGap(50, 50, 50)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFIdPengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFNamaPengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFUsernamePengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFPasswordPengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFEmailPengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1)
+                    .addComponent(cbxLevelPengguna)
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -438,7 +535,7 @@ public class FiturPengguna extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(161, Short.MAX_VALUE))
+                .addContainerGap(170, Short.MAX_VALUE))
         );
 
         add(panelTambah, "card2");
@@ -446,10 +543,25 @@ public class FiturPengguna extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
+        jLabel3.setVisible(true);
+        TFPasswordPengguna.setVisible(true);
+        clearField();
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        changePanel(panelData);
+        if(btnSimpan.getText().equals("SIMPAN")) {
+        if(validationAddData()) {
+            tambahData();          
+            changePanel(panelData); 
+        }   
+        } else {
+            if(validationUpdateData()) {
+            perbaruiData();
+            changePanel(panelData); 
+            }
+        }
+        tabmodel.setRowCount(0);
+        tampilData();
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void txtCariFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusGained
@@ -459,18 +571,16 @@ public class FiturPengguna extends javax.swing.JPanel {
     }//GEN-LAST:event_txtCariFocusGained
 
     private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
-        txtCari.setText("Cari Berdasarkan Kode Barang & Nama Barang");
+        txtCari.setText("Cari Berdasarkan ID Pengguna & Nama Pengguna");
         txtCari.setForeground(new Color(185,185,185));
         txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
     }//GEN-LAST:event_txtCariFocusLost
 
-    private void jTextField4KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyTyped
-        characterDigit(evt);
-    }//GEN-LAST:event_jTextField4KeyTyped
-
-    private void jTextField5KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField5KeyTyped
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5KeyTyped
+    private void btnSimpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan1ActionPerformed
+        clearField();
+        btnSimpan.setText("SIMPAN");
+        changePanel(panelData);
+    }//GEN-LAST:event_btnSimpan1ActionPerformed
 
     private void changePanel(JPanel panel) {
         removeAll();
@@ -489,10 +599,15 @@ public class FiturPengguna extends javax.swing.JPanel {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField TFEmailPengguna;
+    private javax.swing.JTextField TFIdPengguna;
+    private javax.swing.JTextField TFNamaPengguna;
+    private javax.swing.JTextField TFPasswordPengguna;
+    private javax.swing.JTextField TFUsernamePengguna;
     private swing.Button btnSimpan;
     private swing.Button btnSimpan1;
     private swing.Button btnTambah;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> cbxLevelPengguna;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -501,11 +616,6 @@ public class FiturPengguna extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
     private javax.swing.JLabel label;
     private javax.swing.JLabel label1;
     private swing.Pagination pagination;

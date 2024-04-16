@@ -28,10 +28,11 @@ public class ServicePengeluaran {
     
         public void loadData(int page, DefaultTableModel tabmodel, Pagination pagination) {
         String sqlCount = "SELECT COUNT(No_Pengeluaran) AS Jumlah FROM pengeluaran";
-        int limit = 20;
+        int limit = 15;
         int count = 0;
         
-        String query = "SELECT plrn.No_Pengeluaran, plrn.ID_Pengguna, pg.Nama, plrn.Tanggal_Pengeluaran, "
+        String query = "SELECT plrn.No_Pengeluaran, plrn.ID_Pengguna, pg.Nama, "
+                + "DATE_FORMAT(plrn.Tanggal_Pengeluaran, '%d - %M - %Y') AS Tanggal_Pengeluaran, "
                 + "plrn.Total_Pengeluaran, plrn.Deskripsi FROM pengeluaran plrn INNER JOIN pengguna pg "
                 + "ON plrn.ID_Pengguna=pg.ID_Pengguna "
                 + "ORDER BY No_Pengeluaran ASC LIMIT "+(page-1) * limit+","+limit+"";
@@ -66,6 +67,29 @@ public class ServicePengeluaran {
             ex.printStackTrace();
         }    
     }
+        
+    public void searchData(DefaultTableModel tabmodel) {
+        String query = "SELECT plrn.No_Pengeluaran, plrn.ID_Pengguna, pg.Nama, "
+                + "DATE_FORMAT(plrn.Tanggal_Pengeluaran, '%d - %M - %Y') AS Tanggal_Pengeluaran, "
+                + "plrn.Total_Pengeluaran, plrn.Deskripsi FROM pengeluaran plrn INNER JOIN pengguna pg "
+                + "ON plrn.ID_Pengguna=pg.ID_Pengguna "
+                + "ORDER BY No_Pengeluaran ASC";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            while(rst.next()) {
+                String noPengeluaran = rst.getString("No_Pengeluaran");
+                String idPengguna = rst.getString("ID_Pengguna");
+                String namaPengguna = rst.getString("Nama");
+                String tgl = rst.getString("Tanggal_Pengeluaran");
+                int total = rst.getInt("Total_Pengeluaran");
+                String deskripsi = rst.getString("Deskripsi");
+                tabmodel.addRow(new Object[]{noPengeluaran, idPengguna, namaPengguna, tgl, total, deskripsi});
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
     
     public void addDataPengeluaran(ModelPengeluaran modelPengeluaran) {
         String query = "INSERT INTO pengeluaran(No_Pengeluaran, Tanggal_Pengeluaran, Total_Pengeluaran, Deskripsi, ID_Pengguna) VALUES (?,?,?,?,?)";
@@ -75,7 +99,7 @@ public class ServicePengeluaran {
             pst.setString(2, modelPengeluaran.getTglPengeluaran());
             pst.setInt(3, modelPengeluaran.getTotal());
             pst.setString(4, modelPengeluaran.getDeskripsi());
-            pst.setString(5, "USR-001");
+            pst.setString(5, modelPengeluaran.getModelPengguna().getIdpengguna());
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "Data Berhasil Ditambahkan");
         } catch(Exception ex) {
@@ -143,6 +167,26 @@ public class ServicePengeluaran {
                 pst.setInt(4, sub);
             }
             pst.executeUpdate();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void loadDataDetail(ModelDetailPengeluaran modelDetail, DefaultTableModel tabmodel) {
+        String query = "SELECT dtl.No_Pengeluaran, dtl.No_Jenis, jns.Nama_Jenis, "
+                + "dtl.Detail_Jenis, dtl.Subtotal FROM detail_pengeluaran dtl "
+                + "JOIN jenis_pengeluaran jns ON dtl.No_Jenis=jns.No_Jenis "
+                + "WHERE No_Pengeluaran='"+modelDetail.getModelPengeluaran().getNoPengeluaran()+"' ";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            while(rst.next()) {
+                String noJenis = rst.getString("No_Jenis");
+                String namaJenis = rst.getString("Nama_Jenis");
+                String detailJenis = rst.getString("Detail_Jenis");
+                int subtotal = rst.getInt("Subtotal");
+                tabmodel.addRow(new Object[]{noJenis, namaJenis, detailJenis, subtotal});
+            }
         } catch(Exception ex) {
             ex.printStackTrace();
         }

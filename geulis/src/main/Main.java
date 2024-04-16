@@ -6,7 +6,6 @@ package main;
 
 import action.ActionMenuSelected;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
-import component.Chart;
 import component.Content;
 import component.Navbar;
 import component.Sidebar;
@@ -31,10 +30,13 @@ import features.FiturTindakan;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import model.ModelPengguna;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
+import service.ServicePromo;
 
 /**
  *
@@ -50,25 +52,35 @@ public class Main extends javax.swing.JFrame {
     private Content content;
     private Sidebar menu;
     private Animator animator;
-    public Main() {
+    public Main(ModelPengguna modelPengguna) {
         initComponents();
-        initiation();
+        initiation(modelPengguna);
+        endPromoAuto();
     }
     
-    public void initiation() {
+    public void initiation(ModelPengguna modelPengguna) {
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         layout = new MigLayout("fill", "0[]0[100%, fill]0", "0[fill, top]0");
         background.setLayout(layout);
         menu = new Sidebar();
         content = new Content();
-        navbar = new Navbar();
-        content.showContent(new Dashboard());
+        navbar = new Navbar(modelPengguna);
+        String level = modelPengguna.getLevel();
+        if(level.equals("Owner")) {
+        content.showContent(new Dashboard(modelPengguna));   
+        } else {
+        content.showContent(new FiturReservasi(modelPengguna));   
+            
+        }
         menu.addAction(new ActionMenuSelected() {
             @Override
             public void menuSelected(int menuIndex, int subMenuIndex) {
+                
+//          Owner
+                if(level.equals("Owner")) {
                 if (menuIndex == 0 && subMenuIndex == -1) {
 //              fitur beranda
-                      content.showContent(new Dashboard());
+                      content.showContent(new Dashboard(modelPengguna));
                 } else if (menuIndex == 1) {
 //              fitur master                
 
@@ -97,13 +109,13 @@ public class Main extends javax.swing.JFrame {
                     }
                 } else if (menuIndex == 2 && subMenuIndex == -1) {
 //              fitur reservasi
-                    content.showContent(new FiturReservasi());
+                    content.showContent(new FiturReservasi(modelPengguna));
 
                 } else if (menuIndex == 3) {
 //              fitur transaksi
                     if (subMenuIndex == 0) {
 //                        fitur pemeriksaan
-                        content.showContent(new FiturPemeriksaan());
+                        content.showContent(new FiturPemeriksaan(modelPengguna));
                     } else if (subMenuIndex == 1) {
 //                        fitur penjualan
                         content.showContent(new FiturPenjualan());
@@ -113,7 +125,7 @@ public class Main extends javax.swing.JFrame {
                     }
                 } else if (menuIndex == 4 && subMenuIndex == -1) {
 //              fitur riwayat pasien 
-                        content.showContent(new FiturPengeluaran());
+                        content.showContent(new FiturPengeluaran(modelPengguna));
                 } else if(menuIndex == 5 && subMenuIndex == -1) {
                         content.showContent(new FiturRiwayatPasien());                   
                 } else if (menuIndex == 6) {
@@ -132,13 +144,51 @@ public class Main extends javax.swing.JFrame {
                         content.showContent(new FiturLaporan());
                     }
                 }
+                
+//          Admin        
+                } else {
+                    if (menuIndex == 0 && subMenuIndex == -1) {
+//                  fitur reservasi
+                      content.showContent(new FiturReservasi(modelPengguna));
+                    } else if(menuIndex == 1) {
+//                  fitur transaksasi
+                        if (subMenuIndex == 0) {
+    //                        fitur pemeriksaan
+                            content.showContent(new FiturPemeriksaan(modelPengguna));
+                        } else if (subMenuIndex == 1) {
+    //                        fitur penjualan
+                            content.showContent(new FiturPenjualan());
+                        } else if (subMenuIndex == 2) {
+    //                        fitur pemesanan
+                            content.showContent(new FiturPemesanan());
+                        }
+                    }  else if(menuIndex == 2 && subMenuIndex == -1) {
+//                     Fitur Riwayat Pasien
+                       content.showContent(new FiturRiwayatPasien());
+                    } else if(menuIndex == 3) {
+//                        Fitur lain-lain
+                        if (subMenuIndex == 0) {
+    //                        fitur restok
+                            content.showContent(new FiturRestok());
+                        } else if (subMenuIndex == 1) {
+    //                        fitur absensi
+                            content.showContent(new FiturAbsensi());
+                        } else if (subMenuIndex == 2) {
+    //                        fitur cetak kartu
+                            content.showContent(new FiturCetakKartu());
+                        } else if (subMenuIndex == 3) {
+    //                        fitur laporan
+                            content.showContent(new FiturLaporan());
+                        }
+                    }
+                }
 
             }
         });
         
-        actionSettings();
+        actionSettings(modelPengguna);
         
-        menu.initiationMenu();
+        menu.initiationMenu(modelPengguna);
 //        background.setLayer(panelDetail, JLayeredPane.POPUP_LAYER);
 //        background.add(panelDetail, "pos 0 0 100% 100%");
         background.add(menu, "w 230!, spany2");
@@ -191,11 +241,11 @@ public class Main extends javax.swing.JFrame {
     }
         
 //    action settings
-    private void actionSettings() {
+    private void actionSettings(ModelPengguna modelPengguna) {
         navbar.settings.account(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                content.showContent(new FiturPengaturan("Slide-Akun"));
+                content.showContent(new FiturPengaturan("Slide-Akun", modelPengguna));
                 navbar.settings.dispose();
             }
         });
@@ -203,7 +253,7 @@ public class Main extends javax.swing.JFrame {
         navbar.settings.changePassword(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                content.showContent(new FiturPengaturan("Slide-Password"));
+                content.showContent(new FiturPengaturan("Slide-Password", modelPengguna));
                 navbar.settings.dispose();
             }
         });
@@ -211,10 +261,29 @@ public class Main extends javax.swing.JFrame {
         navbar.settings.promo(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                content.showContent(new FiturPengaturan("Slide-Promo"));
+                content.showContent(new FiturPengaturan("Slide-Promo", modelPengguna));
                 navbar.settings.dispose();
             }
         });
+        
+        navbar.settings.logout(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(null, "Yakin ingin keluar?", "Konfirmasi", JOptionPane.OK_OPTION);
+                if(confirm == 0) {
+                    Login login = new Login();
+                    login.setVisible(true);
+                    navbar.settings.dispose();
+                    dispose();
+                }
+            }
+        });
+    }
+    
+//    End Promo Auto
+    private void endPromoAuto() {
+        ServicePromo servicePromo = new ServicePromo();
+        servicePromo.autoChangeKeteranganPromo();
     }
 
     /**
@@ -285,13 +354,25 @@ public class Main extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         
         FlatMacLightLaf.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Main().setVisible(true);
+                new Main(null).setVisible(true);
             }
         });
     }

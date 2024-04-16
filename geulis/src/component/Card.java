@@ -12,7 +12,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
-import javax.swing.ImageIcon;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import model.ModelCard;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import model.ModelCard;
 
 /**
@@ -62,6 +66,9 @@ public class Card extends javax.swing.JPanel {
     public void setRange(DateChooserAdapter action) {
         DateChooser chooser = new DateChooser();
         chooser.setTextField(txtRange);
+        chooser.setLabelCurrentDayVisible(false);
+        chooser.setDateFormat(new SimpleDateFormat("yyyy-MM-dd"));
+        chooser.setSelectedDate(new Date());
         chooser.setDateSelectionMode(DateChooser.DateSelectionMode.BETWEEN_DATE_SELECTED);
         chooser.setBetweenCharacter(" Sampai ");
         chooser.addActionDateChooserListener(action);

@@ -75,6 +75,7 @@ public class ServiceRiwayatPasien {
     public void loadDataDetail(ModelPemeriksaan modelPemeriksaan, DefaultTableModel model) {
         String query = "SELECT No_Pemeriksaan, Tanggal_Pemeriksaan FROM pemeriksaan WHERE ID_Pasien='"+modelPemeriksaan.getModelPasien().getIdPasien()+"' ORDER BY Tanggal_Pemeriksaan DESC";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd - MMMM - yyyy");
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
@@ -83,24 +84,10 @@ public class ServiceRiwayatPasien {
                 String tglPemeriksaan = rst.getString("Tanggal_Pemeriksaan");
                 LocalDate lastDate = LocalDate.parse(tglPemeriksaan, formatter);
                 LocalDate nextDate = lastDate.plusDays(30);
-                String estimate = nextDate.format(formatter);
-                model.addRow(new String[]{noPemeriksaan, tglPemeriksaan, estimate});
+                String strLastDate = lastDate.format(format);
+                String estimate = nextDate.format(format);
+                model.addRow(new String[]{noPemeriksaan, strLastDate, estimate});
             }
-        } catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-    
-    private void addDataRiwayatPasien(ModelPemeriksaan modelPemeriksaan, String status) {
-        String query = "INSERT INTO riwayat_pasien (No_Pemeriksaan,ID_Pasien,Nama,Terakhir_Pemeriksaan,Status) VALUES(?,?,?,?,?)";
-        try {
-            PreparedStatement pst = connection.prepareStatement(query);
-            pst.setString(1, modelPemeriksaan.getNoPemeriksaan());
-            pst.setString(2, modelPemeriksaan.getModelPasien().getIdPasien());
-            pst.setString(3, modelPemeriksaan.getModelPasien().getNama());
-            pst.setString(4, modelPemeriksaan.getTglPemeriksaan());
-            pst.setString(5, status);
-            pst.executeUpdate();
         } catch(Exception ex) {
             ex.printStackTrace();
         }

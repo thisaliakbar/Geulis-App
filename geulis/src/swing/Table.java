@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import model.ModelProfile;
@@ -20,7 +21,7 @@ import model.ModelProfile;
  *
  * @author usER
  */
-public class Table extends JTable{
+public class Table extends JTable{    
     public Table() {
         setShowHorizontalLines(true);
         setGridColor(new Color(185, 185, 185));

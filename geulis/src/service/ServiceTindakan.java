@@ -27,7 +27,6 @@ public class ServiceTindakan {
         int limit = 10;
         int count = 0;
         String query = "SELECT * FROM tindakan LIMIT "+(page-1) * limit+","+limit+"";
-        System.out.println("query");
         try {
             PreparedStatement pst = connection.prepareStatement(sqlCount);
             ResultSet rst = pst.executeQuery();

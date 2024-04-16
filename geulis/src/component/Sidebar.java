@@ -14,6 +14,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import javax.swing.ImageIcon;
 import model.ModelMenu;
+import model.ModelPengguna;
 import net.miginfocom.swing.MigLayout;
 import swing.MenuAnimation;
 import swing.MenuItem;
@@ -54,14 +55,22 @@ public class Sidebar extends javax.swing.JPanel {
         panelMenu.setLayout(layout);
     }
     
-    public void initiationMenu() {
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/dashboard.png")), "Dashboard"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/briefcase.png")), "Master", "Barang","Tindakan","Pasien","Supplier","Karyawan","Pengguna"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/clock.png")), "Reservasi"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/money-exchange.png")), "Transaksi","Pemeriksaan","Penjualan","Pemesanan"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/expenditure.png")), "Pengeluaran"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/medical-records.png")), "Riwayat Pasien"));
-        addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/menu.png")), "Lain lain","Restok","Absensi","Cetak Kartu","Laporan"));
+    public void initiationMenu(ModelPengguna modelPengguna) {
+        String level = modelPengguna.getLevel();
+        if(level.equals("Owner")) {
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/dashboard.png")), "Dashboard"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/briefcase.png")), "Master", "Barang","Tindakan","Pasien","Supplier","Karyawan","Pengguna"));    
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/clock.png")), "Reservasi"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/money-exchange.png")), "Transaksi","Pemeriksaan","Penjualan","Pemesanan"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/expenditure.png")), "Pengeluaran"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/medical-records.png")), "Riwayat Pasien"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/menu.png")), "Lain lain","Restok","Absensi","Cetak Kartu","Laporan"));
+        } else {
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/clock.png")), "Reservasi"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/money-exchange.png")), "Transaksi","Pemeriksaan","Penjualan","Pemesanan"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/medical-records.png")), "Riwayat Pasien"));
+            addMenu(new ModelMenu(new ImageIcon(getClass().getResource("/image/menu.png")), "Lain lain","Restok","Absensi","Cetak Kartu","Laporan"));  
+        }
     }
     
     private void addMenu(ModelMenu menu) {

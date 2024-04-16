@@ -8,12 +8,15 @@ import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import model.ModelHeaderTable;
+import model.ModelKaryawan;
 import model.ModelRenderTable;
+import service.ServiceKaryawan;
 import swing.TableCellActionRender;
 import swing.TableCellEditor;
 
@@ -28,6 +31,7 @@ public class FiturKaryawan extends javax.swing.JPanel {
      */
     private DefaultTableModel tabmodel;
     private TableAction action;
+    private ServiceKaryawan serviceKaryawan = new ServiceKaryawan();
     
     public FiturKaryawan() {
         initComponents();
@@ -41,10 +45,7 @@ public class FiturKaryawan extends javax.swing.JPanel {
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
         table.setDefaultRenderer(Object.class, new ModelRenderTable(6));
         tabmodel = (DefaultTableModel) table.getModel();
-        
-        for(int a = 0; a < 20; a++) {
-            tabmodel.addRow(new String[]{"B-2402-001","Botol","Pcs","25000","35000","100"});
-        }
+        tampilData();
         actionRenderTable();
        
     }
@@ -54,7 +55,9 @@ public class FiturKaryawan extends javax.swing.JPanel {
         action = new TableAction() {
         @Override
         public void edit(int row) {
-            System.out.println("Edit row : " + row);
+            changePanel(panelTambah);
+            setComponentUpdate(row);
+            btnSimpan.setText("PERBARUI");
         }
 
         @Override
@@ -62,17 +65,96 @@ public class FiturKaryawan extends javax.swing.JPanel {
             if(table.isEditing()) {
                 table.getCellEditor().stopCellEditing();
             }
-            System.out.println("Remov Row : " + row);
+            if(JOptionPane.showConfirmDialog(null, "Apakah Anda Ingin Menghapusnya", "Konfirmasi", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            hapusData(row);  
             tabmodel.removeRow(row);
+            }
         }
 
         @Override
         public void view(int row) {
-            System.out.println("View row : " + row);
+            
         }
     };        
         table.getColumnModel().getColumn(6).setCellRenderer(new TableCellActionRender(true, true, false));
         table.getColumnModel().getColumn(6).setCellEditor(new TableCellEditor(action, true, true, false));
+    }
+    
+    private void addData(){
+    String IdKaryawan = TFIdKaryawan.getText();   
+    String NamaKaryawan = TFNamaKaryawan.getText();   
+    String TeleponKaryawan = TFTeleponKaryawan.getText();   
+    String EmailKaryawan = TFEmailKaryawan.getText();   
+    String AlamatKaryawan = TFAlamatKaryawan.getText();   
+    String JabatanKaryawan = (String) cbxJabatanKaryawan.getSelectedItem();   
+    ModelKaryawan modelKaryawan = new ModelKaryawan(IdKaryawan, NamaKaryawan, TeleponKaryawan, EmailKaryawan, AlamatKaryawan, JabatanKaryawan);
+    serviceKaryawan.addData(modelKaryawan);
+    
+    }
+    
+    private void setComponentUpdate(int row){
+    TFIdKaryawan.setText((String) table.getValueAt(row, 0));
+    TFNamaKaryawan.setText((String) table.getValueAt(row, 1));
+    TFTeleponKaryawan.setText((String) table.getValueAt(row, 2));
+    TFEmailKaryawan.setText((String) table.getValueAt(row, 3));
+    TFAlamatKaryawan.setText((String) table.getValueAt(row, 4));
+    cbxJabatanKaryawan.setSelectedItem((String)table.getValueAt(row, 5));
+   }
+    
+    private void perbaruiData(){
+        String IdKaryawan = TFIdKaryawan.getText();
+        String NamaKaryawan = TFNamaKaryawan.getText();
+        String TeleponKaryawan = TFTeleponKaryawan.getText();
+        String EmailKaryawan = TFEmailKaryawan.getText();
+        String AlamatKaryawan = TFAlamatKaryawan.getText();
+        String JabatanKaryawan = (String) cbxJabatanKaryawan.getSelectedItem();
+        ModelKaryawan modelKaryawan = new ModelKaryawan(IdKaryawan, NamaKaryawan, TeleponKaryawan, EmailKaryawan, AlamatKaryawan, JabatanKaryawan);
+        serviceKaryawan.updateData(modelKaryawan);
+        btnSimpan.setText("SIMPAN");
+        
+    }
+     private void hapusData(int row){
+        String IdKaryawan = (String) table.getValueAt(row, 0);
+        ModelKaryawan modelKaryawan = new ModelKaryawan();
+        modelKaryawan.setIdKaryawan(IdKaryawan);
+        serviceKaryawan.deleteData(modelKaryawan);
+    }
+     private boolean validation(){
+        boolean valid = false;
+        
+        
+        if(TFIdKaryawan.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "ID Karyawan Tidak Boleh Kosong");
+        }else if (TFNamaKaryawan.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Nama Karyawan Tidak Boleh Kosong");
+        }else if (TFTeleponKaryawan.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "No Telepon Karyawan Tidak Boleh Kosong");
+        }else if (TFEmailKaryawan.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Email Karyawan Tidak Boleh Kosong");
+        }else if (TFAlamatKaryawan.getText().isEmpty()){
+            JOptionPane.showMessageDialog(null, "Alamat Karyawan Tiddak Boleh Kosong");   
+        }else{
+            valid = true;
+        }
+        
+        return valid;
+    }
+     private void clearField(){
+        TFIdKaryawan.setText(null);
+        TFNamaKaryawan.setText(null);
+        TFTeleponKaryawan.setText(null);
+        TFEmailKaryawan.setText(null);
+        TFAlamatKaryawan.setText(null);
+    }
+     
+    private void tampilData(){
+    serviceKaryawan.loadData(1, tabmodel, pagination);
+    pagination.addActionPagination(new action.ActionPagination() {
+        @Override
+        public void pageChanged(int page) {
+             serviceKaryawan.loadData(page, tabmodel, pagination);
+        }
+        });
     }
    
     /**
@@ -103,13 +185,13 @@ public class FiturKaryawan extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         btnSimpan1 = new swing.Button();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
+        TFIdKaryawan = new javax.swing.JTextField();
+        TFEmailKaryawan = new javax.swing.JTextField();
+        TFNamaKaryawan = new javax.swing.JTextField();
+        TFTeleponKaryawan = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        TFAlamatKaryawan = new javax.swing.JTextArea();
+        cbxJabatanKaryawan = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         label1 = new javax.swing.JLabel();
 
@@ -300,29 +382,36 @@ public class FiturKaryawan extends javax.swing.JPanel {
         btnSimpan1.setForeground(new java.awt.Color(255, 255, 255));
         btnSimpan1.setText("BATAL");
         btnSimpan1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        jTextField2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField2.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-
-        jTextField4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField4.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
-        jTextField4.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                jTextField4KeyTyped(evt);
+        btnSimpan1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSimpan1ActionPerformed(evt);
             }
         });
 
-        jTextField7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField7.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        TFIdKaryawan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFIdKaryawan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jTextField8.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jTextField8.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        TFEmailKaryawan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFEmailKaryawan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        TFNamaKaryawan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFNamaKaryawan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        TFTeleponKaryawan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFTeleponKaryawan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        TFTeleponKaryawan.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                TFTeleponKaryawanKeyTyped(evt);
+            }
+        });
+
+        TFAlamatKaryawan.setColumns(20);
+        TFAlamatKaryawan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        TFAlamatKaryawan.setRows(5);
+        jScrollPane1.setViewportView(TFAlamatKaryawan);
+
+        cbxJabatanKaryawan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        cbxJabatanKaryawan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Terapist" }));
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -344,13 +433,13 @@ public class FiturKaryawan extends javax.swing.JPanel {
                         .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextField2)
-                    .addComponent(jTextField4)
-                    .addComponent(jTextField7)
-                    .addComponent(jTextField8)
+                    .addComponent(TFIdKaryawan)
+                    .addComponent(TFEmailKaryawan)
+                    .addComponent(TFNamaKaryawan)
+                    .addComponent(TFTeleponKaryawan)
                     .addComponent(jScrollPane1)
                     .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cbxJabatanKaryawan, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 289, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -360,26 +449,26 @@ public class FiturKaryawan extends javax.swing.JPanel {
                 .addGap(50, 50, 50)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFIdKaryawan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFNamaKaryawan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFTeleponKaryawan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TFEmailKaryawan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jComboBox1)
+                    .addComponent(cbxJabatanKaryawan)
                     .addGroup(panel2Layout.createSequentialGroup()
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -435,18 +524,31 @@ public class FiturKaryawan extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
 
         add(panelTambah, "card2");
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
+        clearField();
         changePanel(panelTambah);
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
-        changePanel(panelData);
+        if(btnSimpan.getText().equals("SIMPAN")) {
+        if(validation()) {
+            addData();          
+            changePanel(panelData);
+        }   
+        } else {
+        if(validation()) {
+            perbaruiData();    
+            changePanel(panelData);
+        }
+        }
+        tabmodel.setRowCount(0);
+        tampilData();
     }//GEN-LAST:event_btnSimpanActionPerformed
 
     private void txtCariFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusGained
@@ -456,14 +558,19 @@ public class FiturKaryawan extends javax.swing.JPanel {
     }//GEN-LAST:event_txtCariFocusGained
 
     private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
-        txtCari.setText("Cari Berdasarkan Kode Barang & Nama Barang");
+        txtCari.setText("Cari Berdasarkan ID Karyawan atau Nama Karyawan");
         txtCari.setForeground(new Color(185,185,185));
         txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
     }//GEN-LAST:event_txtCariFocusLost
 
-    private void jTextField4KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField4KeyTyped
+    private void TFTeleponKaryawanKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TFTeleponKaryawanKeyTyped
         characterDigit(evt);
-    }//GEN-LAST:event_jTextField4KeyTyped
+    }//GEN-LAST:event_TFTeleponKaryawanKeyTyped
+
+    private void btnSimpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan1ActionPerformed
+        clearField();
+        changePanel(panelData);
+    }//GEN-LAST:event_btnSimpan1ActionPerformed
 
     private void changePanel(JPanel panel) {
         removeAll();
@@ -482,10 +589,15 @@ public class FiturKaryawan extends javax.swing.JPanel {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextArea TFAlamatKaryawan;
+    private javax.swing.JTextField TFEmailKaryawan;
+    private javax.swing.JTextField TFIdKaryawan;
+    private javax.swing.JTextField TFNamaKaryawan;
+    private javax.swing.JTextField TFTeleponKaryawan;
     private swing.Button btnSimpan;
     private swing.Button btnSimpan1;
     private swing.Button btnTambah;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> cbxJabatanKaryawan;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -495,11 +607,6 @@ public class FiturKaryawan extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
     private javax.swing.JLabel label;
     private javax.swing.JLabel label1;
     private swing.Pagination pagination;
