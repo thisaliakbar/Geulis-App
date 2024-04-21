@@ -42,7 +42,7 @@ public class ServicePasien {
             rst = pst.executeQuery();
             while(rst.next()) {
                 String idPasien = rst.getString("Id_Pasien");
-                String nama = rst.getString("Nama_Pasien");
+                String nama = rst.getString("Nama");
                 String jenisKelamin = rst.getString("Jenis_Kelamin");
                 String no_Telp = rst.getString("No_Telp");
                 String alamat = rst.getString("Alamat");
@@ -62,16 +62,19 @@ public class ServicePasien {
     }
     
     public void addData(ModelPasien modelPasien) {
-        String query = "INSERT INTO pasien (Id_Pasien, Nama_Pasien, Jenis_Kelamin, No_Telp, Alamat, Email, Level) VALUES (?,?,?,?,?,?,?)";
+        String query = "INSERT INTO pasien (Id_Pasien, Nama, Jenis_Kelamin, No_Telp, Alamat, Email, Level) VALUES (?,?,?,?,?,?,?)";
+        System.out.println(query);
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, modelPasien.getIdPasien());
+            System.out.println(modelPasien.getIdPasien());
             pst.setString(2, modelPasien.getNama());
             pst.setString(3, modelPasien.getJenisKelamin());
             pst.setString(4, modelPasien.getNoTelp());
             pst.setString(5, modelPasien.getAlamat());
             pst.setString(6, modelPasien.getEmail());
             pst.setString(7, modelPasien.getLevel());
+            System.out.println(modelPasien.getLevel());
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "Data Pasien berhasil ditambahkan");
         } catch(Exception ex) {
@@ -80,7 +83,7 @@ public class ServicePasien {
     }
     
     public void updateData(ModelPasien modelPasien) {
-        String query = "UPDATE pasien SET Nama_Pasien=?, Jenis_Kelamin=?, No_Telp=?, Alamat=?, Email=?, Level=? WHERE Id_Pasien=?";
+        String query = "UPDATE pasien SET Nama=?, Jenis_Kelamin=?, No_Telp=?, Alamat=?, Email=?, Level=? WHERE Id_Pasien=?";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, modelPasien.getNama());

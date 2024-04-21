@@ -69,16 +69,23 @@ public class FiturBarang extends javax.swing.JPanel {
         @Override
         public void edit(int row) {
             changePanel(panelTambah);
+            lb_kodeJenis.setVisible(false);
             t_kodeBarang.setEnabled(false);
             btnSimpan.setText("PERBARUI");
             String kodeBarang = (String) table.getValueAt(row, 0);
-            String namaBarang = (String) table.getValueAt(row, 1);
-            String satuan = (String) table.getValueAt(row, 2);
-            int hargaBeli = (int) table.getValueAt(row,3);
-            int hargaJual = (int) table.getValueAt(row, 4);
-            int stok = (int) table.getValueAt(row, 5);
+            String noBarcode = (String) table.getValueAt(row, 1);
+            String kodeJenis = (String) table.getValueAt(row, 2);
+            String jenisBarang = (String) table.getValueAt(row, 3);
+            String namaBarang = (String) table.getValueAt(row, 4);
+            String satuan = (String) table.getValueAt(row, 5);
+            int hargaBeli = (int) table.getValueAt(row,6);
+            int hargaJual = (int) table.getValueAt(row, 7);
+            int stok = (int) table.getValueAt(row, 8);
             
             t_kodeBarang.setText(kodeBarang);
+            t_noBarcode.setText(noBarcode);
+            lb_kodeJenis.setText(kodeJenis);
+            cbx_jenisBarang.setSelectedItem(jenisBarang);
             t_namaBarang.setText(namaBarang);
             cbx_satuan.setSelectedItem(satuan);
             t_hargaBeli.setText(String.valueOf(hargaBeli));
@@ -145,11 +152,12 @@ public class FiturBarang extends javax.swing.JPanel {
         cbx_satuan = new javax.swing.JComboBox<>();
         spn_stok = new javax.swing.JSpinner();
         cbx_jenisBarang = new javax.swing.JComboBox<>();
-        t_kodeBarang1 = new javax.swing.JTextField();
+        t_noBarcode = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         t_tambahJenisBarang = new javax.swing.JTextField();
         btnTambahJenis = new swing.Button();
         btnBatalJenis = new swing.Button();
+        lb_kodeJenis = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         label1 = new javax.swing.JLabel();
 
@@ -171,11 +179,11 @@ public class FiturBarang extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Kode Barang", "Kode Jenis", "Jenis Barang", "Nama Barang", "Satuan", "Harga Beli", "Harga Jual", "Stok", "Aksi"
+                "Kode Barang", "Nomor Barcode", "Kode Jenis", "Jenis Barang", "Nama Barang", "Satuan", "Harga Beli", "Harga Jual", "Stok", "Aksi"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, true, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -187,9 +195,9 @@ public class FiturBarang extends javax.swing.JPanel {
         table.setSelectionBackground(new java.awt.Color(255, 255, 255));
         scrollPane.setViewportView(table);
         if (table.getColumnModel().getColumnCount() > 0) {
-            table.getColumnModel().getColumn(1).setMinWidth(0);
-            table.getColumnModel().getColumn(1).setPreferredWidth(0);
-            table.getColumnModel().getColumn(1).setMaxWidth(0);
+            table.getColumnModel().getColumn(2).setMinWidth(0);
+            table.getColumnModel().getColumn(2).setPreferredWidth(0);
+            table.getColumnModel().getColumn(2).setMaxWidth(0);
         }
 
         btnTambah.setBackground(new java.awt.Color(135, 15, 50));
@@ -434,8 +442,8 @@ public class FiturBarang extends javax.swing.JPanel {
             }
         });
 
-        t_kodeBarang1.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
-        t_kodeBarang1.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
+        t_noBarcode.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        t_noBarcode.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         jLabel10.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -458,13 +466,16 @@ public class FiturBarang extends javax.swing.JPanel {
             }
         });
 
+        lb_kodeJenis.setBackground(new java.awt.Color(255, 255, 255));
+        lb_kodeJenis.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
         panel2Layout.setHorizontalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -472,7 +483,8 @@ public class FiturBarang extends javax.swing.JPanel {
                         .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jLabel10))
+                    .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lb_kodeJenis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(t_kodeBarang)
@@ -480,7 +492,7 @@ public class FiturBarang extends javax.swing.JPanel {
                     .addComponent(t_hargaJual)
                     .addComponent(t_namaBarang)
                     .addGroup(panel2Layout.createSequentialGroup()
-                        .addComponent(t_kodeBarang1, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(t_noBarcode, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbx_jenisBarang, 0, 259, Short.MAX_VALUE))
                     .addGroup(panel2Layout.createSequentialGroup()
@@ -508,14 +520,15 @@ public class FiturBarang extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbx_jenisBarang, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(t_kodeBarang1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(t_noBarcode, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(t_tambahJenisBarang, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
                     .addComponent(btnTambahJenis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnBatalJenis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnBatalJenis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lb_kodeJenis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -603,6 +616,7 @@ public class FiturBarang extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
+        lb_kodeJenis.setVisible(false);
         tampilJenisBarang();
         setShowFieldAddJenis(false, false, false);
     }//GEN-LAST:event_btnTambahActionPerformed
@@ -652,6 +666,7 @@ public class FiturBarang extends javax.swing.JPanel {
             setShowFieldAddJenis(false, false, false);
             ModelJenisBarang modelJenis = new ModelJenisBarang();
             modelJenis.setNamaJenis(index);
+            lb_kodeJenis.setText(serviceBarang.selectKodeJenis(modelJenis));
             String kodeBarang = serviceBarang.createKodeBarang(modelJenis);
             t_kodeBarang.setText(kodeBarang);
         } else {
@@ -730,6 +745,7 @@ public class FiturBarang extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel label;
     private javax.swing.JLabel label1;
+    private javax.swing.JLabel lb_kodeJenis;
     private swing.Pagination pagination;
     private javax.swing.JPanel panel1;
     private javax.swing.JPanel panel2;
@@ -741,8 +757,8 @@ public class FiturBarang extends javax.swing.JPanel {
     private javax.swing.JTextField t_hargaBeli;
     private javax.swing.JTextField t_hargaJual;
     private javax.swing.JTextField t_kodeBarang;
-    private javax.swing.JTextField t_kodeBarang1;
     private javax.swing.JTextField t_namaBarang;
+    private javax.swing.JTextField t_noBarcode;
     private javax.swing.JTextField t_tambahJenisBarang;
     private javax.swing.JTable table;
     private javax.swing.JTextField txtCari;
@@ -751,24 +767,29 @@ public class FiturBarang extends javax.swing.JPanel {
 // Tambah data barang
     private void tambahData() {
         String kodeBarang = t_kodeBarang.getText();
+        String nomorBarcode = t_noBarcode.getText();
+        String kodeJenis = lb_kodeJenis.getText();
         String namaBarang = t_namaBarang.getText();
         String satuan = (String) cbx_satuan.getSelectedItem();
         int hargaBeli = Integer.parseInt(t_hargaBeli.getText());
         int hargaJual = Integer.parseInt(t_hargaJual.getText());
         int stok = (int) spn_stok.getValue();
         
-        ModelBarang modelBarang = new ModelBarang(kodeBarang, namaBarang, satuan, hargaBeli, hargaJual, stok);
+        ModelBarang modelBarang = new ModelBarang(kodeBarang, nomorBarcode, kodeJenis, namaBarang, namaBarang, satuan, hargaBeli, hargaJual, stok);
         serviceBarang.addData(modelBarang);
     }
     
     private void perbaruiData() {
         String kodeBarang = t_kodeBarang.getText();
-        String namaBaran = t_namaBarang.getText();
+        String nomorBarcode = t_noBarcode.getText();
+        String kodeJenis = lb_kodeJenis.getText();
+        String jenisBarang = (String) cbx_jenisBarang.getSelectedItem();
+        String namaBarang = t_namaBarang.getText();
         String satuan = (String) cbx_satuan.getSelectedItem();
         int hargaBeli = Integer.parseInt(t_hargaBeli.getText());
         int hargaJual = Integer.parseInt(t_hargaJual.getText());
         int stok = (int) spn_stok.getValue(); 
-        ModelBarang modelBarang = new ModelBarang(kodeBarang, namaBaran, satuan, hargaBeli, hargaJual, stok);
+        ModelBarang modelBarang = new ModelBarang(kodeBarang, nomorBarcode, kodeJenis, jenisBarang, namaBarang, satuan, hargaBeli, hargaJual, stok);
         serviceBarang.updateData(modelBarang);
     }
     
@@ -804,6 +825,10 @@ public class FiturBarang extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "Kode Barang tidak boleh kosong");
         } else if(t_namaBarang.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Nama Barang tidak boleh kosong");   
+        } else if(t_noBarcode.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Nomor Barcode tidak boleh kosong");
+        } else if(cbx_jenisBarang.getSelectedIndex() == 0) {
+            JOptionPane.showMessageDialog(null, "Mohon pilih jenis barang");
         } else if(t_hargaBeli.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Harga Beli tidak boleh kosong");             
         } else if(t_hargaJual.getText().isEmpty()) {

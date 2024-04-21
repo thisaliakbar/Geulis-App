@@ -47,7 +47,7 @@ public class FiturPasien extends javax.swing.JPanel {
         scrollPane.setBorder(new EmptyBorder(5,10,5,10));
         table.setRowHeight(40);        
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
-        table.setDefaultRenderer(Object.class, new ModelRenderTable(6));
+        table.setDefaultRenderer(Object.class, new ModelRenderTable(7));
         tabmodel = (DefaultTableModel) table.getModel();
         tampilData();
         actionRenderTable();
@@ -75,16 +75,18 @@ public class FiturPasien extends javax.swing.JPanel {
             btnSimpan.setText("PERBARUI");
             String idPasien = (String) table.getValueAt(row, 0);
             String nama = (String) table.getValueAt(row, 1);
-            String no_Telp = (String) table.getValueAt(row, 2);
-            String alamat = (String) table.getValueAt(row, 3);
-            String email = (String) table.getValueAt(row, 4);
-            String level = (String) table.getValueAt(row, 5);
+            String jenisKelamin = (String) table.getValueAt(row, 2);
+            String no_Telp = (String) table.getValueAt(row, 3);
+            String alamat = (String) table.getValueAt(row, 4);
+            String email = (String) table.getValueAt(row, 5);
+            String level = (String) table.getValueAt(row, 6);
             
             t_idPasien.setText(idPasien);
             t_nama.setText(nama);
-            t_jenisKelamin.setText(no_Telp);
-            t_alamat.setText(alamat);
+            t_jenisKelamin.setText(jenisKelamin);
+            t_no_Telp.setText(no_Telp);
             t_email.setText(email);
+            t_alamat.setText(alamat);
             cbx_level.setSelectedItem(level);
         }
 
@@ -106,8 +108,8 @@ public class FiturPasien extends javax.swing.JPanel {
             System.out.println("View row : " + row);
         }
     };        
-        table.getColumnModel().getColumn(6).setCellRenderer(new TableCellActionRender(true, true, false));
-        table.getColumnModel().getColumn(6).setCellEditor(new TableCellEditor(action, true, true, false));
+        table.getColumnModel().getColumn(7).setCellRenderer(new TableCellActionRender(true, true, false));
+        table.getColumnModel().getColumn(7).setCellEditor(new TableCellEditor(action, true, true, false));
     }
    
     /**
@@ -168,11 +170,11 @@ public class FiturPasien extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID Pasien", "Nama Pasien", "No Telepon", "Email", "Alamat", "Level", "Aksi"
+                "ID Pasien", "Nama Pasien", "Jenis Kelamin", "No Telepon", "Email", "Alamat", "Level", "Aksi"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -488,7 +490,7 @@ public class FiturPasien extends javax.swing.JPanel {
             .addGroup(panelTambahLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addGap(32, 32, 32)
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44))
         );
@@ -498,6 +500,8 @@ public class FiturPasien extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
+        t_idPasien.setEnabled(true);
+        btnSimpan.setText("SIMPAN");
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
