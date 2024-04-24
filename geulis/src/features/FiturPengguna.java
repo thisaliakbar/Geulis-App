@@ -11,8 +11,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import model.ModelHeaderTable;
 import model.ModelPengguna;
 import model.ModelRenderTable;
@@ -29,6 +33,7 @@ public class FiturPengguna extends javax.swing.JPanel {
     /**
      * Creates new form FiturBarang
      */
+    private TableRowSorter<DefaultTableModel> rowSorter;
     private DefaultTableModel tabmodel;
     private TableAction action;
     private ServicePengguna servicePengguna = new ServicePengguna(); 
@@ -44,9 +49,12 @@ public class FiturPengguna extends javax.swing.JPanel {
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
         table.setDefaultRenderer(Object.class, new ModelRenderTable(5));
         tabmodel = (DefaultTableModel) table.getModel();
+        rowSorter = new TableRowSorter<>(tabmodel);
+        table.setRowSorter(rowSorter);
         tampilData();
+        tampilLevel();
         actionRenderTable();
-       
+        cariData();
     }
     
 //  Update,Delete,Detail
@@ -95,7 +103,7 @@ public class FiturPengguna extends javax.swing.JPanel {
         TFIdPengguna.setText((String) table.getValueAt(row, 0));
         TFNamaPengguna.setText((String) table.getValueAt(row, 1));
         TFUsernamePengguna.setText((String) table.getValueAt(row, 2));
-        jLabel3.setVisible(false);
+        lbPassword.setVisible(false);
         TFPasswordPengguna.setVisible(false);
         TFEmailPengguna.setText((String) table.getValueAt(row, 3));
         cbxLevelPengguna.setSelectedItem((String)table.getValueAt(row, 4));
@@ -110,7 +118,6 @@ public class FiturPengguna extends javax.swing.JPanel {
         String LevelPengguna = (String)cbxLevelPengguna.getSelectedItem();
         ModelPengguna modelPengguna =new ModelPengguna(IdPengguna, NamaPengguna, UsernamePengguna, PasswordPengguna, EmailPengguna, LevelPengguna);
         servicePengguna.updateData(modelPengguna);
-        btnSimpan.setText("SIMPAN");
       } 
     
       
@@ -167,13 +174,49 @@ public class FiturPengguna extends javax.swing.JPanel {
         TFEmailPengguna.setText(null);
     }
     private void tampilData(){
-    servicePengguna.loadData(1, tabmodel, pagination);
-    pagination.addActionPagination(new action.ActionPagination() {
-        @Override
-        public void pageChanged(int page) {
-             servicePengguna.loadData(page, tabmodel, pagination);
+        servicePengguna.loadData(1, tabmodel, pagination);
+        pagination.addActionPagination(new action.ActionPagination() {
+            @Override
+            public void pageChanged(int page) {
+                 servicePengguna.loadData(page, tabmodel, pagination);
+            }
+        });
+    }
+    
+    private void cariData() {
+        txtCari.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                
+            }
+        });
+    }
+    
+    private void tampilLevel() {
+        String[] levels = new String[]{"Owner", "Admin"};
+        for(String level : levels) {
+            cbxLevelPengguna.addItem(level);
         }
-    });
     }
    
     /**
@@ -199,11 +242,11 @@ public class FiturPengguna extends javax.swing.JPanel {
         btnSimpan = new swing.Button();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        lbPassword = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        btnSimpan1 = new swing.Button();
+        btnBatal = new swing.Button();
         TFIdPengguna = new javax.swing.JTextField();
         TFPasswordPengguna = new javax.swing.JTextField();
         TFNamaPengguna = new javax.swing.JTextField();
@@ -276,9 +319,6 @@ public class FiturPengguna extends javax.swing.JPanel {
         txtCari.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCariFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtCariFocusLost(evt);
             }
         });
 
@@ -376,10 +416,10 @@ public class FiturPengguna extends javax.swing.JPanel {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel2.setText("ID Pengguna");
 
-        jLabel3.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel3.setText("Password");
+        lbPassword.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        lbPassword.setForeground(new java.awt.Color(0, 0, 0));
+        lbPassword.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        lbPassword.setText("Password");
 
         jLabel4.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
@@ -396,13 +436,13 @@ public class FiturPengguna extends javax.swing.JPanel {
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel6.setText("Email");
 
-        btnSimpan1.setBackground(new java.awt.Color(0, 153, 0));
-        btnSimpan1.setForeground(new java.awt.Color(255, 255, 255));
-        btnSimpan1.setText("BATAL");
-        btnSimpan1.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-        btnSimpan1.addActionListener(new java.awt.event.ActionListener() {
+        btnBatal.setBackground(new java.awt.Color(0, 153, 0));
+        btnBatal.setForeground(new java.awt.Color(255, 255, 255));
+        btnBatal.setText("BATAL");
+        btnBatal.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btnBatal.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSimpan1ActionPerformed(evt);
+                btnBatalActionPerformed(evt);
             }
         });
 
@@ -419,7 +459,7 @@ public class FiturPengguna extends javax.swing.JPanel {
         TFUsernamePengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         cbxLevelPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
-        cbxLevelPengguna.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Owner", "Administrator" }));
+        cbxLevelPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         TFEmailPengguna.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
         TFEmailPengguna.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
@@ -432,7 +472,7 @@ public class FiturPengguna extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -443,7 +483,7 @@ public class FiturPengguna extends javax.swing.JPanel {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(TFIdPengguna)
                     .addComponent(TFPasswordPengguna)
                     .addComponent(TFNamaPengguna)
@@ -457,7 +497,7 @@ public class FiturPengguna extends javax.swing.JPanel {
         panel2Layout.setVerticalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addContainerGap()
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TFIdPengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -471,7 +511,7 @@ public class FiturPengguna extends javax.swing.JPanel {
                     .addComponent(TFUsernamePengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TFPasswordPengguna, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -486,7 +526,7 @@ public class FiturPengguna extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSimpan1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -495,16 +535,16 @@ public class FiturPengguna extends javax.swing.JPanel {
         label1.setBackground(new java.awt.Color(135, 15, 50));
         label1.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         label1.setForeground(new java.awt.Color(255, 255, 255));
-        label1.setText("Tambah Barang");
+        label1.setText("Tambah Pengguna");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(501, Short.MAX_VALUE)
+                .addContainerGap(478, Short.MAX_VALUE)
                 .addComponent(label1)
-                .addContainerGap(501, Short.MAX_VALUE))
+                .addContainerGap(477, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -535,7 +575,7 @@ public class FiturPengguna extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addContainerGap(208, Short.MAX_VALUE))
         );
 
         add(panelTambah, "card2");
@@ -543,9 +583,13 @@ public class FiturPengguna extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
-        jLabel3.setVisible(true);
-        TFPasswordPengguna.setVisible(true);
         clearField();
+        TFIdPengguna.setEnabled(false);
+        TFIdPengguna.setText(servicePengguna.createId());
+        lbPassword.setVisible(true);
+        TFPasswordPengguna.setVisible(true);
+        cbxLevelPengguna.setSelectedItem("Owner");
+        btnSimpan.setText("SIMPAN");
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
@@ -570,17 +614,12 @@ public class FiturPengguna extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",0,14));
     }//GEN-LAST:event_txtCariFocusGained
 
-    private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
-        txtCari.setText("Cari Berdasarkan ID Pengguna & Nama Pengguna");
-        txtCari.setForeground(new Color(185,185,185));
-        txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
-    }//GEN-LAST:event_txtCariFocusLost
-
-    private void btnSimpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan1ActionPerformed
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
         clearField();
-        btnSimpan.setText("SIMPAN");
+        tabmodel.setRowCount(0);
+        tampilData();
         changePanel(panelData);
-    }//GEN-LAST:event_btnSimpan1ActionPerformed
+    }//GEN-LAST:event_btnBatalActionPerformed
 
     private void changePanel(JPanel panel) {
         removeAll();
@@ -604,13 +643,12 @@ public class FiturPengguna extends javax.swing.JPanel {
     private javax.swing.JTextField TFNamaPengguna;
     private javax.swing.JTextField TFPasswordPengguna;
     private javax.swing.JTextField TFUsernamePengguna;
+    private swing.Button btnBatal;
     private swing.Button btnSimpan;
-    private swing.Button btnSimpan1;
     private swing.Button btnTambah;
     private javax.swing.JComboBox<String> cbxLevelPengguna;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -618,6 +656,7 @@ public class FiturPengguna extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JLabel label;
     private javax.swing.JLabel label1;
+    private javax.swing.JLabel lbPassword;
     private swing.Pagination pagination;
     private javax.swing.JPanel panel1;
     private javax.swing.JPanel panel2;

@@ -11,8 +11,12 @@ import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import model.ModelHeaderTable;
 import model.ModelKaryawan;
 import model.ModelRenderTable;
@@ -29,6 +33,7 @@ public class FiturKaryawan extends javax.swing.JPanel {
     /**
      * Creates new form FiturBarang
      */
+    private TableRowSorter<DefaultTableModel> rowSorter;
     private DefaultTableModel tabmodel;
     private TableAction action;
     private ServiceKaryawan serviceKaryawan = new ServiceKaryawan();
@@ -45,9 +50,12 @@ public class FiturKaryawan extends javax.swing.JPanel {
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
         table.setDefaultRenderer(Object.class, new ModelRenderTable(6));
         tabmodel = (DefaultTableModel) table.getModel();
+        rowSorter = new TableRowSorter<>(tabmodel);
+        table.setRowSorter(rowSorter);
         tampilData();
+        tampilJabatan();
         actionRenderTable();
-       
+        cariData();
     }
     
 //  Update,Delete,Detail
@@ -110,7 +118,6 @@ public class FiturKaryawan extends javax.swing.JPanel {
         String JabatanKaryawan = (String) cbxJabatanKaryawan.getSelectedItem();
         ModelKaryawan modelKaryawan = new ModelKaryawan(IdKaryawan, NamaKaryawan, TeleponKaryawan, EmailKaryawan, AlamatKaryawan, JabatanKaryawan);
         serviceKaryawan.updateData(modelKaryawan);
-        btnSimpan.setText("SIMPAN");
         
     }
      private void hapusData(int row){
@@ -156,6 +163,44 @@ public class FiturKaryawan extends javax.swing.JPanel {
         }
         });
     }
+    
+    private void tampilJabatan() {
+        String[] positions = new String[]{"Admin","Terapis"};
+        for(String position : positions) {
+            cbxJabatanKaryawan.addItem(position);
+        }
+    }
+    
+    private void cariData() {
+        txtCari.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = txtCari.getText();
+                if(text.length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 1));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                
+            }
+        });
+    }
+    
+//    private void tampilLevelKa
    
     /**
      * This method is called from within the constructor to initialize the form.
@@ -214,7 +259,7 @@ public class FiturKaryawan extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID Karyawan", "Nama Karyawan", "No Telepon", "Email", "Alamat", "Jabatan", "Aksi"
+                "ID Karyawan", "Nama", "No Telepon", "Email", "Alamat", "Jabatan", "Aksi"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -229,6 +274,15 @@ public class FiturKaryawan extends javax.swing.JPanel {
         table.setOpaque(false);
         table.setSelectionBackground(new java.awt.Color(255, 255, 255));
         scrollPane.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setMinWidth(100);
+            table.getColumnModel().getColumn(0).setPreferredWidth(100);
+            table.getColumnModel().getColumn(0).setMaxWidth(100);
+            table.getColumnModel().getColumn(4).setPreferredWidth(300);
+            table.getColumnModel().getColumn(6).setMinWidth(100);
+            table.getColumnModel().getColumn(6).setPreferredWidth(100);
+            table.getColumnModel().getColumn(6).setMaxWidth(100);
+        }
 
         btnTambah.setBackground(new java.awt.Color(135, 15, 50));
         btnTambah.setForeground(new java.awt.Color(255, 255, 255));
@@ -253,14 +307,11 @@ public class FiturKaryawan extends javax.swing.JPanel {
         txtCari.setFont(new java.awt.Font("SansSerif", 2, 14)); // NOI18N
         txtCari.setForeground(new java.awt.Color(185, 185, 185));
         txtCari.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtCari.setText("Cari Berdasarkan ID Pasien Atau Nama Pasien");
+        txtCari.setText("Cari Berdasarkan ID Karyawan Atau Nama");
         txtCari.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(185, 185, 185)));
         txtCari.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtCariFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtCariFocusLost(evt);
             }
         });
 
@@ -411,7 +462,7 @@ public class FiturKaryawan extends javax.swing.JPanel {
         jScrollPane1.setViewportView(TFAlamatKaryawan);
 
         cbxJabatanKaryawan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
-        cbxJabatanKaryawan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Terapist" }));
+        cbxJabatanKaryawan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
 
         javax.swing.GroupLayout panel2Layout = new javax.swing.GroupLayout(panel2);
         panel2.setLayout(panel2Layout);
@@ -446,7 +497,7 @@ public class FiturKaryawan extends javax.swing.JPanel {
         panel2Layout.setVerticalGroup(
             panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel2Layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addContainerGap()
                 .addGroup(panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TFIdKaryawan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -484,16 +535,16 @@ public class FiturKaryawan extends javax.swing.JPanel {
         label1.setBackground(new java.awt.Color(135, 15, 50));
         label1.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         label1.setForeground(new java.awt.Color(255, 255, 255));
-        label1.setText("Tambah Barang");
+        label1.setText("Tambah Karyawan");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(501, Short.MAX_VALUE)
+                .addContainerGap(477, Short.MAX_VALUE)
                 .addComponent(label1)
-                .addContainerGap(501, Short.MAX_VALUE))
+                .addContainerGap(477, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -524,7 +575,7 @@ public class FiturKaryawan extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addComponent(panel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(70, Short.MAX_VALUE))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
 
         add(panelTambah, "card2");
@@ -533,6 +584,10 @@ public class FiturKaryawan extends javax.swing.JPanel {
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         clearField();
         changePanel(panelTambah);
+        btnSimpan.setText("SIMPAN");
+        TFIdKaryawan.setText(serviceKaryawan.createId());
+        TFIdKaryawan.setEnabled(false);
+        cbxJabatanKaryawan.setSelectedItem("Admin");
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
@@ -557,18 +612,14 @@ public class FiturKaryawan extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",0,14));
     }//GEN-LAST:event_txtCariFocusGained
 
-    private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost
-        txtCari.setText("Cari Berdasarkan ID Karyawan atau Nama Karyawan");
-        txtCari.setForeground(new Color(185,185,185));
-        txtCari.setFont(new Font("sansserif",Font.ITALIC,14));
-    }//GEN-LAST:event_txtCariFocusLost
-
     private void TFTeleponKaryawanKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TFTeleponKaryawanKeyTyped
         characterDigit(evt);
     }//GEN-LAST:event_TFTeleponKaryawanKeyTyped
 
     private void btnSimpan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan1ActionPerformed
         clearField();
+        tabmodel.setRowCount(0);
+        tampilData();
         changePanel(panelData);
     }//GEN-LAST:event_btnSimpan1ActionPerformed
 

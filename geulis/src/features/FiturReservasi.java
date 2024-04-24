@@ -190,7 +190,7 @@ public class FiturReservasi extends javax.swing.JPanel {
         ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
         modelDetail.setModelPemeriksaan(modelPemeriksaan);
         
-        DialogDetail dialog = new DialogDetail(null, true, "Slide-4", modelDetail, null);
+        DialogDetail dialog = new DialogDetail(null, true, "Slide-4", modelDetail, null,null);
         dialog.setVisible(true);
         
     }

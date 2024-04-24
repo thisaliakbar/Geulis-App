@@ -15,7 +15,7 @@ public class ServiceSupplier {
     }
     public void loadData(int page, DefaultTableModel tabmodel, Pagination pagination) {
         String sqlCount = "SELECT COUNT(ID_Supplier) AS Jumlah FROM supplier";
-        int limit = 20;
+        int limit = 15;
         int count = 0;
         
         String query = "SELECT * FROM supplier LIMIT "+(page-1) * limit+","+limit+"";
@@ -100,6 +100,25 @@ public class ServiceSupplier {
             ex.printStackTrace();
         }
     }
+    
+    public String createId() {
+        String idSupplier = null;
+        String query = "SELECT RIGHT(ID_Supplier, 3) AS ID FROM supplier ORDER BY ID_Supplier DESC";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+                int number = Integer.parseInt(rst.getString("ID"));
+                number++;
+                idSupplier = "SLR-" + String.format("%03d", number);
+            } else {
+                idSupplier = "SLR-001";
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return idSupplier;
     }
+}
 
 

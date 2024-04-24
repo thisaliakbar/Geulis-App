@@ -201,7 +201,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         pengeluaran.setTotal((int) table.getValueAt(row, 4));
         pengeluaran.setDeskripsi((String) table.getValueAt(row, 5));
         detailPengeluaran.setModelPengeluaran(pengeluaran);
-        DialogDetail dialog = new DialogDetail(null, true, "Slide-3", null, detailPengeluaran);
+        DialogDetail dialog = new DialogDetail(null, true, "Slide-3", null, null,detailPengeluaran);
         dialog.setVisible(true);
     }
     
@@ -855,7 +855,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         PilihPemesanan pemesanan = new PilihPemesanan(null, true);
         pemesanan.setVisible(true);
         txtDetailJenis.setText(pemesanan.modelPemesanan.getNoPemesanan());
-        txtSubtotal.setText(String.valueOf(pemesanan.modelPemesanan.getTotal()));
+        txtSubtotal.setText(String.valueOf(pemesanan.modelPemesanan.getTotalPemesanan()));
     }//GEN-LAST:event_btnPilihActionPerformed
 
     private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed

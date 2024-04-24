@@ -4,9 +4,6 @@
  */
 package control;
 
-import model.ModelPemeriksaan;
-import model.ModelTindakan;
-
 /**
  *
  * @author usER

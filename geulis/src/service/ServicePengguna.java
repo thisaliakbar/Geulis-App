@@ -3,15 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package service;
-import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.ModelPengguna;
@@ -30,7 +24,7 @@ public class ServicePengguna {
     
      public void loadData(int page, DefaultTableModel tabmodel, Pagination pagination) {
         String sqlCount = "SELECT COUNT(ID_Pengguna) AS Jumlah FROM pengguna";
-        int limit = 10;
+        int limit = 15;
         int count = 0;
         
         String query = "SELECT * FROM pengguna LIMIT "+(page-1) * limit+","+limit+"";
@@ -118,4 +112,22 @@ public class ServicePengguna {
         }
     }
     
+    public String createId() {
+        String idPasien = null;
+        String query = "SELECT RIGHT(ID_Pengguna, 3) AS ID FROM pengguna ORDER BY ID_Pengguna DESC";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+                int number = Integer.parseInt(rst.getString("ID"));
+                number++;
+                idPasien = "USR-" + String.format("%03d", number);
+            } else {
+                idPasien = "USR-001";
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return idPasien;
+    }
 }

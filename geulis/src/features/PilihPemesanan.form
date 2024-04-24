@@ -75,7 +75,6 @@
                               <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="scroll2" min="-2" pref="435" max="-2" attributes="0"/>
                   </Group>
               </Group>

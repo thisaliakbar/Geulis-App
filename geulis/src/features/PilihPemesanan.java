@@ -72,9 +72,9 @@ public class PilihPemesanan extends java.awt.Dialog {
         
 //  Tampil Data Pemesanan
     private void tampilData() {
-        String query = "SELECT pmsn.No_Pemesanan, DATE_FORMAT(pmsn.Tanggal, '%d - %M - %Y') AS Tanggal, pmsn.ID_Supplier, spl.Nama, pgn.ID_Pengguna, pgn.Nama, pmsn.Total_Pemesanan, pmsn.Keterangan "
+        String query = "SELECT pmsn.No_Pemesanan, DATE_FORMAT(pmsn.Tanggal_Pemesanan, '%d - %M - %Y') AS Tanggal, pmsn.ID_Supplier, spl.Nama, pgn.ID_Pengguna, pgn.Nama, pmsn.Total_Pemesanan "
                 + "FROM pemesanan pmsn JOIN supplier spl ON pmsn.ID_Supplier=spl.ID_Supplier JOIN pengguna pgn ON pmsn.ID_Pengguna=pgn.ID_Pengguna "
-                + "WHERE Keterangan='Dikirim'";
+                + "WHERE Status_Pemesanan='Dikirim'";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
@@ -107,7 +107,7 @@ public class PilihPemesanan extends java.awt.Dialog {
             modelPengguna.setIdpengguna((String) table2.getValueAt(selectRow, 4));
             modelPengguna.setNama((String) table2.getValueAt(selectRow, 5));
             modelPemesanan.setModelPengguna(modelPengguna);
-            modelPemesanan.setTotal((int) table2.getValueAt(selectRow, 6));
+            modelPemesanan.setTotalPemesanan((int) table2.getValueAt(selectRow, 6));
             dispose();
         } else {
             JOptionPane.showMessageDialog(panel2, "Silahkan Pilih Pemesanan Terlebih Dahulu");

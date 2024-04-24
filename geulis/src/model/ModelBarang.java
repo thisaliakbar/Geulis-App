@@ -14,11 +14,10 @@ public class ModelBarang {
         
     }
 
-    public ModelBarang(String Kode_Barang, String Nomor_Barcode, String Kode_Jenis, String Jenis_Barang, String Nama_Barang, String Satuan, Integer Harga_Beli, Integer Harga_Jual, Integer Stok) {
+    public ModelBarang(String Kode_Barang, String Nomor_Barcode, String Kode_Jenis, String Nama_Barang, String Satuan, Integer Harga_Beli, Integer Harga_Jual, Integer Stok) {
         this.Kode_Barang = Kode_Barang;
         this.Nomor_Barcode = Nomor_Barcode;
         this.Kode_Jenis = Kode_Jenis;
-        this.Jenis_Barang = Jenis_Barang;
         this.Nama_Barang = Nama_Barang;
         this.Satuan = Satuan;
         this.Harga_Beli = Harga_Beli;
@@ -61,7 +60,7 @@ public class ModelBarang {
     public void setKode_Jenis(String Kode_Jenis) {
         this.Kode_Jenis = Kode_Jenis;
     }
-
+    
     public String getJenis_Barang() {
         return Jenis_Barang;
     }
@@ -69,7 +68,7 @@ public class ModelBarang {
     public void setJenis_Barang(String Jenis_Barang) {
         this.Jenis_Barang = Jenis_Barang;
     }
-
+    
     public String getNama_Barang() {
         return Nama_Barang;
     }

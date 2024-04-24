@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import main.Main;
@@ -33,31 +34,26 @@ public class FiturPenjualan extends javax.swing.JPanel {
     public FiturPenjualan() {
         initComponents();
       
-        scrollPane.getViewport().setBackground(new Color(255,255,255));
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(255,255,255));
-        scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, panel);
-        scrollPane.setBorder(new EmptyBorder(5,10,5,10));
-        table.setRowHeight(40);        
-        table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
-        table.setDefaultRenderer(Object.class, new ModelRenderTable(5));
+        styleTable(scrollPane, table, 5);
         tabmodel = (DefaultTableModel) table.getModel();
         
-        scrollPanePasien.getViewport().setBackground(new Color(255,255,255));
-        scrollPanePasien.setCorner(JScrollPane.UPPER_RIGHT_CORNER, panel);
-        scrollPanePasien.setBorder(new EmptyBorder(5,10,5,10));
-        tableDetail.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
-        tableDetail.setDefaultRenderer(Object.class, new ModelRenderTable(5));
-        tableDetail.setRowHeight(35);
-        
-        for(int a = 0; a < 10; a++) {
-            tabmodel.addRow(new String[]{"PMR-2402-001","Galih Sutikno","12-Februari-2024","389000"});
-        }
-                
+        styleTable(scrollPanePasien, tableDetail, 5);
         actionRenderTable();
         
         
     }
+    
+//  Style Table
+    private void styleTable(JScrollPane scroll, JTable table, int columnTable) {
+        scroll.getViewport().setBackground(new Color(255,255,255));
+        JPanel panel = new JPanel();
+        panel.setBackground(new Color(255,255,255));
+        scroll.setCorner(JScrollPane.UPPER_RIGHT_CORNER, panel);
+        scroll.setBorder(new EmptyBorder(5,10,5,10));
+        table.setRowHeight(40);        
+        table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
+        table.setDefaultRenderer(Object.class, new ModelRenderTable(columnTable));
+    }    
     
 //  Update,Delete,Detail
     private void actionRenderTable() {
@@ -78,7 +74,7 @@ public class FiturPenjualan extends javax.swing.JPanel {
 
         @Override
         public void view(int row) {
-            DialogDetail dialog = new DialogDetail(null, true, "Slide-2", null, null);
+            DialogDetail dialog = new DialogDetail(null, true, "Slide-2", null, null,null);
             dialog.setVisible(true);
         }
     };        

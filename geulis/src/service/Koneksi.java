@@ -17,7 +17,7 @@ public class Koneksi {
     public static Connection getConnection() {
     String database = "geulis";
     String username = "root";
-    String password = "ekinanda_57";
+    String password = "12345678";
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/".concat(database), username, password);

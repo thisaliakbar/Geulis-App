@@ -18,7 +18,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-import main.Main;
 import model.ModelDetailRestok;
 import model.ModelHeader;
 import model.ModelHeaderTable;
@@ -109,19 +108,7 @@ public class FiturRestok extends javax.swing.JPanel {
             }
         });
     }
-    
-//    Tampil data stok barang
-    private void tampilDataCekStok() {
-        serviceRestok.loadDataStok(1, pagination2, tabmodel3);
-        pagination2.addActionPagination(new ActionPagination() {
-            @Override
-            public void pageChanged(int page) {
-                tabmodel3.setRowCount(0);
-                serviceRestok.loadDataStok(page, pagination2, tabmodel2);
-            }
-        });
-    }
-    
+        
 //    pilih data
     private void pilihDataPemesanan() {
         try {   
@@ -148,7 +135,7 @@ public class FiturRestok extends javax.swing.JPanel {
         ModelRestok modelRestok = new ModelRestok();
         modelRestok.setModelPemesanan(modelPemesanan);
         DecimalFormat df = new DecimalFormat("#,##0.##");
-        lbTotal.setText(df.format(pemesanan.modelPemesanan.getTotal()));
+        lbTotal.setText(df.format(pemesanan.modelPemesanan.getTotalPemesanan()));
         serviceRestok.getData(modelRestok, tabmodel2);
     }
     
@@ -983,7 +970,9 @@ public class FiturRestok extends javax.swing.JPanel {
 
     private void btnCekBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCekBarangActionPerformed
         changePanel(panelStokBarang);
-        tampilDataCekStok();
+        pagination2.setVisible(false);
+        tabmodel3.setRowCount(0);
+        serviceRestok.loadDataStok(tabmodel3);
         hitungStok();
     }//GEN-LAST:event_btnCekBarangActionPerformed
 
@@ -994,8 +983,10 @@ public class FiturRestok extends javax.swing.JPanel {
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         if(validationSave()) {
             tambahData();
-            changePanel(panelData);
             clearField();
+            changePanel(panelData);
+            tabmodel1.setRowCount(0);
+            tampilData();
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 

@@ -148,9 +148,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             String kodeTindakan = (String) tableDetail.getValueAt(a, 1);
             int totalHarga = (int) tableDetail.getValueAt(a, 5);
             int potongan = (int) tableDetail.getValueAt(a, 4);
-            PemeriksaanSementara ts = new PemeriksaanSementara(new String[]{kodeTindakan}, new int[]{potongan}, new int[]{totalHarga});
+            PemeriksaanSementara ps = new PemeriksaanSementara(new String[]{kodeTindakan}, new int[]{potongan}, new int[]{totalHarga});
             detail.setModelPemeriksaan(pemeriksaan);
-            serviceDetail.addData(detail, ts);
+            serviceDetail.addData(detail, ps);
         }
         
         tabmodel2.setRowCount(0);
@@ -189,12 +189,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
          } 
          
          int totalHarga = harga - potongan;
-         if(servicPemeriksaan.validationData(kodeTindakan)) {
          tabmodel2.addRow(new ProductPemeriksaan(kodeTindakan, namaTindaan, harga, potongan, totalHarga).toTableRow());
          DecimalFormat df = new DecimalFormat("#,##0.##");
          lbTotal.setText(df.format(total()));
-         }
-         servicPemeriksaan.addTemporaryCode(kodeTindakan);
     }
     
 //    Detail Pemeriksaan
@@ -226,7 +223,7 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         ModelDetailPemeriksaan modelDetail = new ModelDetailPemeriksaan();
         modelDetail.setModelPemeriksaan(modelPemeriksaan);
 
-        DialogDetail dialog = new DialogDetail(null, true, "Slide-1", modelDetail, null);
+        DialogDetail dialog = new DialogDetail(null, true, "Slide-1", modelDetail, null, null);
         dialog.setVisible(true);
     }
     
@@ -313,7 +310,6 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
                 lbTotal.setText(df.format(total()));
                 double kembali = Double.parseDouble(txtBayar.getText()) - total();
                 lbKembalian.setText(df.format(kembali));
-                servicPemeriksaan.deleteTemporaryCode(actionCode);
             }
 
             @Override
@@ -1197,7 +1193,6 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
-        servicPemeriksaan.deleteAll();
         lbIdPasien.setVisible(false);
         lbNoPemeriksaan.setText(servicPemeriksaan.createNo());
         actionTableDetail();
@@ -1218,36 +1213,25 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
     }//GEN-LAST:event_txtCariFocusGained
 
     private void btnTambahSementaraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahSementaraActionPerformed
-        int kodeTindakan;
-        try {
-            kodeTindakan = lbKodeTindakan.getText().length();
-        } catch(NullPointerException ex) {
-            kodeTindakan= 0;
+        if(validationAddTemporary()) {
+            tambahDataSementara();
+            clearFieldTindakan();
+            String bayar = txtBayar.getText();
+            double kembalian = 0;
+            if(bayar.length() > 0) {
+                kembalian = Double.parseDouble(bayar) - total();
+            }
+            DecimalFormat df = new DecimalFormat("#,##0.##");
+            lbKembalian.setText(df.format(kembalian));    
         }
-        int noReservasi = lbTgl.getText().length();
-        String bayar = txtBayar.getText();
-        double kembalian = 0;
-        if(noReservasi > 0 && kodeTindakan > 0) {
-        tambahDataSementara();
-        clearFieldTindakan();   
-        }else {
-            JOptionPane.showMessageDialog(null, "Silahkan Pilih No Reservasi\ndan Tindakan");
-        }
-        if(bayar.length() > 0) {
-            kembalian = Double.parseDouble(bayar) - total();
-        }
-        DecimalFormat df = new DecimalFormat("#,##0.##");
-        lbKembalian.setText(df.format(kembalian));
     }//GEN-LAST:event_btnTambahSementaraActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         if(validation()) {
         tambahData();
         clearField();
-        servicPemeriksaan.deleteAll();
         changePanel(panelData);
-        tabmodel1.setRowCount(0);
-        servicPemeriksaan.loadData(1, tabmodel1, pagination); 
+        tampilData();
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -1256,12 +1240,10 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             int confirm = JOptionPane.showConfirmDialog(null, "Data yang telah diinput akan dihapus", "Konfirmasi", JOptionPane.OK_OPTION);
             if(confirm == 0) {
             clearField();
-            servicPemeriksaan.deleteAll();
             changePanel(panelData);
             }   
         } else {
             clearField();
-            servicPemeriksaan.deleteAll();
             changePanel(panelData); 
         }
     }//GEN-LAST:event_btnBatalActionPerformed
@@ -1366,6 +1348,9 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
         lbIdKaryawan.setText(null);
         lbNamaKaryawan.setText(null);
         lbTotal.setText(String.valueOf(0));
+        txtBayar.setText("");
+        lbKembalian.setText("0");
+        tabmodel2.setRowCount(0);
         clearFieldTindakan();
     }
     
@@ -1386,10 +1371,39 @@ public class FiturPemeriksaan extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "Silahkan Pilih Nomor Reservasi");
         } else if(lbIdKaryawan.getText().trim().length() == 0) {
             JOptionPane.showMessageDialog(null, "Silahkan Pilih Karyawan");  
+        } else if(txtBayar.getText().trim().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Silahkan Masukkan Jumlah Pembayaran");
         } else if(tableDetail.getRowCount() == 0) {
             JOptionPane.showMessageDialog(null, "Silahkan Pilih Tindakan");    
         } else {
             valid = true;
+        }
+        
+        return valid;
+    }
+    
+    private boolean validationAddTemporary() {
+        boolean valid = true;
+        int rowCount = tableDetail.getRowCount();
+        try {
+            if(lbKodeTindakan.getText().length() == 0) {
+                valid = false;
+                JOptionPane.showMessageDialog(null, "Silahkan Pilih Tindakan");
+            } else {
+                for(int a = 0; a < rowCount; a++) {
+                    String kodeTdknSmntr = (String) tableDetail.getValueAt(a, 1);
+                    String kodeTdkn = lbKodeTindakan.getText();
+                    if(kodeTdkn.equals(kodeTdknSmntr)) {
+                        valid = false;
+                        JOptionPane.showMessageDialog(null, "Tindakan ini sudah di tambahkan");
+                        break;
+                    } else {
+                        valid = true;
+                    }
+                }
+            }
+        } catch(NullPointerException ex) {
+            JOptionPane.showMessageDialog(null, "Silahkan Pilih Tindakan");
         }
         
         return valid;

@@ -87,7 +87,7 @@ public class ServiceRestok {
     }
     
     public void addData(ModelRestok modelRestok) {
-        String query = "INSERT INTO restok (No_Restok, Tanggal, Total_Biaya, Keterangan, ID_Pengguna) VALUES(?,?,?,?,?)";
+        String query = "INSERT INTO restok (No_Restok, Tanggal, Total_Biaya, Status_Restok, ID_Pengguna) VALUES(?,?,?,?,?)";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, modelRestok.getModelPemesanan().getNoPemesanan());
@@ -128,24 +128,12 @@ public class ServiceRestok {
         }
     }
     
-    public void loadDataStok(int page, Pagination pagination, DefaultTableModel model) {
-        String sqlCount = "SELECT COUNT(Kode_Barang) AS Jumlah FROM barang";
-        int limit = 15;
-        int count = 0;
+    public void loadDataStok(DefaultTableModel model) {
         String query = "SELECT brg.Kode_Barang, brg.Kode_Jenis, jb.Nama_Jenis, brg.Nama_Barang, brg.Satuan, brg.Stok FROM barang brg "
-                + "JOIN jenis_barang jb ON brg.Kode_Jenis=jb.Kode_Jenis LIMIT "+(page-1) * limit+","+limit+"";
+                + "JOIN jenis_barang jb ON brg.Kode_Jenis=jb.Kode_Jenis ";
         try {
-            PreparedStatement pst = connection.prepareStatement(sqlCount);
+            PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
-            if(rst.next()) {
-                count = rst.getInt("Jumlah");
-            }
-            
-            pst.close();
-            rst.close();
-            
-            pst = connection.prepareStatement(query);
-            rst = pst.executeQuery();
             while(rst.next()) {
                 String kodeBarang = rst.getString("Kode_Barang");
                 String kodeJenis = rst.getString("Kode_Jenis");
@@ -175,12 +163,6 @@ public class ServiceRestok {
                 
                 model.addRow(modelDetail.toRowTable());
             }
-            
-            pst.close();
-            rst.close();
-            
-            int totalPage = (int) Math.ceil((double)count / limit);
-            pagination.setPagination(page, totalPage);
         } catch(Exception ex) {
             ex.printStackTrace();
         }

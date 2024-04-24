@@ -6,8 +6,6 @@ package service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.ModelKaryawan;
@@ -25,7 +23,7 @@ public class ServiceKaryawan {
     }
      public void loadData(int page, DefaultTableModel tabmodel, Pagination pagination) {
         String sqlCount = "SELECT COUNT(ID_Karyawan) AS Jumlah FROM karyawan";
-        int limit = 10;
+        int limit = 15;
         int count = 0;
         String query ="SELECT * FROM karyawan LIMIT "+(page-1) * limit+","+limit+"";            
         try {
@@ -77,7 +75,7 @@ public class ServiceKaryawan {
             ex.printStackTrace();
         }
     
-}
+    }
     public void updateData(ModelKaryawan modelKaryawan){
      String query = "UPDATE karyawan SET Nama=?, No_Telp=?, Email=?, Jabatan=?, Alamat=? WHERE ID_Karyawan=?";
      try {
@@ -107,5 +105,24 @@ public class ServiceKaryawan {
             ex.printStackTrace();
         }
     }
+    
+    public String createId() {
+        String idPasien = null;
+        String query = "SELECT RIGHT(ID_Karyawan, 3) AS ID FROM karyawan ORDER BY ID_Karyawan DESC";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+                int number = Integer.parseInt(rst.getString("ID"));
+                number++;
+                idPasien = "STAFF-" + String.format("%03d", number);
+            } else {
+                idPasien = "STAFF-001";
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
         }
+        return idPasien;
+    }
+}
                 

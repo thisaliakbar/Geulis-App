@@ -12,6 +12,7 @@ import component.Sidebar;
 import features.Dashboard;
 import features.FiturAbsensi;
 import features.FiturBarang;
+import features.FiturBarang;
 import features.FiturCetakKartu;
 import features.FiturKaryawan;
 import features.FiturLaporan;
@@ -121,7 +122,7 @@ public class Main extends javax.swing.JFrame {
                         content.showContent(new FiturPenjualan());
                     } else if (subMenuIndex == 2) {
 //                        fitur pemesanan
-                        content.showContent(new FiturPemesanan());
+                        content.showContent(new FiturPemesanan(modelPengguna));
                     }
                 } else if (menuIndex == 4 && subMenuIndex == -1) {
 //              fitur riwayat pasien 
@@ -160,7 +161,7 @@ public class Main extends javax.swing.JFrame {
                             content.showContent(new FiturPenjualan());
                         } else if (subMenuIndex == 2) {
     //                        fitur pemesanan
-                            content.showContent(new FiturPemesanan());
+                            content.showContent(new FiturPemesanan(modelPengguna));
                         }
                     }  else if(menuIndex == 2 && subMenuIndex == -1) {
 //                     Fitur Riwayat Pasien
@@ -350,6 +351,54 @@ public class Main extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>

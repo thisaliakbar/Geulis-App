@@ -47,7 +47,7 @@ public class Status extends JLabel{
             } else if(type == StatusType.Cancel){
                 gp = new GradientPaint(0, 0, new Color(135, 15, 50), 0, getHeight(), new Color(135, 15, 50));
             } else if(type == StatusType.Send) {
-                gp = new GradientPaint(0, 0, new Color(31, 26, 186), 0, getHeight(), new Color(31, 26, 186));
+                gp = new GradientPaint(0, 0, new Color(190, 4, 196), 0, getHeight(), new Color(190, 4, 196));
             } else if(type == StatusType.Accept) {
                 gp = new GradientPaint(0, 0, new Color(0, 153, 0), 0, getHeight(), new Color(0, 153, 0));    
             } else if(type == StatusType.Habis) {

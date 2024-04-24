@@ -28,7 +28,7 @@ public class ServiceBarang {
     
     public void loadData(int page, Pagination pagination, DefaultTableModel model) {
         String sqlCount = "SELECT COUNT(Kode_Barang) AS Jumlah FROM barang";
-        int limit = 5;
+        int limit = 15;
         int count = 0;
         String query = "SELECT * FROM barang barang JOIN jenis_barang jenis_barang ON barang.Kode_Jenis=jenis_barang.Kode_Jenis LIMIT "+(page-1) * limit+","+limit+"";
         try {
@@ -71,8 +71,8 @@ public class ServiceBarang {
      try {
          PreparedStatement pst = connection.prepareStatement(query);
          pst.setString(1, modelBarang.getKode_Barang());
-         pst.setString(2, modelBarang.getKode_Jenis());
-         pst.setString(3, modelBarang.getNomor_Barcode());
+         pst.setString(2, modelBarang.getNomor_Barcode());
+         pst.setString(3, modelBarang.getKode_Jenis());
          pst.setString(4, modelBarang.getNama_Barang());
          pst.setString(5, modelBarang.getSatuan());
          pst.setInt(6, modelBarang.getHarga_Beli());
@@ -86,17 +86,16 @@ public class ServiceBarang {
     }
     
     public void updateData(ModelBarang modelBarang) {
-     String query = "UPDATE barang SET Kode_Jenis=?, Nomor_Barcode=?, Nama_Barang=?, Satuan=?, Harga_Beli=?, Harga_Jual=?, Stok=? WHERE Kode_Barang=?";
+     String query = "UPDATE barang SET Nomor_Barcode=?, Nama_Barang=?, Satuan=?, Harga_Beli=?, Harga_Jual=?, Stok=? WHERE Kode_Barang=?";
      try {
          PreparedStatement pst = connection.prepareStatement(query);
          pst.setString(1, modelBarang.getNomor_Barcode());
-         pst.setString(2, modelBarang.getKode_Jenis());
-         pst.setString(3, modelBarang.getNama_Barang());
-         pst.setString(4, modelBarang.getSatuan());
-         pst.setInt(5, modelBarang.getHarga_Beli());
-         pst.setInt(6, modelBarang.getHarga_Jual());
-         pst.setInt(7, modelBarang.getStok());
-         pst.setString(8, modelBarang.getKode_Barang());
+         pst.setString(2, modelBarang.getNama_Barang());
+         pst.setString(3, modelBarang.getSatuan());
+         pst.setInt(4, modelBarang.getHarga_Beli());
+         pst.setInt(5, modelBarang.getHarga_Jual());
+         pst.setInt(6, modelBarang.getStok());
+         pst.setString(7, modelBarang.getKode_Barang());
          pst.executeUpdate();
          JOptionPane.showMessageDialog(null, "Barang berhasil diperbarui");
      } catch(Exception ex) {
@@ -128,7 +127,7 @@ public class ServiceBarang {
             if(rst.next()) {
                 int kode = Integer.parseInt(rst.getString("Kode"));
                 kode++;
-                kodeBarang = formatJenis + "-" + format + String.format("%03d", kode);
+                kodeBarang = formatJenis + "-" + format + "-" + String.format("%03d", kode);
             } else {
                 kodeBarang = formatJenis + "-" + format + "-" +"001";
             }
@@ -162,7 +161,6 @@ public class ServiceBarang {
     public String selectKodeJenis(ModelJenisBarang modelJenis) {
         String kodeJenis = null;
         String query = "SELECT Kode_Jenis FROM jenis_barang WHERE Nama_Jenis='"+modelJenis.getNamaJenis()+"' ";
-        System.out.println(query);
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();

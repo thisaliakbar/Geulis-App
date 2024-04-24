@@ -24,7 +24,7 @@ public class ServiceTindakan {
     
     public void loadData(int page, Pagination pagination, DefaultTableModel model) {
         String sqlCount = "SELECT COUNT(Kode_Tindakan) AS Jumlah FROM Tindakan";
-        int limit = 10;
+        int limit = 15;
         int count = 0;
         String query = "SELECT * FROM tindakan LIMIT "+(page-1) * limit+","+limit+"";
         try {
@@ -94,6 +94,25 @@ public class ServiceTindakan {
         } catch(Exception ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public String createKodeTindakan() {
+        String kodeTindakan = null;
+        String query = "SELECT RIGHT(Kode_Tindakan, 3) AS Kode FROM Tindakan ORDER BY Kode_Tindakan DESC";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+                int number = Integer.parseInt(rst.getString("Kode"));
+                number++;
+                kodeTindakan = "TDKN-" + String.format("%03d", number);
+            } else {
+                kodeTindakan = "TDKN-001";
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return kodeTindakan;
     }
 }
        

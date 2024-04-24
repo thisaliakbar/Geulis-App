@@ -115,7 +115,7 @@ public class FiturRiwayatPasien extends javax.swing.JPanel {
         modelPemeriksaan.setModelPasien(modelPasien);
         detailPemeriksaan.setModelPemeriksaan(modelPemeriksaan);
         
-        DialogDetail detail = new DialogDetail(null, true, "Slide-2", detailPemeriksaan, null);
+        DialogDetail detail = new DialogDetail(null, true, "Slide-2", detailPemeriksaan, null, null);
         detail.setVisible(true);
     }
     

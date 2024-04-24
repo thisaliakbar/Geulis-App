@@ -24,10 +24,9 @@ public class ServicePasien {
     
     public void loadData(int page, Pagination pagination, DefaultTableModel model) {
         String sqlCount = "SELECT COUNT(ID_Pasien) AS Jumlah FROM Pasien";
-        int limit = 5;
+        int limit = 15;
         int count = 0;
         String query = "SELECT * FROM pasien LIMIT "+(page-1) * limit+","+limit+"";
-        System.out.println("query");
         try {
             PreparedStatement pst = connection.prepareStatement(sqlCount);
             ResultSet rst = pst.executeQuery();
@@ -48,7 +47,7 @@ public class ServicePasien {
                 String alamat = rst.getString("Alamat");
                 String email = rst.getString("Email");
                 String level = rst.getString("Level");
-                model.addRow(new Object[]{idPasien, nama, jenisKelamin, no_Telp, alamat, email, level});
+                model.addRow(new Object[]{idPasien, nama, jenisKelamin, no_Telp, email, alamat, level});
             }
             
             pst.close();
@@ -110,5 +109,24 @@ public class ServicePasien {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public String createId() {
+        String idPasien = null;
+        String query = "SELECT RIGHT(ID_Pasien, 3) AS ID FROM pasien ORDER BY ID_Pasien DESC";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            ResultSet rst = pst.executeQuery();
+            if(rst.next()) {
+                int number = Integer.parseInt(rst.getString("ID"));
+                number++;
+                idPasien = "PASIEN" + String.format("%03d", number);
+            } else {
+                idPasien = "PASIEN001";
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        return idPasien;
     }
 }
