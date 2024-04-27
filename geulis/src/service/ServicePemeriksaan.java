@@ -27,7 +27,7 @@ public class ServicePemeriksaan {
     
     public void loadData(int page, DefaultTableModel tabmodel, Pagination pagination) {
         String sqlCount = "SELECT COUNT(No_Pemeriksaan) AS Jumlah FROM pemeriksaan";
-        int limit = 15;
+        int limit = 16;
         int count = 0;
         
         String query = "SELECT pmn.No_Pemeriksaan,pmn.No_Reservasi ,DATE_FORMAT(pmn.Tanggal_Pemeriksaan, '%d - %M - %Y') AS Tanggal_Pemeriksaan, "
@@ -36,7 +36,7 @@ public class ServicePemeriksaan {
                 + "INNER JOIN pasien psn ON pmn.ID_Pasien=psn.ID_Pasien "
                 + "INNER JOIN karyawan krn ON pmn.ID_Karyawan=krn.ID_Karyawan "
                 + "INNER JOIN pengguna pgn ON pmn.ID_Pengguna=pgn.ID_Pengguna "
-                + "ORDER BY No_Pemeriksaan ASC LIMIT "+(page-1) * limit+","+limit+"";
+                + "ORDER BY No_Pemeriksaan DESC LIMIT "+(page-1) * limit+","+limit+"";
         
         try {
             PreparedStatement pst = connection.prepareStatement(sqlCount);
@@ -79,7 +79,7 @@ public class ServicePemeriksaan {
         }    
     }
     
-    public void search(DefaultTableModel tabmodel) {
+    public void loadAll(DefaultTableModel tabmodel) {
         String query = "SELECT pmn.No_Pemeriksaan,pmn.No_Reservasi ,DATE_FORMAT(pmn.Tanggal_Pemeriksaan, '%d - %M - %Y') AS Tanggal_Pemeriksaan, "
         + "pmn.Deskripsi, pmn.Total, pmn.Bayar, pmn.Kembalian, pmn.Jenis_Pembayaran, pmn.ID_Pasien, "
         + "psn.Nama, pmn.ID_Karyawan, krn.Nama, pmn.ID_Pengguna, pgn.Nama FROM pemeriksaan pmn "

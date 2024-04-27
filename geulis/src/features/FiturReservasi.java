@@ -9,6 +9,8 @@ import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -46,8 +48,8 @@ public class FiturReservasi extends javax.swing.JPanel {
     private DefaultTableModel tabmodel1;
     private DefaultTableModel tabmodel2;
     private TableAction action;
-    private ServiceReservasi serviceReservasi = new ServiceReservasi();
     private ModelPengguna modelPengguna;
+    private ServiceReservasi serviceReservasi = new ServiceReservasi();
     private TableRowSorter<DefaultTableModel> rowSorter1;
     private TableRowSorter<DefaultTableModel> rowSorter2;
     public FiturReservasi(ModelPengguna modelPengguna) {
@@ -284,6 +286,7 @@ public class FiturReservasi extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         txtCariPasien = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        btnRegist = new swing.Button();
         panel2 = new javax.swing.JPanel();
         btnSimpan = new swing.Button();
         jLabel1 = new javax.swing.JLabel();
@@ -535,6 +538,16 @@ public class FiturReservasi extends javax.swing.JPanel {
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/search-2.png"))); // NOI18N
 
+        btnRegist.setBackground(new java.awt.Color(0, 153, 0));
+        btnRegist.setForeground(new java.awt.Color(255, 255, 255));
+        btnRegist.setText("DAFTAR PASIEN BARU");
+        btnRegist.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        btnRegist.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panel3Layout = new javax.swing.GroupLayout(panel3);
         panel3.setLayout(panel3Layout);
         panel3Layout.setHorizontalGroup(
@@ -544,12 +557,14 @@ public class FiturReservasi extends javax.swing.JPanel {
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createSequentialGroup()
-                        .addComponent(btnPilih, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
+                        .addComponent(btnPilih, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRegist, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42)
                         .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtCariPasien))
-                    .addComponent(scrollPanePasien))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCariPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(scrollPanePasien, javax.swing.GroupLayout.DEFAULT_SIZE, 617, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panel3Layout.setVerticalGroup(
@@ -560,10 +575,12 @@ public class FiturReservasi extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtCariPasien, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPilih, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnPilih, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnRegist, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollPanePasien, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(scrollPanePasien, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -742,9 +759,9 @@ public class FiturReservasi extends javax.swing.JPanel {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(455, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(label1)
-                .addContainerGap(455, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -787,6 +804,7 @@ public class FiturReservasi extends javax.swing.JPanel {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         changePanel(panelTambah);
+        tabmodel2.setRowCount(0);
         serviceReservasi.loadDataPasien(tabmodel2);
         txtNoReservasi.setText(serviceReservasi.createNo());
         LocalDate dateNow = LocalDate.now();
@@ -813,7 +831,7 @@ public class FiturReservasi extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",0,14));
         pagination.setVisible(false);
         tabmodel1.setRowCount(0);
-        serviceReservasi.searchData(tabmodel1);
+        serviceReservasi.loadAll(tabmodel1);
     }//GEN-LAST:event_txtCariFocusGained
 
     private void txtCariPasienFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariPasienFocusGained
@@ -835,20 +853,18 @@ public class FiturReservasi extends javax.swing.JPanel {
         pagination.setVisible(true);
     }//GEN-LAST:event_txtCariFocusLost
 
+    private void btnRegistActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistActionPerformed
+        Dialog dialog = new Dialog(null, true, "Slide-1", tabmodel2);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_btnRegistActionPerformed
+
     private void changePanel(JPanel panel) {
         removeAll();
         add(panel);
         repaint();
         revalidate();
     }
-    
-    private void characterDigit(KeyEvent evt) {
-        char typed = evt.getKeyChar();
-        if(!Character.isDigit(typed)) {
-            evt.consume();
-        }
-    }
-    
+        
     private void clearField() {
         txtNoReservasi.setText(null);
         txtIdPasien.setText(null);
@@ -859,6 +875,7 @@ public class FiturReservasi extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private swing.Button btnBatal;
     private swing.Button btnPilih;
+    private swing.Button btnRegist;
     private swing.Button btnSimpan;
     private swing.Button btnTambah;
     private javax.swing.JLabel jLabel1;

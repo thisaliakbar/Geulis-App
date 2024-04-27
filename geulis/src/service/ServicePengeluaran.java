@@ -28,14 +28,14 @@ public class ServicePengeluaran {
     
         public void loadData(int page, DefaultTableModel tabmodel, Pagination pagination) {
         String sqlCount = "SELECT COUNT(No_Pengeluaran) AS Jumlah FROM pengeluaran";
-        int limit = 15;
+        int limit = 16;
         int count = 0;
         
         String query = "SELECT plrn.No_Pengeluaran, plrn.ID_Pengguna, pg.Nama, "
                 + "DATE_FORMAT(plrn.Tanggal_Pengeluaran, '%d - %M - %Y') AS Tanggal_Pengeluaran, "
                 + "plrn.Total_Pengeluaran, plrn.Deskripsi FROM pengeluaran plrn INNER JOIN pengguna pg "
                 + "ON plrn.ID_Pengguna=pg.ID_Pengguna "
-                + "ORDER BY No_Pengeluaran ASC LIMIT "+(page-1) * limit+","+limit+"";
+                + "ORDER BY No_Pengeluaran DESC LIMIT "+(page-1) * limit+","+limit+"";
         
         try {
             PreparedStatement pst = connection.prepareStatement(sqlCount);
@@ -68,7 +68,7 @@ public class ServicePengeluaran {
         }    
     }
         
-    public void searchData(DefaultTableModel tabmodel) {
+    public void loadAll(DefaultTableModel tabmodel) {
         String query = "SELECT plrn.No_Pengeluaran, plrn.ID_Pengguna, pg.Nama, "
                 + "DATE_FORMAT(plrn.Tanggal_Pengeluaran, '%d - %M - %Y') AS Tanggal_Pengeluaran, "
                 + "plrn.Total_Pengeluaran, plrn.Deskripsi FROM pengeluaran plrn INNER JOIN pengguna pg "

@@ -35,7 +35,7 @@ public class ServiceReservasi {
                 + "rsv.ID_Pasien, psn.Nama, psn.Jenis_Kelamin, DATE_FORMAT(rsv.Tanggal_Kedatangan, '%d - %M - %Y') AS Tanggal_Kedatangan, "
                 + "TIME_FORMAT(rsv.Jam_Kedatangan, '%H.%i WIB') AS Jam_Kedatangan, rsv.Status_Reservasi, rsv.ID_Pengguna, pgn.Nama FROM reservasi rsv "
                 + "JOIN pasien psn ON rsv.ID_Pasien=psn.ID_Pasien JOIN pengguna pgn "
-                + "ON rsv.ID_Pengguna=pgn.ID_Pengguna ORDER BY No_Reservasi ASC LIMIT "+(page-1) * limit+","+limit+"";
+                + "ON rsv.ID_Pengguna=pgn.ID_Pengguna ORDER BY No_Reservasi DESC LIMIT "+(page-1) * limit+","+limit+"";
         ModelPengguna modelPengguna = new ModelPengguna();
         ModelPasien modelPasien = new ModelPasien();
         try {
@@ -91,7 +91,7 @@ public class ServiceReservasi {
         }
     }
     
-    public void searchData(DefaultTableModel tabmodel) {
+    public void loadAll(DefaultTableModel tabmodel) {
         String query = "SELECT rsv.No_Reservasi, DATE_FORMAT(rsv.Tanggal_Reservasi, '%d - %M - %Y') AS Tanggal_Reservasi, "
         + "rsv.ID_Pasien, psn.Nama, psn.Jenis_Kelamin, DATE_FORMAT(rsv.Tanggal_Kedatangan, '%d - %M - %Y') AS Tanggal_Kedatangan, "
         + "TIME_FORMAT(rsv.Jam_Kedatangan, '%H.%i WIB') AS Jam_Kedatangan, rsv.Status_Reservasi, rsv.ID_Pengguna, pgn.Nama FROM reservasi rsv "

@@ -62,18 +62,15 @@ public class ServicePasien {
     
     public void addData(ModelPasien modelPasien) {
         String query = "INSERT INTO pasien (Id_Pasien, Nama, Jenis_Kelamin, No_Telp, Alamat, Email, Level) VALUES (?,?,?,?,?,?,?)";
-        System.out.println(query);
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             pst.setString(1, modelPasien.getIdPasien());
-            System.out.println(modelPasien.getIdPasien());
             pst.setString(2, modelPasien.getNama());
             pst.setString(3, modelPasien.getJenisKelamin());
             pst.setString(4, modelPasien.getNoTelp());
             pst.setString(5, modelPasien.getAlamat());
             pst.setString(6, modelPasien.getEmail());
             pst.setString(7, modelPasien.getLevel());
-            System.out.println(modelPasien.getLevel());
             pst.executeUpdate();
             JOptionPane.showMessageDialog(null, "Data Pasien berhasil ditambahkan");
         } catch(Exception ex) {

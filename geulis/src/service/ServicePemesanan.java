@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.ModelBarang;
 import model.ModelPemesanan;
 import model.ModelPengguna;
 import model.ModelSupplier;
@@ -27,7 +28,7 @@ public class ServicePemesanan {
     
     public void loadData(int page, DefaultTableModel tabmodel, Pagination pagination) {
         String sqlCount = "SELECT COUNT(No_Pemesanan) AS Jumlah FROM pemesanan";
-        int limit = 15;
+        int limit = 16;
         int count = 0;
         
         String query = "SELECT pmsn.No_Pemesanan, DATE_FORMAT(pmsn.Tanggal_Pemesanan, '%d - %M - %Y') AS Tanggal_Pemesanan, "
@@ -35,7 +36,7 @@ public class ServicePemesanan {
                 + "slr.Nama, pmsn.ID_Pengguna, pgn.Nama, pmsn.Jenis_Pembayaran FROM pemesanan pmsn "
                 + "INNER JOIN supplier slr ON pmsn.ID_Supplier=slr.ID_Supplier "
                 + "INNER JOIN pengguna pgn ON pmsn.ID_Pengguna=pgn.ID_Pengguna "
-                + "ORDER BY No_Pemesanan ASC LIMIT "+(page-1) * limit+","+limit+"";
+                + "ORDER BY No_Pemesanan DESC LIMIT "+(page-1) * limit+","+limit+"";
         
         try {
             PreparedStatement pst = connection.prepareStatement(sqlCount);
@@ -88,7 +89,7 @@ public class ServicePemesanan {
         }    
     }
     
-    public void search(DefaultTableModel tabmodel) {
+    public void loadAll(DefaultTableModel tabmodel) {
         String query = "SELECT pmsn.No_Pemesanan, DATE_FORMAT(pmsn.Tanggal_Pemesanan, '%d - %M - %Y') AS Tanggal_Pemesanan, "
                 + "pmsn.Status_Pemesanan, pmsn.Total_Pemesanan, pmsn.Bayar, pmsn.Kembali, pmsn.Jenis_Pembayaran, "
                 + "pmsn.ID_Supplier, slr.Nama, pmsn.ID_Pengguna, pgn.Nama FROM pemesanan pmsn "
@@ -173,4 +174,13 @@ public class ServicePemesanan {
         return noPemesanan;
     }
     
+    public void updatePriceBuy(ModelBarang modelBarang) {
+        String query = "UPDATE barang SET Harga_Beli="+modelBarang.getHarga_Beli()+" WHERE Kode_Barang='"+modelBarang.getKode_Barang()+"' ";
+        try {
+            PreparedStatement pst = connection.prepareStatement(query);
+            pst.executeUpdate();
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }

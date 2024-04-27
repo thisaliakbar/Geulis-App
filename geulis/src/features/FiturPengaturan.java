@@ -650,7 +650,14 @@ public class FiturPengaturan extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSimpan2ActionPerformed
 
     private void btnSimpan3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpan3ActionPerformed
-        aturPromo();
+        Date date = new Date();
+        String dateNow = new SimpleDateFormat("yyyy-MM-dd").format(date);
+        String strDate = txtRentang.getText();
+        if(!strDate.equals(dateNow)) {
+        aturPromo();    
+        } else {
+            JOptionPane.showMessageDialog(null, "Silahkan Tentukan Rentang Promo");
+        }
     }//GEN-LAST:event_btnSimpan3ActionPerformed
 
     private void btnViewPromoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewPromoActionPerformed

@@ -87,7 +87,7 @@ public class PilihPemeriksaan extends java.awt.Dialog {
     
 //  Tampil Data Karyawan
     private void tampilData1() {
-        String query = "SELECT ID_Karyawan, Nama FROM karyawan";
+        String query = "SELECT ID_Karyawan, Nama FROM karyawan WHERE Jabatan='Terapis'";
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
@@ -295,6 +295,14 @@ public class PilihPemeriksaan extends java.awt.Dialog {
             }
         });
         scroll2.setViewportView(table2);
+        if (table2.getColumnModel().getColumnCount() > 0) {
+            table2.getColumnModel().getColumn(0).setMinWidth(125);
+            table2.getColumnModel().getColumn(0).setPreferredWidth(125);
+            table2.getColumnModel().getColumn(0).setMaxWidth(125);
+            table2.getColumnModel().getColumn(2).setMinWidth(125);
+            table2.getColumnModel().getColumn(2).setPreferredWidth(125);
+            table2.getColumnModel().getColumn(2).setMaxWidth(125);
+        }
 
         label2.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         label2.setForeground(new java.awt.Color(135, 15, 50));

@@ -178,11 +178,11 @@ public class FiturPengeluaran extends javax.swing.JPanel {
     
     private void tambahDataSementara() {
         String noJenis = lbNoJenis.getText();
-        String jeniPengeluaran = (String) cbxJenis.getSelectedItem();
+        String jenisPengeluaran = (String) cbxJenis.getSelectedItem();
         String detailJenis = txtDetailJenis.getText();
         int subtotal = Integer.parseInt(txtSubtotal.getText());
         DecimalFormat df = new DecimalFormat("#,##0.##");
-        tabmodel2.addRow(new Object[]{noJenis, jeniPengeluaran, detailJenis, subtotal});
+        tabmodel2.addRow(new Object[]{noJenis, jenisPengeluaran, detailJenis, subtotal});
         lbTotal.setText(df.format(total()));
         txtDetailJenis.setText(null);
         txtSubtotal.setText(null);
@@ -582,6 +582,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
 
         cbxJenis.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         cbxJenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Pemesanan Barang", "Biaya Operasional", "Lain - lain" }));
+        cbxJenis.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(185, 185, 185)));
         cbxJenis.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbxJenisActionPerformed(evt);
@@ -796,7 +797,7 @@ public class FiturPengeluaran extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",0,14));
         pagination.setVisible(false);
         tabmodel1.setRowCount(0);
-        servicePengeluaran.searchData(tabmodel1);
+        servicePengeluaran.loadAll(tabmodel1);
     }//GEN-LAST:event_txtCariFocusGained
 
     private void txtCariFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCariFocusLost

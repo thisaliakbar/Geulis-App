@@ -27,27 +27,13 @@ public class ServiceRestok {
         connection = Koneksi.getConnection();
     }
     
-    public void loadData(int page, Pagination pagination, DefaultTableModel tabmodel) {
-        String sqlCount = "SELECT COUNT(No_Restok) AS Jumlah FROM restok";
-        int limit = 20;
-        int count = 0;
-        
+    public void loadData(DefaultTableModel tabmodel) {
         String query = "SELECT rst.No_Restok, DATE_FORMAT(rst.Tanggal, '%d - %M - %Y') AS Tanggal_Tiba, "
                 + "rst.ID_Pengguna, pgn.Nama, rst.Total_Biaya FROM restok rst JOIN pengguna pgn "
-                + "ON rst.ID_Pengguna=pgn.ID_Pengguna ORDER BY No_Restok ASC "
-                + "LIMIT "+(page-1) * limit+","+limit+"";
+                + "ON rst.ID_Pengguna=pgn.ID_Pengguna ORDER BY No_Restok DESC";
         try {
-            PreparedStatement pst = connection.prepareStatement(sqlCount);
+            PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
-            if(rst.next()) {
-                count = rst.getInt("Jumlah");
-            }
-            
-            pst.close();
-            rst.close();
-            
-            pst = connection.prepareStatement(query);
-            rst = pst.executeQuery();
             while(rst.next()) {
                 String noRestok = rst.getString("No_Restok");
                 String tglTiba = rst.getString("Tanggal_Tiba");
@@ -56,11 +42,6 @@ public class ServiceRestok {
                 int total = rst.getInt("Total_Biaya");
                 tabmodel.addRow(new Object[]{noRestok, tglTiba, idPengguna, nama, total});
             }
-            pst.close();
-            rst.close();
-            
-            int totalPage = (int) Math.ceil((double)count / limit);
-            pagination.setPagination(page, totalPage);
         } catch(Exception ex) {
             ex.printStackTrace();
         } 

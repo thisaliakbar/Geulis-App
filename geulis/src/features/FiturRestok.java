@@ -5,7 +5,6 @@
 package features;
 
 import action.ActionPagination;
-import action.TableAction;
 import java.awt.Color;
 import java.awt.Font;
 import java.text.DecimalFormat;
@@ -16,8 +15,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import model.ModelDetailRestok;
 import model.ModelHeader;
 import model.ModelHeaderTable;
@@ -27,8 +30,6 @@ import model.ModelRenderTable;
 import model.ModelRestok;
 import model.RestokSementara;
 import service.ServiceRestok;
-import swing.TableCellActionRender;
-import swing.TableCellEditor;
 
 /**
  *
@@ -44,22 +45,27 @@ public class FiturRestok extends javax.swing.JPanel {
     private DefaultTableModel tabmodel1;
     private DefaultTableModel tabmodel2;
     private DefaultTableModel tabmodel3;
-    private TableAction action;
+    private TableRowSorter<DefaultTableModel> rowSorter1;
+    private TableRowSorter<DefaultTableModel> rowSorter2;
     public FiturRestok() {
         initComponents();
-      
+        pagination1.setVisible(false);
         styleTable(scrollPane, table, 5);
         tabmodel1 = (DefaultTableModel) table.getModel();
-        tampilData();
+        serviceRestok.loadData(tabmodel1);
+        rowSorter1 = new TableRowSorter<>(tabmodel1);
+        table.setRowSorter(rowSorter1);
         
         styleTable(scrollPanePasien, tableDetail, 5);
         tabmodel2 = (DefaultTableModel) tableDetail.getModel();
         
         table3.scrollPane(scrollPane3);
         tabmodel3 = (DefaultTableModel) table3.getModel();
+        rowSorter2 = new TableRowSorter<>(tabmodel3);
+        table3.setRowSorter(rowSorter2);
         table3.getTableHeader().setDefaultRenderer(new ModelHeader());
-        actionRenderTable();
         
+        searchData(rowSorter1, txtCari);
     }
     
     //  Style Table
@@ -73,42 +79,7 @@ public class FiturRestok extends javax.swing.JPanel {
         table.getTableHeader().setDefaultRenderer(new ModelHeaderTable());
         table.setDefaultRenderer(Object.class, new ModelRenderTable(columnTable));
     }
-    
-//  Update,Delete,Detail
-    private void actionRenderTable() {
-        action = new TableAction() {
-        @Override
-        public void edit(int row) {
-        }
-
-        @Override
-        public void delete(int row) {
-            if(table.isEditing()) {
-                table.getCellEditor().stopCellEditing();
-            }
-        }
-
-        @Override
-        public void view(int row) {
             
-        }
-    };        
-        table.getColumnModel().getColumn(5).setCellRenderer(new TableCellActionRender(false, false, true));
-        table.getColumnModel().getColumn(5).setCellEditor(new TableCellEditor(action, false, false, true));
-    }
-    
-//    Tampil data
-    private void tampilData() {
-        serviceRestok.loadData(1, pagination1, tabmodel1);
-        pagination1.addActionPagination(new ActionPagination() {
-            @Override
-            public void pageChanged(int page) {
-                tabmodel1.setRowCount(0);
-                serviceRestok.loadData(page, pagination1, tabmodel1);
-            }
-        });
-    }
-        
 //    pilih data
     private void pilihDataPemesanan() {
         try {   
@@ -196,6 +167,36 @@ public class FiturRestok extends javax.swing.JPanel {
         lbStokHampirHabis.setText(String.valueOf(stokHampirHabis));
         lbStokHabis.setText(String.valueOf(stokHabis));    
     }
+    
+    private void searchData(TableRowSorter<DefaultTableModel> rowSorter, JTextField textfield) {
+        textfield.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                String text = textfield.getText();
+                if(text.length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 3));
+                }
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                String text = textfield.getText();
+                if(text.length() == 0) {
+                    rowSorter.setRowFilter(null);
+                } else {
+                    rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text, 0, 3));
+                }
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                
+            }
+        });
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -318,11 +319,11 @@ public class FiturRestok extends javax.swing.JPanel {
 
             },
             new String [] {
-                "No Pemesanan", "Tanggal Tiba", "ID Pengguna", "Penerima", "Total", "Detail"
+                "No Pemesanan", "Tanggal Tiba", "ID Pengguna", "Penerima", "Total"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -970,6 +971,7 @@ public class FiturRestok extends javax.swing.JPanel {
 
     private void btnCekBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCekBarangActionPerformed
         changePanel(panelStokBarang);
+        searchData(rowSorter2, txtCariBarang);
         pagination2.setVisible(false);
         tabmodel3.setRowCount(0);
         serviceRestok.loadDataStok(tabmodel3);
@@ -978,6 +980,7 @@ public class FiturRestok extends javax.swing.JPanel {
 
     private void btnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackActionPerformed
         changePanel(panelData);
+        searchData(rowSorter1, txtCari);
     }//GEN-LAST:event_btnBackActionPerformed
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
@@ -986,7 +989,7 @@ public class FiturRestok extends javax.swing.JPanel {
             clearField();
             changePanel(panelData);
             tabmodel1.setRowCount(0);
-            tampilData();
+            serviceRestok.loadData(tabmodel1);
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+import javax.swing.border.MatteBorder;
 
 /**
  *
@@ -46,6 +47,7 @@ public class FiturCetakKartu extends javax.swing.JPanel {
     }
     
     private void style() {
+        cbxJenisKartu.setBorder(new MatteBorder(1, 1, 1, 1, new Color(185, 185, 185)));
         cbxJenisKartu.setFont(new Font("sansserif",0,20));
         cbxJenisKartu.setBackground(new Color(255,255,255));
         cbxJenisKartu.setForeground(new Color(0,0,0));

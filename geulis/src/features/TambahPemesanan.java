@@ -400,7 +400,18 @@ public class TambahPemesanan extends java.awt.Dialog {
         });
         scrollBrg.setViewportView(tableBrg);
         if (tableBrg.getColumnModel().getColumnCount() > 0) {
-            tableBrg.getColumnModel().getColumn(4).setResizable(false);
+            tableBrg.getColumnModel().getColumn(0).setMinWidth(125);
+            tableBrg.getColumnModel().getColumn(0).setPreferredWidth(125);
+            tableBrg.getColumnModel().getColumn(0).setMaxWidth(125);
+            tableBrg.getColumnModel().getColumn(2).setMinWidth(75);
+            tableBrg.getColumnModel().getColumn(2).setPreferredWidth(75);
+            tableBrg.getColumnModel().getColumn(2).setMaxWidth(75);
+            tableBrg.getColumnModel().getColumn(3).setMinWidth(125);
+            tableBrg.getColumnModel().getColumn(3).setPreferredWidth(125);
+            tableBrg.getColumnModel().getColumn(3).setMaxWidth(125);
+            tableBrg.getColumnModel().getColumn(4).setMinWidth(65);
+            tableBrg.getColumnModel().getColumn(4).setPreferredWidth(65);
+            tableBrg.getColumnModel().getColumn(4).setMaxWidth(65);
         }
 
         label1.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N

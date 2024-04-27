@@ -11,7 +11,9 @@ import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,6 +24,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import model.ModelBarang;
 import model.ModelDetailPemesanan;
 import model.ModelHeader;
 import model.ModelHeaderTable;
@@ -319,6 +322,37 @@ public class FiturPemesanan extends javax.swing.JPanel {
         }
         
         return valid;
+    }
+
+    private boolean validationUpdatePrice() {
+        boolean valid = false;
+        for(int a = 0; a < tableDetail.getRowCount(); a++) {
+            double hrgSblm = (double) tableDetail.getValueAt(a, 2);
+            double hrgSkrg = (double) tableDetail.getValueAt(a, 3);
+            if(hrgSblm != hrgSkrg) {
+                int confirm = JOptionPane.showConfirmDialog(null, "Terdapat perubahan harga beli pada salah\nsatu atau beberapa "
+                + "barang.Apakah anda yakin\ningin melanjutkan pemesanan?", "Konfirmasi", JOptionPane.OK_OPTION);
+                if(confirm == 0) {
+                    valid = true;
+                    break;
+                }
+            }
+        }
+        return valid;
+    }
+    
+    private void perbaruiHargaBeli() {
+        for(int a = 0; a < tableDetail.getRowCount(); a++) {
+            String kodeBrg = tableDetail.getValueAt(a, 0).toString();
+            double hrgSblm = (double) tableDetail.getValueAt(a, 2);
+            double hrgSkrg = (double) tableDetail.getValueAt(a, 3);
+            if(hrgSblm != hrgSkrg) {
+                ModelBarang modelBarang = new ModelBarang();
+                modelBarang.setKode_Barang(kodeBrg);
+                modelBarang.setHarga_Beli((int)(hrgSkrg));
+                servicePemesanan.updatePriceBuy(modelBarang);
+            }
+        }
     }
     
     private void clearAllField() {
@@ -1120,7 +1154,7 @@ public class FiturPemesanan extends javax.swing.JPanel {
         txtCari.setFont(new Font("sansserif",0,14));
         pagination.setVisible(false);
         tabmodel1.setRowCount(0);
-        servicePemesanan.search(tabmodel1);
+        servicePemesanan.loadAll(tabmodel1);
     }//GEN-LAST:event_txtCariFocusGained
 
     private void btnTambahSementaraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahSementaraActionPerformed
@@ -1184,11 +1218,14 @@ public class FiturPemesanan extends javax.swing.JPanel {
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         if(validation()) {
+            if(validationUpdatePrice()) {
+            perbaruiHargaBeli();
             tambahData();
             clearAllField();
             tabmodel1.setRowCount(0);
             changePanel(panelData);
-            tampilData();
+            tampilData();    
+            }
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 

@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import model.ModelPasien;
 import model.ModelPemeriksaan;
 /**
  *
@@ -62,7 +61,7 @@ public class ServiceRiwayatPasien {
                 
                 String status = "";
                 if(tglSekarang.equals(estimasiPemeriksaan)) {
-                    status = "Follow Up";
+                    status = "Tindak Lanjuti";
                 }
                 model.addRow(new String[]{noPemeriksaan, idPasien, nama, tglPemeriksaan, status});
             }

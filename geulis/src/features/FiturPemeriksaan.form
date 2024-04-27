@@ -835,7 +835,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="lbIdKaryawan" min="-2" pref="200" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="btnPilih1" max="32767" attributes="0"/>
+                                      <Component id="btnPilih1" min="-2" pref="67" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="lbNamaKaryawan" alignment="0" max="32767" attributes="0"/>
                                   <Component id="lbNamaTindakan" alignment="1" max="32767" attributes="0"/>
@@ -843,7 +843,7 @@
                                   <Component id="txtPotongan" alignment="0" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Component id="lbKodeTindakan" min="-2" pref="200" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                       <Component id="btnPilih2" min="-2" pref="67" max="-2" attributes="0"/>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
@@ -883,7 +883,7 @@
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="jLabel12" pref="41" max="32767" attributes="0"/>
-                          <Component id="btnPilih1" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnPilih1" alignment="0" min="-2" pref="40" max="-2" attributes="0"/>
                           <Component id="lbIdKaryawan" alignment="0" pref="41" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
@@ -1031,7 +1031,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="Pilih Karyawan"/>
+                <Property name="text" type="java.lang.String" value="Pilih Terapis"/>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>
             </Component>
@@ -1060,7 +1060,7 @@
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="2"/>
-                <Property name="text" type="java.lang.String" value="ID Karyawan"/>
+                <Property name="text" type="java.lang.String" value="ID Terapis"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel13">
@@ -1072,7 +1072,7 @@
                   <Color blue="0" green="0" red="0" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="2"/>
-                <Property name="text" type="java.lang.String" value="Nama Karyawan"/>
+                <Property name="text" type="java.lang.String" value="Nama Terapis"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel14">
