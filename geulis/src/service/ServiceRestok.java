@@ -31,6 +31,7 @@ public class ServiceRestok {
         String query = "SELECT rst.No_Restok, DATE_FORMAT(rst.Tanggal, '%d - %M - %Y') AS Tanggal_Tiba, "
                 + "rst.ID_Pengguna, pgn.Nama, rst.Total_Biaya FROM restok rst JOIN pengguna pgn "
                 + "ON rst.ID_Pengguna=pgn.ID_Pengguna ORDER BY No_Restok DESC";
+        System.out.println("halo");
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
