@@ -32,6 +32,7 @@ public class ServiceRestok {
                 + "rst.ID_Pengguna, pgn.Nama, rst.Total_Biaya FROM restok rst JOIN pengguna pgn "
                 + "ON rst.ID_Pengguna=pgn.ID_Pengguna ORDER BY No_Restok DESC";
         System.out.println("halo");
+        System.out.println("halo");
         try {
             PreparedStatement pst = connection.prepareStatement(query);
             ResultSet rst = pst.executeQuery();
